@@ -1,6 +1,8 @@
 import React from "react"
 import { connect } from "react-redux"
 
+import { baseWEBUrl } from "../config.js"
+
 import { createLoginuser,loginLoginuser, fetchLoginuser, logoutLoginuser } from "../actions/loginuserActions"
 
 @connect((store) => {
@@ -96,6 +98,9 @@ export default class Layout extends React.Component {
         </form>
         <button onClick={this.createLoginuser.bind(this)}>create user</button>
         <ErrorBlock error={error} />
+        <div>
+          Forgot password? <a href={baseWEBUrl+"/reset"}>Click Here</a>
+        </div>
       </div>;
     } else {
       createUserButtons =<div>
