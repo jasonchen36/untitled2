@@ -1,0 +1,15 @@
+# humanstxt.org/
+# We are humans.  HUMANS.
+# taxplan.ca
+
+// TEAM
+    awong -- programmer -- initiator
+
+    <name> -- <role>
+
+// THANKS
+    <humans>
+    <name>
+// Site
+    HTML5, CSS3
+    react, redux, webpack

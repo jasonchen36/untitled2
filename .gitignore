@@ -1,0 +1,11 @@
+node_modules/
+
+# Vim Swap files
+*.swp
+
+#IDE files
+.idea
+
+#env.sh
+env.sh
+
