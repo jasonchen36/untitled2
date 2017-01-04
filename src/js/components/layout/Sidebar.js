@@ -4,7 +4,13 @@ import { IndexLink, Link } from "react-router";
 
 // Footer for all pages
 export default class Sidebar extends React.Component {
+
+
     render() {
+      const { userId } = this.props;
+
+
+
         return (
             <aside class="col-sm-4">
                 <ul id="sidebar-menu">
@@ -24,7 +30,7 @@ export default class Sidebar extends React.Component {
                         <Link to="checklist" class="button">Checklist</Link>
                     </li>
                     <li>
-                        <Link to="messages" class="button">Messages</Link>
+                        <Link to={userId? "/users/"+userId+"/messages" : "/"} class="button">Messages</Link>
                     </li>
                     <li>
                         <Link to="notes" class="button">Notes</Link>

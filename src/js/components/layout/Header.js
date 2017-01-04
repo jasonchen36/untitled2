@@ -22,10 +22,6 @@ export default class Header extends React.Component {
         };
     }
 
-    componentWillMount() {
-        this.props.dispatch(fetchLoginuser())
-    }
-
 /// Nav for all pages
     render() {
         const { location,loginuser } = this.props;

@@ -2,7 +2,6 @@
 
 import * as base from "./baseActions";
 
-
 /// Fetch a list of users, optionally with search Terms
 export function fetchUsers(searchTerms) {
   return function(dispatch) {

@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux"
 import { IndexLink, Link } from "react-router";
 
-import { fetchLoginuser, logoutLoginuser } from "../../actions/loginuserActions"
+import { logoutLoginuser } from "../../actions/loginuserActions"
 
 @connect((store) => {
     return {
@@ -16,10 +16,6 @@ export default class Nav extends React.Component {
         this.state = {};
     }
 
-    componentWillMount() {
-        this.props.dispatch(fetchLoginuser())
-    }
-
     //listeners
     logoutLoginuser(e) {
         this.props.dispatch(logoutLoginuser())
@@ -30,16 +26,16 @@ export default class Nav extends React.Component {
         const { loginuser } = this.props;
         if (loginuser.id) {
             return (
-                <ul class="standard-menu">
+              <ul class="standard-menu">
+                <li>
+                  {loginuser.first_name} ({loginuser.role})
+                  <ul class="sub-menu">
                     <li>
-                        {loginuser.first_name} ({loginuser.role})
-                        <ul class="sub-menu">
-                            <li>
-                                <IndexLink to="/" onClick={this.logoutLoginuser.bind(this)}>Logout</IndexLink>
-                            </li>
-                        </ul>
+                      <IndexLink to="/" onClick={this.logoutLoginuser.bind(this)}>Logout</IndexLink>
                     </li>
-                </ul>
+                  </ul>
+                </li>
+              </ul>
             );
         } else {
             return (

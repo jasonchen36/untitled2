@@ -90,7 +90,7 @@ export default class User extends React.Component {
         return user;
     };
 
-    const { loginuser, user } = this.props;
+    const { loginuser, user, userId } = this.props;
     const name=<h1>{loginuser.name}</h1>;
 
     let userOutput='';
@@ -148,9 +148,10 @@ export default class User extends React.Component {
       </div>
     }
 
+
     return (
         <main class="grid-container row">
-            <Sidebar/>
+            <Sidebar userId={user? user.id: null} />
             <section class="col-sm-8">{name}{userOutput}</section>
         </main>
     );
