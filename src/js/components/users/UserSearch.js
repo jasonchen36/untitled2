@@ -7,7 +7,7 @@ import { fetchUsers, deleteUser } from "../../actions/usersActions"
 
 @connect((store) => {
   return {
-    users: store.users.users,
+    users: store.users.users
   };
 })
 
@@ -28,6 +28,5 @@ export default class UserSearch extends React.Component {
           <button onClick={this.searchUsers.bind(this)}>search</button>
       </div>
     }
-
-  }
+    
 }
