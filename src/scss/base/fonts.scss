@@ -1,0 +1,43 @@
+/*
+
+We only load a certain subset of possible font file extensions because fonts are extremely hard on the browser in terms of rendering engines.  The extensions that we have chosen follow the recommendations here https://css-tricks.com/snippets/css/using-font-face/ .  It supports IE9+
+
+If you only have a font in a certain extension, there are tools online to convert it to the other types.  There is not one specific tool that is recommended at this time.
+
+Note: font file paths are relative to deployed file paths, not source paths
+*/
+
+//font declarations
+//-----------------------------
+// Reference Example:
+//@font-face {
+//  font-family: 'FuturaMedium';
+//  src: url('/fonts/FuturaPTMedium.woff2') format('woff2'), url('/fonts/FuturaPTMedium.woff') format('woff'),url('/fonts/FuturaPTMedium.ttf') format('truetype');
+//  font-weight: normal;
+//  font-style: normal
+//}
+
+@font-face {
+  font-family: 'FuturaHeavy';
+  src: url('/fonts/FuturaPTHeavy.woff2') format('woff2'), url('/fonts/FuturaPTHeavy.woff') format('woff'),url('/fonts/FuturaPTHeavy.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal
+}
+
+@font-face {
+  font-family: 'FuturaBook';
+  src: url('/fonts/FuturaPTBook.woff2') format('woff2'), url('/fonts/FuturaPTBook.woff') format('woff'),url('/fonts/FuturaPTBook.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal
+}
+
+//extensible classes
+//-----------------------------
+
+.f--futura-book {
+  font-family: FuturaBook, Arial, sans-serif;
+}
+
+.f--futura-heavy {
+  font-family: FuturaHeavy, Arial, sans-serif;
+}

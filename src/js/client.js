@@ -6,7 +6,7 @@ import { Router, Route, browserHistory, IndexRoute } from "react-router";
 import { syncHistoryWithStore } from 'react-router-redux';
 
 // Entrypoint for css. (using sass)
-import '../scss/common.scss';
+import '../scss/app.scss';
 
 import Layout from "./components/Layout";
 

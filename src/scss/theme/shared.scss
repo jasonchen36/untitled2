@@ -1,0 +1,108 @@
+/*
+
+These main styles are the globalized foundation for the theme and are often what need to be overwritten by localized changes
+
+Use helper classes to style elements that otherwise wouldn't need to have a full declaration or that are one-off occurrences
+
+*/
+
+//main styles
+//-----------------------------
+h1,h2,h3,h4,h5,p,a,blockquote,span,div,input,textarea {
+  @extend .f--futura-heavy;
+  color: $color-global-text-grey;
+}
+
+img, input {
+  max-width: 100%;
+}
+
+button, .button {
+
+}
+
+
+//helper classes
+//-----------------------------
+.faded-out {
+  display: none;
+  opacity: 0;
+}
+
+.hidden {
+  display: none;
+}
+
+.opaque {
+  opacity: 0;
+}
+
+.horizontal-center {
+  margin: 0 auto;
+}
+
+.float-left {
+  float:left;
+}
+
+.float-right {
+  float:right;
+}
+
+.full-width {
+  width:100%;
+}
+
+.position-relative {
+  position: relative;
+}
+
+
+//typography
+//-----------------------------
+.text-bold {
+  font-weight: bold;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-upper {
+  text-transform: uppercase;
+}
+
+
+//visibility
+//-----------------------------
+@include mobile {
+  .hide-for-small {
+    display: none;
+  }
+}
+@include tablet {
+  .hide-for-medium {
+    display: none;
+  }
+}
+@include tablet-up {
+  .hide-for-medium-up {
+    display: none;
+  }
+  .show-for-small {
+    display: none;
+  }
+}
+@include desktop {
+  .hide-for-large {
+    display: none;
+  }
+}
