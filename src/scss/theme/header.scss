@@ -5,3 +5,49 @@ header {
     margin: 20px;
   }
 }
+
+//dropdown menu
+//----------------------
+.standard-menu {
+  list-style: none;
+  margin: 0;
+  & > li {
+    display: inline-block;
+    & > a {
+      padding: 20px 15px;
+    }
+    &:hover {
+      .sub-menu {
+        opacity: 1;
+        height: auto;
+        overflow: visible;
+      }
+    }
+  }
+  a {
+    padding: 5px 15px;
+    display: block;
+    cursor: pointer;
+  }
+}
+
+.sub-menu {
+  position: absolute;
+  opacity: 0;
+  padding: 0;
+  height: 0;
+  overflow: hidden;
+  list-style: none;
+  background-color: white;
+  text-align: left;
+  min-width: 150px;
+  @include transition-with-defaults(opacity);
+  a {
+    color: $color-global-text-grey;
+    font-size: 14px;
+    @include transition-with-defaults(background-color);
+    &:hover {
+      background-color: $color-menu-active-state;
+    }
+  }
+}
