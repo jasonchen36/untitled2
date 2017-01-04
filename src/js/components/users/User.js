@@ -1,5 +1,6 @@
 import React from "react"
 import { connect } from "react-redux"
+import Sidebar from "../layout/Sidebar";
 
 import { createLoginuser, loginLoginuser, fetchLoginuser } from "../../actions/loginuserActions";
 import { fetchUser, updateUser } from "../../actions/usersActions";
@@ -147,6 +148,11 @@ export default class User extends React.Component {
       </div>
     }
 
-    return <div>{name}{userOutput}</div>;
+    return (
+        <main class="grid-container row">
+            <Sidebar/>
+            <section class="col-sm-8">{name}{userOutput}</section>
+        </main>
+    );
   }
 }
