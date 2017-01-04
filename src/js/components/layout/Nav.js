@@ -58,7 +58,7 @@ export default class Nav extends React.Component {
 /// Nav for all pages
     render() {
         return (
-            <nav id="header-menu-container" role="navigation" class="col-sm-8">
+            <nav id="header-menu-container" role="navigation">
                 { this.renderNavMenu() }
             </nav>
         );

@@ -1,9 +1,16 @@
 header {
+  margin-top: 20px;
   .i--icon-logo {
-    height: 40px;
-    width: 180px;
-    margin: 20px;
+    height: 60px;
+    width: 220px;
   }
+}
+
+#header-nav-container {
+  border-top: 1px solid lightgrey;
+  border-bottom: 1px solid lightgrey;
+  padding: 15px 0;
+  margin-top: 30px;
 }
 
 //dropdown menu
@@ -13,6 +20,7 @@ header {
   margin: 0;
   & > li {
     display: inline-block;
+    color: orangered;
     & > a {
       padding: 20px 15px;
     }

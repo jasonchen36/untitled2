@@ -43,6 +43,15 @@ button, .button {
   }
 }
 
+a {
+  cursor: pointer;
+  text-decoration: none;
+  @include transition-with-defaults(opacity);
+  &:hover {
+    opacity: 0.75;
+  }
+}
+
 
 //helper classes
 //-----------------------------

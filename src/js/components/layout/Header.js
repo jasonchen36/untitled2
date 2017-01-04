@@ -31,12 +31,14 @@ export default class Header extends React.Component {
         const { location,loginuser } = this.props;
         return (
             <header class="grid-container row">
-                <div class="col-sm-4">
+                <div class="col-sm-12">
                     <IndexLink to="/">
                         <div class="i--icon-logo"></div>
                     </IndexLink>
                 </div>
-                <Nav location={location} name={loginuser?loginuser.name:null} loggedIn={typeof loginuser ==="undefined"} />
+                <div id="header-nav-container" class="col-sm-12 text-right">
+                    <Nav/>
+                </div>
             </header>
         );
     }
