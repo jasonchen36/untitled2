@@ -101,6 +101,6 @@ export default class Users extends React.Component {
       </div>
     }
 
-    return <div>{name}{userOutput}</div>;
+    return <section class="col-sm-8">{name}{userOutput}</section>;
   }
 }
