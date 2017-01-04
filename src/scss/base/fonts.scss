@@ -19,14 +19,14 @@ Note: font file paths are relative to deployed file paths, not source paths
 
 @font-face {
   font-family: 'FuturaHeavy';
-  src: url('/fonts/FuturaPTHeavy.woff2') format('woff2'), url('/fonts/FuturaPTHeavy.woff') format('woff'),url('/fonts/FuturaPTHeavy.ttf') format('truetype');
+  src: url('../assets/fonts/futura/FuturaPTHeavy.woff2') format('woff2'), url('../assets/fonts/futura/FuturaPTHeavy.woff') format('woff'),url('../assets/fonts/futura/FuturaPTHeavy.ttf') format('truetype');
   font-weight: normal;
   font-style: normal
 }
 
 @font-face {
   font-family: 'FuturaBook';
-  src: url('/fonts/FuturaPTBook.woff2') format('woff2'), url('/fonts/FuturaPTBook.woff') format('woff'),url('/fonts/FuturaPTBook.ttf') format('truetype');
+  src: url('../assets/fonts/futura/FuturaPTBook.woff2') format('woff2'), url('../assets/fonts/futura/FuturaPTBook.woff') format('woff'),url('../assets/fonts/futura/FuturaPTBook.ttf') format('truetype');
   font-weight: normal;
   font-style: normal
 }
