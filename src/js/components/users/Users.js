@@ -3,6 +3,8 @@ import { connect } from "react-redux"
 
 import { Link  } from "react-router"
 
+import Sidebar from "../layout/Sidebar";
+
 import { createLoginuser, loginLoginuser, fetchLoginuser } from "../../actions/loginuserActions"
 
 import { fetchUsers, deleteUser } from "../../actions/usersActions"
@@ -101,9 +103,11 @@ export default class Users extends React.Component {
             </div>
         }
 
+        // todo, remove sidebar
         return (
             <main class="grid-container row">
-                <section class="col-sm-12">{name}{userOutput}</section>
+                <Sidebar/>
+                <section class="col-sm-8">{name}{userOutput}</section>
             </main>
         )
     }
