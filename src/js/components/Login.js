@@ -108,6 +108,10 @@ export default class Layout extends React.Component {
             </div>;
         }
 
-        return <section class="col-sm-12">{name}{createUserButtons}</section>;
+        return (
+            <main class="grid-container row">
+                <section class="col-sm-12">{name}{createUserButtons}</section>
+            </main>
+        );
     };
 }

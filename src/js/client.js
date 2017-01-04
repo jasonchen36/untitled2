@@ -15,6 +15,12 @@ import Login from "./components/Login";
 import Users from "./components/users/Users";
 import User from "./components/users/User";
 import PersonalProfile from "./components/personal-profile/PersonalProfile";
+import TaxProfile from "./components/tax-profile/TaxProfile";
+import Uploads from "./components/uploads/Uploads";
+import Checklist from "./components/checklist/Checklist";
+import Messages from "./components/messages/Messages";
+import Notes from "./components/notes/Notes";
+import BillingStatus from "./components/billing-status/BillingStatus";
 
 // The Redux store file
 import store from "./store";
@@ -33,7 +39,12 @@ ReactDOM.render(<Provider store={store}>
             <Route path="users" name="users" component={Users}></Route>
             <Route path="users/:userId" name="user" component={User}></Route>
             <Route path="personal-profile" name="personal-profile" component={PersonalProfile}></Route>
-            
+            <Route path="tax-profile" name="tax-profile" component={TaxProfile}></Route>
+            <Route path="uploads" name="uploads" component={Uploads}></Route>
+            <Route path="checklist" name="checklist" component={Checklist}></Route>
+            <Route path="messages" name="messages" component={Messages}></Route>
+            <Route path="notes" name="notes" component={Notes}></Route>
+            <Route path="billing-status" name="billing-status" component={BillingStatus}></Route>
         </Route>
     </Router>
 </Provider>, app);

@@ -1,17 +1,19 @@
-import React from "react";
+import React from "react"
+import { connect } from "react-redux"
+
+import { Link  } from "react-router"
 
 import Sidebar from "../layout/Sidebar";
 
-// Footer for all pages
-export default class PersonalProfileLayout extends React.Component {
+export default class Uploads extends React.Component {
     render() {
         return (
             <main class="grid-container row">
                 <Sidebar/>
                 <section class="col-sm-8">
-                    <h1>Personal Profile</h1>
+                    <h1>Uploads</h1>
                 </section>
             </main>
-        );
+        )
     }
 }
