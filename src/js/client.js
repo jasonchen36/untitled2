@@ -14,6 +14,7 @@ import Layout from "./components/Layout";
 import Login from "./components/Login";
 import Users from "./components/users/Users";
 import User from "./components/users/User";
+import PersonalProfile from "./components/personal-profile/PersonalProfile";
 
 // The Redux store file
 import store from "./store";
@@ -26,11 +27,13 @@ const app = document.getElementById('app');
 
 // react router - client side routing
 ReactDOM.render(<Provider store={store}>
-  <Router history={history}>
-    <Route path="/" component={Layout}>
-      <IndexRoute component={Login}></IndexRoute>
-      <Route path="users" name="users" component={Users}></Route>
-      <Route path="users/:userId" name="user" component={User}></Route>
-    </Route>
-  </Router>
+    <Router history={history}>
+        <Route path="/" component={Layout}>
+            <IndexRoute component={Login}></IndexRoute>
+            <Route path="users" name="users" component={Users}></Route>
+            <Route path="users/:userId" name="user" component={User}></Route>
+            <Route path="personal-profile" name="personal-profile" component={PersonalProfile}></Route>
+            
+        </Route>
+    </Router>
 </Provider>, app);

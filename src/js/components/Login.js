@@ -85,7 +85,7 @@ export default class Layout extends React.Component {
             } else {
                 return <div></div>
             }
-        };
+        }
 
         if (!loginuser.id) {
             createUserButtons =<div>
@@ -94,9 +94,9 @@ export default class Layout extends React.Component {
                         <input ref={(input) => { this.email = input; }} type="email"  placeholder="Email" />
                         <input ref={(input) => {this.password = input;}} type="password"  placeholder="Password" />
                     </div>
-                    <button onClick={this.loginLoginuser.bind(this)}>login user</button>
+                    <button onClick={this.loginLoginuser.bind(this)} class="button">login user</button>
                 </form>
-                <button onClick={this.createLoginuser.bind(this)}>create user</button>
+                <button onClick={this.createLoginuser.bind(this)} class="button grey">create user</button>
                 <ErrorBlock error={error} />
                 <div>
                     Forgot password? <a href={baseWEBUrl+"/reset"}>Click Here</a>
@@ -108,6 +108,6 @@ export default class Layout extends React.Component {
             </div>;
         }
 
-        return <div>{name}{createUserButtons}</div>;
+        return <section class="col-sm-12">{name}{createUserButtons}</section>;
     };
 }

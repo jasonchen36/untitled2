@@ -9,7 +9,7 @@ export default class Sidebar extends React.Component {
             <aside class="col-sm-4">
                 <ul id="sidebar-menu">
                     <li>
-                        <Link to="#" class="button">Personal Tax 2015</Link>
+                        <Link to="personal-profile" class="button grey">Personal Tax 2015</Link>
                     </li>
                     <li>
                         <Link to="#" class="button">Personal Profile</Link>
@@ -33,7 +33,7 @@ export default class Sidebar extends React.Component {
                         <Link to="#" class="button">Billing Status</Link>
                     </li>
                     <li>
-                        <Link to="users" class="button disabled">Users</Link>
+                        <Link to="users" class="button grey disabled">Users</Link>
                     </li>
                 </ul>
             </aside>
