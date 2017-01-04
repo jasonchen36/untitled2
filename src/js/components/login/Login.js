@@ -1,9 +1,9 @@
 import React from "react"
 import { connect } from "react-redux"
 
-import { baseWEBUrl } from "../config.js"
+import { baseWEBUrl } from "../../config.js"
 
-import { createLoginuser,loginLoginuser, fetchLoginuser, logoutLoginuser } from "../actions/loginuserActions"
+import { createLoginuser,loginLoginuser, fetchLoginuser, logoutLoginuser } from "../../actions/loginuserActions"
 
 @connect((store) => {
     return {

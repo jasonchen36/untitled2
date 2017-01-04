@@ -11,7 +11,7 @@ import '../scss/app.scss';
 import Layout from "./components/Layout";
 
 // Page components.  Should we move this to a pages folder?
-import Login from "./components/Login";
+import Login from "./components/login/Login";
 import Users from "./components/users/Users";
 import User from "./components/users/User";
 import PersonalProfile from "./components/personal-profile/PersonalProfile";
