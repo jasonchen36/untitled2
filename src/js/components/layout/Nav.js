@@ -37,14 +37,6 @@ export default class Nav extends React.Component {
                 </li>
               </ul>
             );
-        } else {
-            return (
-                <ul>
-                    <li>
-                        <IndexLink to="/">Login</IndexLink>
-                    </li>
-                </ul>
-            );
         }
     }
 

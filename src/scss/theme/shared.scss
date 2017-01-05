@@ -13,8 +13,14 @@ h1,h2,h3,h4,h5,p,a,blockquote,span,div,input,textarea {
   color: $color-global-text-grey;
 }
 
-img, input {
+img {
   max-width: 100%;
+}
+
+input {
+  max-width: 100%;
+  width: 100%;
+  padding: 0.5rem;
 }
 
 button, .button {
@@ -23,7 +29,7 @@ button, .button {
   border: none;
   text-align: center;
   font-size: 1.25rem;
-  padding: 10px;
+  padding: 10px 25px;
   cursor: pointer;
   max-width: 100%;
   vertical-align: middle;
