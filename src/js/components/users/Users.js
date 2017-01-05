@@ -69,10 +69,10 @@ export default class Users extends React.Component {
                 <label class="col">Filter by:</label>
                 <input class="col" type="text" placeholder="User Name"/>
                 <select class="col">
-                    <option disabled selected>Select TaxPro</option>
+                    <option disabled defaultValue>Select TaxPro</option>
                 </select>
                 <select class="col">
-                    <option disabled selected>Select Status</option>
+                    <option disabled defaultValue>Select Status</option>
                 </select>
             </div>
         );
