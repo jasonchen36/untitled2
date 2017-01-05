@@ -44,73 +44,57 @@ export default class Layout extends React.Component {
         this.props.dispatch(loginLoginuser(loginData))
     }
 
+    getErrorBlock(props) {
+        if(props && props.hasOwnProperty('error')) {
+            let message='';
+
+            if(props.error.status===400) {
+                message ='Failed to login. Please make sure your credentials are correct.';
+            } else if (props.error.status===401) {
+                message ='Please Log in';
+            }else {
+                message = 'Failed to login. Please try again later. If you continue to have problems, please contact support.';
+            }
+
+            return <div className="errors">{message}</div>;
+        } else {
+            return <div></div>
+        }
+    }
+
+    getUserForm(){
+        const { loginuser, error } = this.props;
+        if (!loginuser.id) {
+            return (
+                <section class="col-sm-6 col-sm-offset-3">
+                    <form id="login-form">
+                        <label for="login-email">Email/Username</label>
+                        <input id="login-email" ref={(input) => { this.email = input; }} type="email"  placeholder="Email/Username" />
+                        <label for="login-password">Password</label>
+                        <input id="login-password" ref={(input) => {this.password = input;}} type="password"  placeholder="Password" />
+                        <button id="login-submit" onClick={this.loginLoginuser.bind(this)} class="button" type="submit">Sign In</button>
+                    </form>
+                    {this.getErrorBlock(error)}
+                    <div class="text-center">
+                        <p>Don't have an account? <a href={baseWEBUrl+"/login"}>Sign up here »</a></p>
+                        <p>Forgot password? <a href={baseWEBUrl+"/reset"}>Reset password here »</a></p>
+                    </div>
+                </section>
+            );
+        } else {
+            return (
+                <section class="col-sm-6 col-sm-offset-3">
+                    <button onClick={this.logoutLoginuser.bind(this)}>Logout</button>
+                </section>
+            );
+        }
+    }
+
 
     render() {
-
-        // TODO: move this to a helper class
-        const addFullNameForUser = (user) => {
-            if (user.name) {
-                user.fullName = user.name;
-            }
-            else if(user.first_name && user.last_name) {
-                user.fullName= user.first_name + ' ' + user.last_name;
-            } else if (user.first_name) {
-                user.fullName = user.first_name;
-
-            } else {
-                user.fullName = user.last_name;
-            }
-
-            return user;
-        };
-
-        let { loginuser, error } = this.props;
-        loginuser = addFullNameForUser(loginuser);
-        const name=<h1>{loginuser.fullName}</h1>;
-        let createUserButtons='';
-
-        function ErrorBlock(props) {
-            if(props.error) {
-                let message='';
-
-                if(props.error.status===400) {
-                    message ='Failed to login. Please make sure your credentials are correct.';
-                } else if (props.error.status===401) {
-                    message ='Please Log in';
-                }else {
-                    message = 'Failed to login. Please try again later. If you continue to have problems, please contact support.';
-                }
-
-                return <div className="errors">{message}</div>;
-            } else {
-                return <div></div>
-            }
-        }
-
-        if (!loginuser.id) {
-            createUserButtons =<div>
-                <form role="form">
-                    <div className="form-group">
-                        <input ref={(input) => { this.email = input; }} type="email"  placeholder="Email" />
-                        <input ref={(input) => {this.password = input;}} type="password"  placeholder="Password" />
-                    </div>
-                    <button onClick={this.loginLoginuser.bind(this)} class="button">login user</button>
-                </form>
-                <button onClick={this.createLoginuser.bind(this)} class="button grey">create user</button>
-                <ErrorBlock error={error} />
-                <div>
-                    Forgot password? <a href={baseWEBUrl+"/reset"}>Click Here</a>
-                </div>
-            </div>;
-        } else {
-            createUserButtons =<div>
-                <button onClick={this.logoutLoginuser.bind(this)}>logout user</button>
-            </div>;
-        }
-
         return (
             <main class="grid-container row">
-                <section class="col-sm-12">{name}{createUserButtons}</section>
+                { this.getUserForm() }
             </main>
         );
     };

@@ -1,0 +1,33 @@
+.message-container {
+  border: 1px solid black;
+  padding: 5px 10px;
+  border-radius: 20px;
+  margin: 15px 0;
+  clear: both;
+  &.user {
+    background: $color-global-yellow;
+  }
+  &.taxplan {
+    border: 2px solid $color-global-yellow;
+  }
+  p {
+    margin: 0;
+  }
+}
+
+.message-body {
+  margin-top: 10px!important;
+}
+
+.message-icon-container {
+  position: relative;
+  .i--icon-message-taxplan {
+    height: 40px;
+    width: 40px;
+    position: absolute;
+    top: 0;
+    right: 10%;
+    bottom: 0;
+    margin: auto;
+  }
+}

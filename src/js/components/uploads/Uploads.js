@@ -9,7 +9,7 @@ export default class Uploads extends React.Component {
     render() {
         return (
             <main class="grid-container row">
-                <Sidebar/>
+                <Sidebar activeScreen="uploads" userId={this.props.params.userId}/>
                 <section class="col-sm-8">
                     <h1>Uploads</h1>
                 </section>
