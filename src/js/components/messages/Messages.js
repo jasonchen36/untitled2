@@ -77,7 +77,7 @@ export default class Messages extends React.Component {
 
         return (
             <main class="grid-container row">
-                <Sidebar userId={userId}/>
+                <Sidebar activeScreen="messages" userId={this.props.params.userId}/>
                 <section class="col-sm-8">
                     <h1>Messages</h1>
                     <div>

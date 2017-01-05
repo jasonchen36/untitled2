@@ -9,7 +9,7 @@ export default class Notes extends React.Component {
     render() {
         return (
             <main class="grid-container row">
-                <Sidebar/>
+                <Sidebar activeScreen="notes" userId={this.props.params.userId}/>
                 <section class="col-sm-8">
                     <h1>Notes</h1>
                 </section>

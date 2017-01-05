@@ -48,7 +48,7 @@ export default class Users extends React.Component {
             <tr key={user.id}>
                 <td>{user.id}</td>
                 <td>
-                    <Link to={`/users/${user.id}`}>{user.first_name} {user.last_name}</Link>
+                    <Link to={`/users/${user.id}/personal-profile`}>{user.first_name} {user.last_name}</Link>
                 </td>
                 <td>{user.status}</td>
                 <td>{user.role}</td>

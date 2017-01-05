@@ -13,7 +13,6 @@ import Layout from "./components/Layout";
 // Page components.  Should we move this to a pages folder?
 import Login from "./components/login/Login";
 import Users from "./components/users/Users";
-import User from "./components/users/User";
 import PersonalProfile from "./components/personal-profile/PersonalProfile";
 import TaxProfile from "./components/tax-profile/TaxProfile";
 import Uploads from "./components/uploads/Uploads";
@@ -37,14 +36,13 @@ ReactDOM.render(<Provider store={store}>
         <Route path="/" component={Layout}>
             <IndexRoute component={Login}></IndexRoute>
             <Route path="users" name="users" component={Users}></Route>
-            <Route path="users/:userId" name="user" component={User}></Route>
-            <Route path="personal-profile" name="personal-profile" component={PersonalProfile}></Route>
-            <Route path="tax-profile" name="tax-profile" component={TaxProfile}></Route>
-            <Route path="uploads" name="uploads" component={Uploads}></Route>
-            <Route path="checklist" name="checklist" component={Checklist}></Route>
+            <Route path="users/:userId/personal-profile" name="personal-profile" component={PersonalProfile}></Route>
+            <Route path="users/:userId/tax-profile" name="tax-profile" component={TaxProfile}></Route>
+            <Route path="users/:userId/uploads" name="uploads" component={Uploads}></Route>
+            <Route path="users/:userId/checklist" name="checklist" component={Checklist}></Route>
             <Route path="users/:userId/messages" name="messages" component={Messages}></Route>
-            <Route path="notes" name="notes" component={Notes}></Route>
-            <Route path="billing-status" name="billing-status" component={BillingStatus}></Route>
+            <Route path="users/:userId/notes" name="notes" component={Notes}></Route>
+            <Route path="users/:userId/billing-status" name="billing-status" component={BillingStatus}></Route>
         </Route>
     </Router>
 </Provider>, app);
