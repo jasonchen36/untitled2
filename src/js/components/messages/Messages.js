@@ -8,31 +8,31 @@ import Sidebar from "../layout/Sidebar";
 import { fetchUserMessages } from "../../actions/messagesActions";
 
 @connect((store) => {
-  return {
-    loginuser: store.loginuser.loginuser,
-    loginuserFetched: store.loginuser.fetched,
-    user: store.users.user,
-    messages: store.messages.messages
-  };
+    return {
+        loginuser: store.loginuser.loginuser,
+        loginuserFetched: store.loginuser.fetched,
+        user: store.users.user,
+        messages: store.messages.messages
+    };
 })
 
 export default class Messages extends React.Component {
-  constructor() {
-    super();
-    this.sendMessage = this.handleSendMessage.bind(this);
-  }
-
-  componentWillMount() {
-    const props = this.props;
-    const { loginuser } = props;
-    if(!loginuser || !loginuser.id) {
-      props.router.push('/');
-    } else {
+    constructor() {
+        super();
+        this.sendMessage = this.handleSendMessage.bind(this);
     }
-  
-    const userId = this.props.params.userId;
-    this.props.dispatch(fetchUserMessages(userId));
-  };
+
+    componentWillMount() {
+        const props = this.props;
+        const { loginuser } = props;
+        if(!loginuser || !loginuser.id) {
+            props.router.push('/');
+        } else {
+        }
+
+        const userId = this.props.params.userId;
+        this.props.dispatch(fetchUserMessages(userId));
+    };
 
 
     /// Handlers
@@ -41,53 +41,75 @@ export default class Messages extends React.Component {
     };
 
     handleSendMessage(e) {
-      let updatedValues = {
-        message: this.message_text.value
-      };
+        let updatedValues = {
+            message: this.message_text.value
+        };
 
-      let { id } = e.target;
+        let { id } = e.target;
 
-      e.preventDefault();
+        e.preventDefault();
 
-      this.props.dispatch(sendMessage(id, updatedValues));
+        this.props.dispatch(sendMessage(id, updatedValues));
     };
 
+    getMessageIcon(isFromUser){
+        if (!isFromUser){
+            return (
+                <div class="col-sm-3 message-icon-container">
+                    <div class="i--icon-message-taxplan"></div>
+                </div>
+            )
+        }
+    }
+
+    getMessageEntry(message){
+        const isFromUser = message.client_id === message.from_id;
+        const messageContainerClass = 'col-sm-9 message-container';
+        const messageClass = isFromUser?messageContainerClass+' user':messageContainerClass+' taxplan';
+        return (
+            <div class="row">
+                {this.getMessageIcon(isFromUser)}
+                <div class={messageClass}>
+                    <p>
+                        From: {message.fromname}
+                    </p>
+                    <p>
+                        Subject: {message.subject}
+                    </p>
+                    <p>
+                        Date: {message.date}
+                    </p>
+                    <p class="message-body">
+                        Body:
+                    </p>
+                    <p>
+                        {message.body}
+                    </p>
+                </div>
+            </div>
+        );
+    }
+
+
+    getMessages(){
+        const { messages } = this.props;
+        if (messages){
+            //reverse array to show most recent messages first
+            return messages.reverse().map(message => this.getMessageEntry(message));
+        }
+    }
 
     render() {
-
-      const { params,messages } = this.props;
-      const userId = params.userId;
-      const renderMessages = (msgs) => {
-        if(!msgs) {
-          return '';
-        } else {
-          return msgs.map((message) => {
-            return <li>
-                from:{message.fromname}
-                  <br/>
-                  subject:{message.subject}
-                  <br/>
-                  body:{message.body}
-                </li>
-          });
-        }
-      };
-
-      const mappedMessages = renderMessages(messages);
-
         return (
             <main class="grid-container row">
                 <Sidebar activeScreen="messages" userId={this.props.params.userId}/>
                 <section class="col-sm-8">
                     <h1>Messages</h1>
-                    <div>
-                       <input ref={(input) => {this.message_text = input;}} type="text"  placeholder="Message"  />
-                       <button >send message </button>
+                    <textarea rows="5" ref={(input) => {this.message_text = input;}} type="text" placeholder="Compose Messages"/>
+                    <button>Send</button>
+                    <div class="grid-container">
+                        {this.getMessages()}
                     </div>
-                    other messages
-                    <ul>
-                      {mappedMessages}
-                    </ul>
                 </section>
             </main>
         )
