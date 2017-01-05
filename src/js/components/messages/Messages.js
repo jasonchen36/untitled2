@@ -62,7 +62,7 @@ export default class Messages extends React.Component {
           return '';
         } else {
           return msgs.map((message) => {
-            return <li>
+            return <li key={message.id}>
                 from:{message.fromname}
                   <br/>
                   subject:{message.subject}
