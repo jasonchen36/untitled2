@@ -67,7 +67,7 @@ export default class Messages extends React.Component {
         const messageContainerClass = 'col-sm-9 message-container';
         const messageClass = isFromUser?messageContainerClass+' user':messageContainerClass+' taxplan';
         return (
-            <div class="row">
+            <div class="row" key={message.id}>
                 {this.getMessageIcon(isFromUser)}
                 <div class={messageClass}>
                     <p>
