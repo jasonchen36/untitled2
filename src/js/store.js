@@ -10,4 +10,11 @@ const middleware = applyMiddleware(promise(), thunk, logger())
 
 // The store for our app (redux)
 // All the state is kept in reducers, and combined into this store for the app
-export default createStore(reducer, middleware)
+const store =  createStore(reducer, middleware)
+
+export default store;
+
+// initial Global Calls
+import { fetchLoginuser } from "./actions/loginuserActions"
+store.dispatch(fetchLoginuser());
+

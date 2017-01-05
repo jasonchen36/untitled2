@@ -42,7 +42,7 @@ ReactDOM.render(<Provider store={store}>
             <Route path="tax-profile" name="tax-profile" component={TaxProfile}></Route>
             <Route path="uploads" name="uploads" component={Uploads}></Route>
             <Route path="checklist" name="checklist" component={Checklist}></Route>
-            <Route path="messages" name="messages" component={Messages}></Route>
+            <Route path="users/:userId/messages" name="messages" component={Messages}></Route>
             <Route path="notes" name="notes" component={Notes}></Route>
             <Route path="billing-status" name="billing-status" component={BillingStatus}></Route>
         </Route>
