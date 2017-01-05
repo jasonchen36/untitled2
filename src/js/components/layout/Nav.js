@@ -22,13 +22,12 @@ export default class Nav extends React.Component {
     }
 
     //templates
-    renderNavMenu(){
-        const { loginuser } = this.props;
-        if (loginuser.id) {
+    renderNavMenu(user){
+        if (user && user.hasOwnProperty('id')) {
             return (
               <ul class="standard-menu">
                 <li>
-                  {loginuser.first_name} ({loginuser.role})
+                  {user.first_name} ({user.role})
                   <ul class="sub-menu">
                       <li>
                           <Link to="/users">Users</Link>
@@ -45,9 +44,10 @@ export default class Nav extends React.Component {
 
 /// Nav for all pages
     render() {
+        const { loginuser } = this.props;
         return (
             <nav id="header-menu-container" role="navigation">
-                { this.renderNavMenu() }
+                { this.renderNavMenu(loginuser) }
             </nav>
         );
     }

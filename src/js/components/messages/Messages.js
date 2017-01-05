@@ -52,7 +52,7 @@ export default class Messages extends React.Component {
         this.props.dispatch(sendMessage(id, updatedValues));
     };
 
-    getMessageIcon(isFromUser){
+    renderMessageIcon(isFromUser){
         if (!isFromUser){
             return (
                 <div class="col-sm-3 message-icon-container">
@@ -62,13 +62,13 @@ export default class Messages extends React.Component {
         }
     }
 
-    getMessageEntry(message){
+    renderMessageEntry(message){
         const isFromUser = message.client_id === message.from_id;
         const messageContainerClass = 'col-sm-9 message-container';
         const messageClass = isFromUser?messageContainerClass+' user':messageContainerClass+' taxplan';
         return (
             <div class="row" key={message.id}>
-                {this.getMessageIcon(isFromUser)}
+                {this.renderMessageIcon(isFromUser)}
                 <div class={messageClass}>
                     <p>
                         From: {message.fromname}
@@ -91,15 +91,15 @@ export default class Messages extends React.Component {
     }
 
 
-    getMessages(){
-        const { messages } = this.props;
+    renderMessages(messages){
         if (messages){
             //reverse array to show most recent messages first
-            return messages.reverse().map(message => this.getMessageEntry(message));
+            return messages.reverse().map(message => this.renderMessageEntry(message));
         }
     }
 
     render() {
+        const { messages } = this.props;
         return (
             <main class="grid-container row">
                 <Sidebar activeScreen="messages" userId={this.props.params.userId}/>
@@ -108,7 +108,7 @@ export default class Messages extends React.Component {
                     <textarea rows="5" ref={(input) => {this.message_text = input;}} type="text" placeholder="Compose Messages"/>
                     <button>Send</button>
                     <div class="grid-container">
-                        {this.getMessages()}
+                        {this.renderMessages(messages)}
                     </div>
                 </section>
             </main>

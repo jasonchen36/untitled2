@@ -43,7 +43,7 @@ export default class Users extends React.Component {
         }
     };
 
-    getUsersRow(user){
+    renderUsersRow(user){
         return (
             <tr key={user.id}>
                 <td>{user.id}</td>
@@ -61,7 +61,7 @@ export default class Users extends React.Component {
         );
     }
 
-    getTableFilters(){
+    renderTableFilters(){
         //todo, populate taxpros and status from db
         //todo, add event handlers to filters
         return (
@@ -78,8 +78,7 @@ export default class Users extends React.Component {
         );
     }
 
-    getUsersTable(){
-        const { users } = this.props;
+    renderUsersTable(users){
         if (!users) {
             //todo, redirect to login screen if no user session
             return (
@@ -90,7 +89,7 @@ export default class Users extends React.Component {
                 <button onClick={this.fetchUsers.bind(this)}>load users</button>
             );
         } else {
-            const usersRows = users.map(user =>this.getUsersRow(user));
+            const usersRows = users.map(user =>this.renderUsersRow(user));
             return (
                 <table>
                     <thead>
@@ -113,12 +112,13 @@ export default class Users extends React.Component {
     }
 
     render() {
+        const { users } = this.props;
         return (
             <main class="grid-container row">
                 <section class="col-sm-12">
                     <h1>Users</h1>
-                    {this.getTableFilters()}
-                    {this.getUsersTable()}
+                    {this.renderTableFilters()}
+                    {this.renderUsersTable(users)}
                 </section>
             </main>
         )
