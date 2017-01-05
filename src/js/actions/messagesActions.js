@@ -26,7 +26,7 @@ export function fetchMessages(id) {
 /// Fetch a list of users, optionally with search Terms
 export function fetchUserMessages(id) {
   return function(dispatch) {
-    let searchUrl = "users/"+id+"/messages";
+    let searchUrl = "messages/admin/"+id;
     
     base.get(searchUrl)
       .then((response) => {
