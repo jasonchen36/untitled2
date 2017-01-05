@@ -1,0 +1,32 @@
+footer {
+  background-color: #141d49;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  margin: 0;
+  padding: 20px 10px!important;
+  width: 100%;
+  a, p {
+    color: white;
+  }
+}
+
+#footer-ssl-container {
+  position: absolute;
+  right: 5%;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  height: 110px;
+}
+
+#footer-ssl-text {
+  font-weight:bold;
+  font-size:15px;
+  padding-left:40px;
+  color:#86BEE0;
+}
+
+#footer-ssl-image {
+  border: 0;
+}

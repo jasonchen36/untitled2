@@ -84,7 +84,7 @@ export default class Layout extends React.Component {
         } else {
             return (
                 <section class="col-sm-6 col-sm-offset-3">
-                    <button onClick={this.logoutLoginuser.bind(this)}>logout user</button>
+                    <button onClick={this.logoutLoginuser.bind(this)}>Logout</button>
                 </section>
             );
         }
