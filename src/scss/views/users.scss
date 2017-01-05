@@ -1,0 +1,13 @@
+#users-table-filters {
+  margin-bottom: 30px;
+  select {
+    margin: 0 10px;
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+  input {
+    max-width: 150px;
+    margin: 0 10px;
+  }
+}
