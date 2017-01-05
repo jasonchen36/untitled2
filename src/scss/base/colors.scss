@@ -2,7 +2,11 @@
 Try to utilize variables as much as possible.  It's one of the best things about a CSS preprocessor like Sass and it makes updates much easier
 */
 
+//theme defaults
 $color-global-text-grey: #787878;
-$color-box-shadow: #888888;
-$color-purple: purple;
+$color-global-purple: #541b55;
+$color-global-yellow: #FFCB3B;
+
+//special colors
 $color-menu-active-state: #f8f8f8;
+$color-box-shadow: #888888;

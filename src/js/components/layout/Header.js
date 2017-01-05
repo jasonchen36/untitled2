@@ -1,30 +1,16 @@
 import React from "react";
-import { IndexLink, Link } from "react-router";
-import { connect } from "react-redux"
-
-// Actions
-import { fetchLoginuser } from "../../actions/loginuserActions";
-
+import { IndexLink } from "react-router";
 import Nav from "../layout/Nav";
 
-// Store info needed
-@connect((store) => {
-    return {
-        loginuser: store.loginuser.loginuser
-    };
-})
 
 export default class Header extends React.Component {
     constructor() {
         super();
-        this.state = {
-            collapsed: true
-        };
+        this.state = {};
     }
 
 /// Nav for all pages
     render() {
-        const { location,loginuser } = this.props;
         return (
             <header class="grid-container row">
                 <div class="col-sm-12">
