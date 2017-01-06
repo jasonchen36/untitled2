@@ -5,14 +5,15 @@ import { Link  } from "react-router"
 
 import Sidebar from "../layout/Sidebar";
 
-import { fetchUserMessages } from "../../actions/messagesActions";
+import { fetchUserMessages, sendMessage } from "../../actions/messagesActions";
 
 @connect((store) => {
     return {
         loginuser: store.loginuser.loginuser,
         loginuserFetched: store.loginuser.fetched,
         user: store.users.user,
-        messages: store.messages.messages
+        messages: store.messages.messages,
+        messageSent: store.messages.messageSent
     };
 })
 
@@ -34,6 +35,17 @@ export default class Messages extends React.Component {
         this.props.dispatch(fetchUserMessages(userId));
     };
 
+    componentWillReceiveProps(nextProps) {
+      this.clearMessageFieldsOnMessageSent(nextProps.messageSent,this.props.messageSent);
+    };
+
+    /// update all the form with the values from the user (prop)
+    clearMessageFieldsOnMessageSent(messageSentStatus,messageSentPreviousStatus) {
+      if (messageSentStatus===true && messageSentPreviousStatus===false) {
+        this.message_subject.value = '';
+        this.message_text.value= '';
+      }
+    };
 
     /// Handlers
     fetchMessages(userId) {
@@ -41,8 +53,9 @@ export default class Messages extends React.Component {
     };
 
     handleSendMessage(e) {
-        let updatedValues = {
-            message: this.message_text.value
+        const updatedValues = {
+            subject: this.message_subject.value,
+            body: this.message_text.value
         };
 
         let { id } = e.target;
@@ -90,6 +103,15 @@ export default class Messages extends React.Component {
         );
     }
 
+    renderSendMessage(userId) {
+      return (
+        <div>
+          <input ref={(input) => {this.message_subject = input;}}  type="text" placeholder="Message Subject" />
+          <textarea rows="5" ref={(input) => {this.message_text = input;}} type="text" placeholder="Compose Messages"/>
+          <button id={userId} onClick={this.sendMessage}>Send</button>
+        </div>
+      );
+    }
 
     renderMessages(messages){
         if (messages){
@@ -100,13 +122,14 @@ export default class Messages extends React.Component {
 
     render() {
         const { messages } = this.props;
+        const userId = this.props.params.userId;
+
         return (
             <main class="grid-container row">
-                <Sidebar activeScreen="messages" userId={this.props.params.userId}/>
+                <Sidebar activeScreen="messages" userId={userId}/>
                 <section class="col-sm-8">
                     <h1>Messages</h1>
-                    <textarea rows="5" ref={(input) => {this.message_text = input;}} type="text" placeholder="Compose Messages"/>
-                    <button>Send</button>
+                    {this.renderSendMessage(userId)}
                     <div class="grid-container">
                         {this.renderMessages(messages)}
                     </div>

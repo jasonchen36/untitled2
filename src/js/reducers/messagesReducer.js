@@ -3,6 +3,7 @@
 export default function reducer(state={
     messages: null,
     message: null,
+    messageSent:false,
     user:null,
     fetching: false,
     fetched: false,
@@ -11,13 +12,13 @@ export default function reducer(state={
     switch (action.type) {
       // Users events
       case "SEND_MESSAGE_FULFILLED": {
-        return {...state, fetching: true};
+        return {...state, fetching: true, messageSent:true};
       }
       case "FETCH_USER_MESSAGES_REJECTED": {
-        return {...state, fetching: false, error: action.payload};
+        return {...state, fetching: false, error: action.payload,messageSent:false};
       }
         case "FETCH_MESSAGES_REJECTED": {
-        return {...state, fetching: false, error: action.payload};
+        return {...state, fetching: false, error: action.payload,messageSent:false};
       }
       case "FETCH_MESSAGES_FULFILLED": {
         return {
@@ -25,6 +26,7 @@ export default function reducer(state={
           fetching: false,
           fetched: true,
           messages: action.payload,
+          messageSent:false
         };
       }
       case "FETCH_USER_MESSAGES_FULFILLED": {
@@ -33,6 +35,7 @@ export default function reducer(state={
           fetching: false,
           fetched: true,
           messages: action.payload,
+          messageSent:false
         };
       }
     }

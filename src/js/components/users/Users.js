@@ -78,11 +78,18 @@ export default class Users extends React.Component {
         );
     }
 
-    renderUsersTable(users){
+    renderUsersTable(users,loginuser){
+        if(loginuser && loginuser.role==='Customer') {
+          return ( <div>Sorry, you currently don't have permission to Access Users.  If you are a Tax Pro, please ask your Admin to change your role. </div> );
+
+        } else if(!loginuser) {
+          return ( <div>Please Log in</div> );
+        }
+
         if (!users) {
             //todo, redirect to login screen if no user session
             return (
-                <div>Please Log in</div>
+                <div>Do you have</div>
             );
         } else if (!users.length) {
             return (
@@ -112,13 +119,13 @@ export default class Users extends React.Component {
     }
 
     render() {
-        const { users } = this.props;
+        const { users, loginuser } = this.props;
         return (
             <main class="grid-container row">
                 <section class="col-sm-12">
                     <h1>Users</h1>
                     {this.renderTableFilters()}
-                    {this.renderUsersTable(users)}
+                    {this.renderUsersTable(users, loginuser)}
                 </section>
             </main>
         )
