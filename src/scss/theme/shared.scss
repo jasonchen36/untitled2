@@ -111,6 +111,17 @@ table {
   color: red;
 }
 
+.standard-form {
+  padding-top: 30px;
+  label {
+    display: block;
+  }
+  input {
+    display: block;
+    margin-bottom: 20px;
+  }
+}
+
 //helper classes
 //-----------------------------
 .faded-out {
