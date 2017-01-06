@@ -22,7 +22,6 @@ export function fetchMessages(id) {
   };
 };
 
-
 const getUserMessages = (dispatch, id) => {
  let searchUrl = "admin/users/"+id+"/messages";
     
@@ -62,16 +61,19 @@ export function sendMessage(id,data) {
 
   return function(dispatch) {
     base.post("/messages",messageData)
-      .catch((err) => {
-        dispatch({type:"SEND_MESSAGE_REJECTED",payload: err});
-      })
       .then((response) => {
         dispatch( { type: "SEND_MESSAGE_FULFILLED", payload: response.data});
         
-        return getUserMessages(dispatch, id);
+      })
+      .catch((err) => {
+        dispatch({type:"SEND_MESSAGE_REJECTED",payload: err});
+        throw err;
       })
       .then((payload) => {
-        
+        return getUserMessages(dispatch, id);
+      })
+      .catch((err) => {
+        // end catch err  
       });
   };
 };
