@@ -37,7 +37,16 @@ export default function reducer(state={
       }
       case "LOGIN_LOGINUSER_FULFILLED": {
         return {...state,
-          authenticated:action.authenticated}
+          authenticated:action.authenticated};
+      }
+      case "CREATE_LOGINUSER": {
+        return { ...state, fetching:true};
+      }
+      case "CREATE_LOGINUSER_FULFILLED": {
+        return { ...state, fetching:true, loginuser: action.payload };
+      }
+      case "CREATE_LOGINUSER_REJECTED": {
+        return { ...state, fetching:true, loginuser:{id:null, name:null, type:null}, error: action.payload };
       }
       case "FETCH_LOGINUSER_FULFILLED": {
         return {
