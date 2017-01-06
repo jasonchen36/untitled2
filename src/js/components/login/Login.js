@@ -48,6 +48,7 @@ export default class Layout extends React.Component {
     }
 
     getErrorBlock(props) {
+        //todo, error not populating
         if(props && props.hasOwnProperty('error')) {
             let message='';
 
@@ -59,9 +60,7 @@ export default class Layout extends React.Component {
                 message = 'Failed to login. Please try again later. If you continue to have problems, please contact support.';
             }
 
-            return <div className="errors">{message}</div>;
-        } else {
-            return <div></div>
+            return <div class="error">{message}</div>;
         }
     }
 
