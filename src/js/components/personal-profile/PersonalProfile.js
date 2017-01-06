@@ -1,6 +1,7 @@
 import React from "react"
 import { connect } from "react-redux"
 import Sidebar from "../layout/Sidebar";
+import UserOptionsHeader from "../layout/UserOptionsHeader";
 
 import { createLoginuser, loginLoginuser, fetchLoginuser } from "../../actions/loginuserActions";
 import { fetchUser, updateUser } from "../../actions/usersActions";
@@ -43,12 +44,13 @@ export default class PersonalProfile extends React.Component {
 
     /// update all the form with the values from the user (prop)
     updateLocalProps(user) {
-        this.role.value = user.role;
+        this.sin.value = user.sin;
         this.first_name.value= user.first_name;
         this.last_name.value = user.last_name;
         this.email.value = user.email;
         this.phone.value = user.phone;
-        this.username.value = user.username;
+        this.title.value = user.title;
+        this.address.value = user.address;
     };
 
     fetchUser(userId) {
@@ -57,12 +59,13 @@ export default class PersonalProfile extends React.Component {
 
     handleUpdateUser(e) {
         let updatedValues = {
-            role: this.role.value,
             first_name: this.first_name.value,
             last_name: this.last_name.value,
             email: this.email.value,
             phone: this.phone.value,
-            username: this.username.value
+            title: this.title.value,
+            sin: this.sin.value,
+            address: this.address.value
         };
 
         let { id } = e.target;
@@ -71,6 +74,28 @@ export default class PersonalProfile extends React.Component {
 
         this.props.dispatch(updateUser(id, updatedValues));
     };
+
+    renderPersonalProfile(user){
+        return (
+            <form class="standard-form">
+                <label for="user-sin">SIN</label>
+                <input id="user-sin" ref={(input) => {this.sin = input;}}  type="text" placeholder="SIN" defaultValue={user.sin}/>
+                <label for="user-title">Title</label>
+                <input id="user-title" ref={(input) => {this.title = input;}} type="text"  placeholder="Title" defaultValue={user.title} />
+                <label for="user-first-name">First Name &amp; Initials</label>
+                <input id="user-first-name" ref={(input) => {this.first_name = input;}} type="text"  placeholder="First Name" defaultValue={user.first_name} />
+                <label for="user-last-name">Last Name</label>
+                <input id="user-last-name" ref={(input) => {this.last_name = input;}} type="text"  placeholder="Last Name" defaultValue={user.last_name} />
+                <label for="user-email">Preferred Email</label>
+                <input id="user-email" ref={(input) => {this.email = input;}} type="text"  placeholder="Email" defaultValue={user.email} />
+                <label for="user-address">Address</label>
+                <input id="user-address" ref={(input) => {this.address = input;}} type="text"  placeholder="Address" defaultValue={user.address} />
+                <label for="user-phone">Preferred Telephone #</label>
+                <input id="user-phone" ref={(input) => {this.phone = input;}} type="text"  placeholder="Phone" defaultValue={user.phone} />
+                <button id={user.id} onClick={this.updateUser}>update user</button>
+            </form>
+        );
+    }
 
     render() {
         // TODO: move to a helper
@@ -86,7 +111,6 @@ export default class PersonalProfile extends React.Component {
             } else {
                 user.fullName = user.last_name;
             }
-
             return user;
         };
 
@@ -99,60 +123,15 @@ export default class PersonalProfile extends React.Component {
         } else if (!user.id) {
             userOutput=<button onClick={this.fetchUser.bind(this,this,props.params.userId)}>load users</button>
         } else {
-            var usersWithFullName =   addCalculatedDataToUser(user);
-            // The user form
-            // TODO: move to a sub component
-            const mappedUser = <div>
-                <form>
-                    <ul>
-                        <li>
-                            FullName:{user.fullName}
-                        </li>
-                        <li>
-                            First Name:
-                            <input ref={(input) => {this.first_name = input;}} type="text"  placeholder="First Name" defaultValue={user.first_name} />
-                        </li>
-                        <li>
-                            Last Name:
-                            <input ref={(input) => {this.last_name = input;}} type="text"  placeholder="Last Name" defaultValue={user.last_name} />
-
-                        </li>
-                        <li>
-                            Role:
-                            <input ref={(input) => {this.role = input;}} type="text"  placeholder="Role" defaultValue={user.role} />
-                            ({user.role})
-                        </li>
-                        <li>
-                            Email:
-                            <input ref={(input) => {this.email = input;}} type="text"  placeholder="Email" defaultValue={user.email} />
-
-                        </li>
-                        <li>
-                            Phone:
-                            <input ref={(input) => {this.phone = input;}} type="text"  placeholder="Phone" defaultValue={user.phone} />
-
-                        </li>
-                        <li>
-                            Username:
-                            <input ref={(input) => {this.username = input;}} type="text"  placeholder="Username" defaultValue={user.username} />
-
-                        </li>
-                    </ul>
-                    <button id={user.id} onClick={this.updateUser}>update user</button>
-                </form>
-            </div>
-
-
-            userOutput=<div>
-                {mappedUser}
-            </div>
+            userOutput= this.renderPersonalProfile(user);
         }
 
-
+//todo, pass in list of other users to userOptionsHeader
         return (
             <main class="grid-container row">
                 <Sidebar activeScreen="personalProfile" userId={this.props.params.userId}/>
                 <section class="col-sm-8">
+                    <UserOptionsHeader usersList={[loginuser]} activeUser={loginuser}/>
                     <h1>Personal Profile</h1>
                     <section class="col-sm-8">{name}{userOutput}</section>
                 </section>

@@ -13,32 +13,30 @@ import RegisterPresentation from "./Register.Presentation"
 })
 
 export default class Layout extends React.Component {
-  constructor() {
-    super();
-    this.createUser = this.handleCreateLoginuser.bind(this);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const wasNotLoggedIn = !this.props.loginuser.id;
-    const isLoggedIn = !(!nextProps.loginuser.id);
-    if(wasNotLoggedIn && isLoggedIn) {
-        this.props.router.push('/users');
+    constructor() {
+        super();
+        this.createUser = this.handleCreateLoginuser.bind(this);
     }
-  }
 
-  /// Handlers
-  handleCreateLoginuser(data) {
-    this.props.dispatch(createLoginuser(data));
-  }
+    componentWillReceiveProps(nextProps) {
+        const wasNotLoggedIn = !this.props.loginuser.id;
+        const isLoggedIn = !(!nextProps.loginuser.id);
+        if(wasNotLoggedIn && isLoggedIn) {
+            this.props.router.push('/users');
+        }
+    }
 
-  render() {
-    const { loginuser, error } = this.props;
+    /// Handlers
+    handleCreateLoginuser(data) {
+        this.props.dispatch(createLoginuser(data));
+    }
 
-    return (
-      <main class="grid-container row">
-        <RegisterPresentation handleCreateLoginuser={this.createUser} loginuser={loginuser} error={error} />
-      </main>
-    );
-  };
+    render() {
+        const { loginuser, error } = this.props;
+
+        return (
+            <RegisterPresentation handleCreateLoginuser={this.createUser} loginuser={loginuser} error={error} />
+        );
+    };
 }
 

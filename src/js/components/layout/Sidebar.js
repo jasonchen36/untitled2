@@ -2,7 +2,7 @@ import React from "react";
 
 import { IndexLink, Link } from "react-router";
 
-// Footer for all pages
+// sidebar for tax return information pages
 export default class Sidebar extends React.Component {
 
     getButtonClass(screenLink){
