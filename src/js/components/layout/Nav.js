@@ -23,7 +23,7 @@ export default class Nav extends React.Component {
 
     //templates
     renderNavMenu(user){
-        if (user && user.hasOwnProperty('id')) {
+        if (user && user.hasOwnProperty('first_name')) {
             return (
               <ul class="standard-menu">
                 <li>
