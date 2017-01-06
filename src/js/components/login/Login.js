@@ -48,6 +48,7 @@ export default class Layout extends React.Component {
     }
 
     getErrorBlock(props) {
+        //todo, error not populating
         if(props && props.hasOwnProperty('error')) {
             let message='';
 
@@ -59,9 +60,7 @@ export default class Layout extends React.Component {
                 message = 'Failed to login. Please try again later. If you continue to have problems, please contact support.';
             }
 
-            return <div className="errors">{message}</div>;
-        } else {
-            return <div></div>
+            return <div class="error">{message}</div>;
         }
     }
 
@@ -70,7 +69,7 @@ export default class Layout extends React.Component {
         if (!loginuser.id) {
             return (
                 <section class="col-sm-6 col-sm-offset-3">
-                    <form id="login-form">
+                    <form id="login-form" class="standard-form">
                         <label for="login-email">Email/Username</label>
                         <input id="login-email" ref={(input) => { this.email = input; }} type="email"  placeholder="Email/Username" />
                         <label for="login-password">Password</label>
