@@ -1,26 +1,77 @@
 /// Actions for viewing and managing users
 
 import * as base from "./baseActions";
+import _ from "lodash";
 
 /// Fetch a list of users, optionally with search Terms
 export function fetchUsers(searchTerms) {
   return function(dispatch) {
-    let searchUrl = "/users";
-    
-    if(searchTerms) {
-      searchUrl+="?"+searchTerms;
-    }
-
-    base.get(searchUrl)
-      .then((response) => {
-        dispatch({type: "FETCH_USERS_FULFILLED", payload:  response.data});
-      })
-      .catch((err) => {
-
-        dispatch({type: "FETCH_USERS_REJECTED", payload: err});
-      })
+      getUsers(dispatch,searchTerms);
   };
 }
+
+const  getUsers = (dispatch, searchTerms) => {
+  let searchUrl = "/users";
+  
+  if(searchTerms) {
+    searchUrl+=searchTermsToString(searchTerms);
+  }
+
+  base.get(searchUrl)
+    .then((response) => {
+      let result = { searchTerms: searchTerms, data: response.data };
+      dispatch({type: "FETCH_USERS_FULFILLED", payload:  result});
+    })
+    .catch((err) => {
+      dispatch({type: "FETCH_USERS_REJECTED", payload: err});
+    });
+}
+
+export function updateSearchTerms(searchTerms,newSearchTerms) {
+  return function(dispatch) {
+    let  newTermResults =  _.cloneDeep(newSearchTerms);
+    newTermResults = _.concat(newTermResults,getNewOrderAscendingSearchTerm(searchTerms,newSearchTerms));
+
+    // get old terms that are not in new terms
+    let remainingOldTerms = _.filter(searchTerms,(searchTerm) => {
+      return !_.some(newTermResults,(nre) => { return  nre.key===searchTerm.key});
+    });
+
+    newTermResults = _.concat(newTermResults,remainingOldTerms);
+
+    dispatch({type:"SEARCH_TERMS_UPDATED",payload:newTermResults});
+
+    getUsers(dispatch,newTermResults);
+  } 
+}
+
+const getNewOrderAscendingSearchTerm = (searchTerms,newSearchTerms) => {
+  let orderAscending = { key:"orderAscending", val:"true"};
+  // sortBy reversal
+  let newOrderBy = _.find(newSearchTerms,(nst) => { return nst.key==="orderBy" });
+
+  if(newOrderBy) {
+
+    let oldOrderBy = _.find(searchTerms,(nst) => { return nst.key==="orderBy"});
+
+    if(oldOrderBy && oldOrderBy.val===newOrderBy.val) {
+      let oldOrderAscending = _.find(searchTerms,(nst) => { return nst.key==="orderAscending"});
+
+      orderAscending.val = oldOrderAscending? oldOrderAscending.val : orderAscending.val;
+
+      orderAscending.val = orderAscending.val==="true" ? "false": "true";
+    }
+    return [orderAscending];
+  } else {
+    return [];
+  }
+};
+
+const searchTermsToString = (searchTerms) => {
+  let asString = searchTerms.map((term) => { return term.key+"="+term.val }).join(",");
+
+  return asString? "?"+asString: "";
+};
 
 /// Fetch user details by id
 export function fetchUser(id) {

@@ -1,19 +1,30 @@
-import React from "react"
-import { connect } from "react-redux"
+import React from "react";
+import { connect } from "react-redux";
 
-import { Link } from "react-router"
+import { Link } from "react-router";
 
-import { fetchUsers, deleteUser } from "../../actions/usersActions"
+import { fetchUsers, deleteUser, updateSearchTerms } from "../../actions/usersActions";
+import _ from "lodash";
 
 @connect((store) => {
   return {
     loginuser: store.loginuser.loginuser,
     loginuserFetched: store.loginuser.fetched,
-    users: store.users.users
+    users: store.users.users,
+    userSearchTerms: store.users.userSearchTerms
   };
 })
 
 export default class Users extends React.Component {
+  constructor(props) {
+    super(props);
+    this.sortByLastName = this.handleSortByLastName.bind(this);
+    this.sortByLastUpdated = this.handleSortByLastUpdated.bind(this);
+    this.fetchUsers = this.handleFetchUsers.bind(this);
+   // this.deleteUser = this.handleDeleteUser.bind(this);
+  }
+
+
   componentWillMount() {
     this.props.dispatch(fetchUsers())
 
@@ -28,8 +39,34 @@ export default class Users extends React.Component {
     }
   };
 
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.userSearchTerms && nextProps.userSearchTerms.length>0 && this.searchTermsNotInQuery(nextProps.userSearchTerms,nextProps.location.query)) {
+
+      let objectQuery = {};
+
+      _.each(nextProps.userSearchTerms,(ust) => {
+        objectQuery[ust.key] = ust.val;
+      });
+      const newQueries= _.merge(nextProps.location.query,objectQuery);
+    this.props.router.push({pathname:'/users',query:newQueries});
+    } else {
+    }
+  }
+
+  searchTermsNotInQuery(searchTerms, query) {
+    let isSame = true;
+    if(searchTerms && searchTerms.length>0 && !query) {  return true; }
+
+    isSame = _.some(searchTerms,(st) => {
+      return (typeof query[st.key] ==='undefined') || query[st.key] !== st.val;
+    });
+
+    return isSame;
+  }
+
   /// Handlers
-  fetchUsers() {
+  handleFetchUsers() {
+    userSearchTerms
     this.props.dispatch(fetchUsers())
   };
 
@@ -39,6 +76,21 @@ export default class Users extends React.Component {
     } else {
       console.log('canceled delete');
     }
+  };
+
+  handleSortByLastName(e) {
+    e.preventDefault();
+    const oldSearchTerms = this.props.userSearchTerms;
+    const newQueryParam = {key:"orderBy",val:"lastName"}
+    this.props.dispatch(updateSearchTerms(oldSearchTerms,[{key:"orderBy",val:"lastName"}]));
+  };
+
+  handleSortByLastUpdated(e) {
+    e.preventDefault();
+    const oldSearchTerms = this.props.userSearchTerms;
+//    this.props.dispatch(fetchUsers());
+    this.props.dispatch(updateSearchTerms(oldSearchTerms,[{key:"orderBy",val:"lastUpdated"}]));
+    
   };
 
   renderUsersRow(user){
@@ -98,12 +150,12 @@ export default class Users extends React.Component {
           <thead>
           <tr>
             <th>#</th>
-            <th>Name</th>
+            <th><button  onClick={this.sortByLastName} >Name</button></th>
             <th>Status</th>
             <th>Role</th>
             <th>Actions</th>
             <th>TaxPro</th>
-            <th>Last User Update</th>
+            <th><button onClick={this.sortByLastUpdated}>Last User Update</button></th>
           </tr>
           </thead>
           <tbody>

@@ -2,6 +2,8 @@
 
 export default function reducer(state={
     users: null,
+    userSearchTerms:[],
+    searchChanged:false,
     user: null,
     fetching: false,
     fetched: false,
@@ -24,7 +26,14 @@ export default function reducer(state={
           ...state,
           fetching: false,
           fetched: true,
-          users: action.payload,
+          users: action.payload.data,
+          userSearchTerms:action.payload.searchTerms
+        };
+      }
+      case "SEARCH_TERMS_UPDATED": {
+        return {
+          ...state,
+          userSearchTerms:action.payload
         };
       }
       // User events
@@ -32,7 +41,6 @@ export default function reducer(state={
         return {...state, fetching: true};
       }
       case "FETCH_USER_FULFILLED": {
-        console.log('got user',action.payload);
         return {
           ...state,
           fetching: false,
