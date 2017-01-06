@@ -43,7 +43,7 @@ export default class Layout extends React.Component {
               <form id="register-form">
                 <label for="register-first-name">First Name</label>
                 <input id="register-first-name" ref={(input) => {this.firstName = input;}} type="text"  placeholder="First Name" />
- <l for="regislast-name">Last Name</label>
+ <label for="regislast-name">Last Name</label>
                 <input id="register-last-name" ref={(input) => {this.lastName= input;}} type="text"  placeholder="Last Name" />
 
                 <label for="register-email">Email/Username</label>
