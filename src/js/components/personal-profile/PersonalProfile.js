@@ -1,6 +1,7 @@
 import React from "react"
 import { connect } from "react-redux"
 import Sidebar from "../layout/Sidebar";
+import UserOptionsHeader from "../layout/UserOptionsHeader";
 
 import { createLoginuser, loginLoginuser, fetchLoginuser } from "../../actions/loginuserActions";
 import { fetchUser, updateUser } from "../../actions/usersActions";
@@ -110,7 +111,6 @@ export default class PersonalProfile extends React.Component {
             } else {
                 user.fullName = user.last_name;
             }
-
             return user;
         };
 
@@ -126,11 +126,12 @@ export default class PersonalProfile extends React.Component {
             userOutput= this.renderPersonalProfile(user);
         }
 
-
+//todo, pass in list of other users to userOptionsHeader
         return (
             <main class="grid-container row">
                 <Sidebar activeScreen="personalProfile" userId={this.props.params.userId}/>
                 <section class="col-sm-8">
+                    <UserOptionsHeader usersList={[loginuser]} activeUser={loginuser}/>
                     <h1>Personal Profile</h1>
                     <section class="col-sm-8">{name}{userOutput}</section>
                 </section>
