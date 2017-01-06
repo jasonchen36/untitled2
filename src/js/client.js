@@ -12,6 +12,7 @@ import Layout from "./components/Layout";
 
 // Page components.  Should we move this to a pages folder?
 import Login from "./components/login/Login";
+import Register from "./components/register/Register";
 import Users from "./components/users/Users";
 import PersonalProfile from "./components/personal-profile/PersonalProfile";
 import TaxProfile from "./components/tax-profile/TaxProfile";
@@ -35,6 +36,7 @@ ReactDOM.render(<Provider store={store}>
     <Router history={history}>
         <Route path="/" component={Layout}>
             <IndexRoute component={Login}></IndexRoute>
+            <Route path="register" name="register" component={Register}></Route>
             <Route path="users" name="users" component={Users}></Route>
             <Route path="users/:userId/personal-profile" name="personal-profile" component={PersonalProfile}></Route>
             <Route path="users/:userId/tax-profile" name="tax-profile" component={TaxProfile}></Route>

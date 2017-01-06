@@ -1,5 +1,8 @@
 import React from "react"
 import { connect } from "react-redux"
+import { Link } from "react-router";
+
+
 
 import { baseWEBUrl } from "../../config.js"
 
@@ -76,7 +79,7 @@ export default class Layout extends React.Component {
                     </form>
                     {this.getErrorBlock(error)}
                     <div class="text-center">
-                        <p>Don't have an account? <a href={baseWEBUrl+"/login"}>Sign up here »</a></p>
+                        <p>Don't have an account? <Link to={"/register"}>Sign up here »</Link></p>
                         <p>Forgot password? <a href={baseWEBUrl+"/reset"}>Reset password here »</a></p>
                     </div>
                 </section>
