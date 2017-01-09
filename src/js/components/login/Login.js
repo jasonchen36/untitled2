@@ -69,7 +69,7 @@ export default class Layout extends React.Component {
         if (!loginuser.id) {
             return (
                 <section class="col-sm-6 col-sm-offset-3">
-                    <form id="login-form" class="standard-form">
+                    <form id="login-form" class="standard-form standard-form-padding">
                         <label for="login-email">Email/Username</label>
                         <input id="login-email" ref={(input) => { this.email = input; }} type="email"  placeholder="Email/Username" />
                         <label for="login-password">Password</label>

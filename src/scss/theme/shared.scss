@@ -108,7 +108,6 @@ select {
 }
 
 .standard-form {
-  padding-top: 30px;
   label {
     display: block;
   }
@@ -116,6 +115,10 @@ select {
     display: block;
     margin-bottom: 20px;
   }
+}
+
+.standard-form-padding {
+  padding-top: 30px;
 }
 
 //helper classes
