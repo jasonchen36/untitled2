@@ -20,7 +20,7 @@ export default class UserOptionsHeader extends React.Component {
             activeUser = usersList[0];
         }
         return usersList.map(user =>
-            <button class={this.getButtonClass(user, activeUser)}>{user.first_name} {user.last_name}</button>
+            <button class={this.getButtonClass(user, activeUser)} key={user.id}>{user.first_name} {user.last_name}</button>
         );
     }
 

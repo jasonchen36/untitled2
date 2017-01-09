@@ -40,7 +40,7 @@ export default class Layout extends React.Component {
         if (!loginuser.id) {
             return (
                 <section class="col-sm-6 col-sm-offset-3">
-                    <form id="register-form" class="standard-form">
+                    <form id="register-form" class="standard-form standard-form-padding">
                         <label for="register-first-name">First Name</label>
                         <input id="register-first-name" ref={(input) => {this.firstName = input;}} type="text"  placeholder="First Name" />
                         <label for="register-last-name">Last Name</label>

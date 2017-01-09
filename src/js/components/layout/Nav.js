@@ -30,7 +30,7 @@ export default class Nav extends React.Component {
                   {user.first_name} ({user.role})
                   <ul class="sub-menu">
                       <li>
-                          <Link to="/users">Users</Link>
+                          <Link to="/users">Accounts</Link>
                       </li>
                     <li>
                       <IndexLink to="/" onClick={this.logoutLoginuser.bind(this)}>Logout</IndexLink>
