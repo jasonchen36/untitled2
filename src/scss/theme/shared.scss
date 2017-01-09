@@ -17,10 +17,12 @@ img {
   max-width: 100%;
 }
 
-input {
-  max-width: 100%;
-  width: 100%;
+input, textarea {
+  $width:  calc(100% - 1rem - 2px);//100% - padding*2 - border width*2
+  max-width: $width;
+  width: $width;
   padding: 0.5rem;
+  border: 1px solid $color-input-border;
 }
 
 button, .button {
@@ -60,15 +62,10 @@ ul {
   list-style: none;
 }
 
-textarea {
-  width: 100%;
-  max-width: 100%;
-}
-
 select {
   -webkit-appearance: none !important;
-  background-color: #fafafa;
-  border: 1px solid #cccccc;
+  background-color: white;
+  border: 1px solid $color-input-border;
   font-size: 0.875rem;
   border-radius: 0;
   background-image: url('data:image/svg+xml;base64, PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgeD0iMHB4IiB5PSIwcHgiIHdpZHRoPSI2cHgiIGhlaWdodD0iM3B4IiB2aWV3Qm94PSIwIDAgNiAzIiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA2IDMiIHhtbDpzcGFjZT0icHJlc2VydmUiPjxwb2x5Z29uIHBvaW50cz0iNS45OTIsMCAyLjk5MiwzIC0wLjAwOCwwICIvPjwvc3ZnPg==');

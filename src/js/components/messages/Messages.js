@@ -105,11 +105,11 @@ export default class Messages extends React.Component {
 
     renderSendMessage(userId) {
       return (
-        <div>
+        <form class="standard-form">
           <input ref={(input) => {this.message_subject = input;}}  type="text" placeholder="Message Subject" />
           <textarea rows="5" ref={(input) => {this.message_text = input;}} type="text" placeholder="Compose Messages"/>
           <button id={userId} onClick={this.sendMessage}>Send</button>
-        </div>
+        </form>
       );
     }
 
