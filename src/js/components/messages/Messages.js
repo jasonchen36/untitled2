@@ -4,6 +4,7 @@ import { connect } from "react-redux"
 import { Link  } from "react-router"
 
 import Sidebar from "../layout/Sidebar";
+import UserOptionsHeader from "../layout/UserOptionsHeader";
 
 import { fetchUserMessages, sendMessage } from "../../actions/messagesActions";
 
@@ -121,13 +122,14 @@ export default class Messages extends React.Component {
     }
 
     render() {
-        const { messages } = this.props;
+        //todo, pass in list of other users to userOptionsHeader
+        const { messages, loginuser } = this.props;
         const userId = this.props.params.userId;
-
         return (
             <main class="grid-container row">
                 <Sidebar activeScreen="messages" userId={userId}/>
                 <section class="col-sm-8">
+                    <UserOptionsHeader usersList={[loginuser]} activeUser={loginuser}/>
                     <h1>Messages</h1>
                     {this.renderSendMessage(userId)}
                     <div class="grid-container">
