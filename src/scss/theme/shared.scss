@@ -122,6 +122,13 @@ select {
   padding-top: 30px;
 }
 
+.fa-anchor-container {
+  display: inline-block;
+  .fa {
+    padding-right: 5px;
+  }
+}
+
 //helper classes
 //-----------------------------
 .faded-out {

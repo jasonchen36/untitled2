@@ -22,6 +22,9 @@ export default class Checklist extends React.Component {
                 <section class="col-sm-8">
                     <UserOptionsHeader usersList={[loginuser]} activeUser={loginuser}/>
                     <h1>Checklist</h1>
+                    <a class="fa-anchor-container">
+                        <i class="fa fa-file-pdf-o"></i> Print
+                    </a>
                 </section>
             </main>
         )

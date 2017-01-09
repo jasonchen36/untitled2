@@ -20,14 +20,14 @@ export default class TaxProfile extends React.Component {
         return (
             <main class="grid-container row">
                 <Sidebar activeScreen="taxProfile" userId={this.props.params.userId}/>
-                <section class="col-sm-8">
+                <section id="tax-profile-container" class="col-sm-8">
                     <UserOptionsHeader usersList={[loginuser]} activeUser={loginuser}/>
                     <h1>Tax Profile</h1>
                     <div>
-                        <a class="tax-profile-export">
+                        <a class="fa-anchor-container">
                             <i class="fa fa-file-excel-o"></i>Export CSV
                         </a>
-                        <a class="tax-profile-export">
+                        <a class="fa-anchor-container">
                             <i class="fa fa-file-pdf-o"></i>Export PDF
                         </a>
                     </div>
