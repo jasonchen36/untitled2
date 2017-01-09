@@ -95,7 +95,7 @@ export default class Users extends React.Component {
       const usersRows = users.map(user =>this.renderUsersRow(user));
       return (
         <table>
-          <thead>
+          <thead class="text-left">
           <tr>
             <th>#</th>
             <th>Name</th>
