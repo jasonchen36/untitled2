@@ -14,6 +14,7 @@ import UserOptionsHeader from "../layout/UserOptionsHeader";
 
 export default class Checklist extends React.Component {
     //todo, pass in list of other users to userOptionsHeader
+    //todo, get checklist url
     render() {
         const { loginuser} = this.props;
         return (
