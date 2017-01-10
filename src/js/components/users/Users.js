@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 
 import { Link } from "react-router";
 
-import { fetchUsers, deleteUser, updateSearchTerms } from "../../actions/usersActions";
+import { fetchUsers,fetchTaxPros, deleteUser, updateSearchTerms } from "../../actions/usersActions";
 import _ from "lodash";
 
 @connect((store) => {
@@ -11,7 +11,8 @@ import _ from "lodash";
     loginuser: store.loginuser.loginuser,
     loginuserFetched: store.loginuser.fetched,
     users: store.users.users,
-    userSearchTerms: store.users.userSearchTerms
+    userSearchTerms: store.users.userSearchTerms,
+    taxPros: store.users.taxPros
   };
 })
 
@@ -26,7 +27,9 @@ export default class Users extends React.Component {
 
 
   componentWillMount() {
-    this.props.dispatch(fetchUsers())
+    this.props.dispatch(fetchUsers());
+    this.props.dispatch(fetchTaxPros());
+    
 
     const newProps = this.props;
     const { loginuser } = newProps;
@@ -111,7 +114,23 @@ export default class Users extends React.Component {
     );
   }
 
-  renderTableFilters(){
+  renderTaxProSelection(taxPros) {
+    const defaultSelection = <option defaultValue>TaxPros</option>;
+    
+    if(!taxPros) {
+      return defaultSelection;
+    }
+
+    const renderedTaxPros= taxPros.map((taxPro) => {
+      return (<option key={taxPro.id}>
+        {taxPro.first_name}{ taxPro.last_name? ' '+taxPro.last_name:''}
+      </option> );
+    });
+
+    return _.concat([defaultSelection],renderedTaxPros);
+  }
+
+  renderTableFilters(taxPros){
     //todo, populate taxpros and status from db
     //todo, add event handlers to filters
     return (
@@ -119,7 +138,7 @@ export default class Users extends React.Component {
         <label class="col">Filter by:</label>
         <input class="col" type="text" placeholder="User Name"/>
         <select class="col">
-          <option disabled defaultValue>Select TaxPro</option>
+          {this.renderTaxProSelection(taxPros)}
         </select>
         <select class="col">
           <option disabled defaultValue>Select Status</option>
@@ -167,12 +186,12 @@ export default class Users extends React.Component {
   }
 
   render() {
-    const { users, loginuser } = this.props;
+    const { users, loginuser, taxPros } = this.props;
     return (
       <main class="grid-container row">
         <section class="col-sm-12">
           <h1>Users</h1>
-          {this.renderTableFilters()}
+          {this.renderTableFilters(taxPros)}
           {this.renderUsersTable(users, loginuser)}
         </section>
       </main>
