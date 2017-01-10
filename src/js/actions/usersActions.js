@@ -10,6 +10,21 @@ export function fetchUsers(searchTerms) {
   };
 }
 
+export function fetchTaxPros() {
+ let searchUrl = "/users?role=TaxPro";
+  
+  return function(dispatch) {
+  base.get(searchUrl)
+    .then((response) => {
+      let result = { data: response.data };
+      dispatch({type: "FETCH_TAXPROS_FULFILLED", payload:  result});
+    })
+    .catch((err) => {
+      dispatch({type: "FETCH_TAXPROS_REJECTED", payload: err});
+    });
+  };
+}
+
 const  getUsers = (dispatch, searchTerms) => {
   let searchUrl = "/users";
   
@@ -68,7 +83,7 @@ const getNewOrderAscendingSearchTerm = (searchTerms,newSearchTerms) => {
 };
 
 const searchTermsToString = (searchTerms) => {
-  let asString = searchTerms.map((term) => { return term.key+"="+term.val }).join(",");
+  let asString = searchTerms.map((term) => { return term.key+"="+term.val }).join("&");
 
   return asString? "?"+asString: "";
 };
