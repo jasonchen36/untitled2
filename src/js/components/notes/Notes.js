@@ -21,6 +21,32 @@ export default class Notes extends React.Component {
         this.sendNote = this.handleSendNote.bind(this);
     }
 
+    getDummyData(){
+        return [
+            {
+                id: 1,
+                date: '1/5/17 4:11 PM',
+                user: 'TAXplan Canada',
+                notes: 'Frank test',
+                done: false
+            },
+            {
+                id: 2,
+                date: '1/6/17 4:12 PM',
+                user: 'TAXplan Canada',
+                notes: 'Frank test2',
+                done: true
+            },
+            {
+                id: 3,
+                date: '1/7/17 4:13 PM',
+                user: 'TAXplan Canada',
+                notes: 'Frank test3',
+                done: false
+            }
+        ]
+    }
+
     handleSendNote(e) {
         const updatedValues = {
             body: this.note_text.value
@@ -44,8 +70,9 @@ export default class Notes extends React.Component {
 
     renderNotesRow(data){
         //todo, add handler to checkbox toggle
+        //todo, add logic for checkbox selected or not
         return (
-            <tr>
+            <tr key={data.id}>
                 <td>
                     {data.id}
                 </td>
@@ -58,7 +85,7 @@ export default class Notes extends React.Component {
                 <td>
                     {data.notes}
                 </td>
-                <td>
+                <td class="text-center">
                     <input type="checkbox" />
                 </td>
             </tr>
@@ -107,7 +134,7 @@ export default class Notes extends React.Component {
                     <UserOptionsHeader taxReturns={taxReturns} activeTaxReturn={taxReturn}/>
                     <h1>Notes</h1>
                     {this.renderSendNote(userId)}
-                    {this.renderNotesTable([])}
+                    {this.renderNotesTable(this.getDummyData())}
                 </section>
             </main>
         )
