@@ -5,6 +5,7 @@ import UserOptionsHeader from "../layout/UserOptionsHeader";
 
 import { createLoginuser, loginLoginuser, fetchLoginuser } from "../../actions/loginuserActions";
 import { fetchUser, fetchTaxPros, updateUser } from "../../actions/usersActions";
+import { renderTaxProSelection } from "../helpers/LayoutHelpers";
 
 @connect((store) => {
     return {
@@ -88,26 +89,11 @@ export default class AccountProfile extends React.Component {
                 <input id="user-role" ref={(input) => {this.role = input;}} type="text"  placeholder="Role" defaultValue={user.role} />
                 <label for="user-tax-pro">Assigned TaxPro</label>
                 <select>
-                    {this.renderTaxProSelection(user,taxPros)}
+                    {renderTaxProSelection(taxPros, user)}
                 </select>
                 <button id={user.id} onClick={this.updateUser}>update user</button>
             </form>
         );
-    }
-
-    renderTaxProSelection(user, taxPros) {
-        const defaultSelection = <option key={-1} disabled>TaxPros</option>;
-        if(!taxPros) {
-            return defaultSelection;
-        }
-        const renderedTaxPros= taxPros.map((taxPro) => {
-            return (
-                <option key={taxPro.id} defaultValue={taxPro.id===user.assigned_tax_pro}>
-                    {taxPro.first_name}{ taxPro.last_name? ' '+taxPro.last_name:''}
-                </option>
-            );
-        });
-        return _.concat([defaultSelection],renderedTaxPros);
     }
 
     render() {

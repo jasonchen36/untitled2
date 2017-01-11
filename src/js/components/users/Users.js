@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { Link } from "react-router";
 
 import { fetchUsers,fetchTaxPros, deleteUser, updateSearchTerms } from "../../actions/usersActions";
+import { renderTaxProSelection } from "../helpers/LayoutHelpers";
 import _ from "lodash";
 
 @connect((store) => {
@@ -114,22 +115,6 @@ export default class Users extends React.Component {
     );
   }
 
-  renderTaxProSelection(taxPros) {
-    const defaultSelection = <option key="-1" disabled>TaxPros</option>;
-    
-    if(!taxPros) {
-      return defaultSelection;
-    }
-
-    const renderedTaxPros= taxPros.map((taxPro) => {
-      return (<option key={taxPro.id}>
-        {taxPro.first_name}{ taxPro.last_name? ' '+taxPro.last_name:''}
-      </option> );
-    });
-
-    return _.concat([defaultSelection],renderedTaxPros);
-  }
-
   renderTableFilters(taxPros){
     //todo, populate taxpros and status from db
     //todo, add event handlers to filters
@@ -138,7 +123,7 @@ export default class Users extends React.Component {
         <label class="col">Filter by:</label>
         <input class="col" type="text" placeholder="User Name"/>
         <select class="col">
-          {this.renderTaxProSelection(taxPros)}
+          {renderTaxProSelection(taxPros)}
         </select>
         <select class="col">
           <option disabled defaultValue>Select Status</option>
