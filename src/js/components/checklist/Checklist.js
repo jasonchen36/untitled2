@@ -15,7 +15,18 @@ import UserOptionsHeader from "../layout/UserOptionsHeader";
 })
 
 export default class Checklist extends React.Component {
-    //todo, get checklist url
+
+    renderChecklist(){
+        //todo, get checklist url
+        return (
+            <div>
+                <a class="fa-anchor-container">
+                    <i class="fa fa-file-pdf-o"></i> Print
+                </a>
+            </div>
+        )
+    }
+
     render() {
         const { taxReturns, taxReturn} = this.props;
         return (
@@ -24,9 +35,7 @@ export default class Checklist extends React.Component {
                 <section class="col-sm-8">
                     <UserOptionsHeader taxReturns={taxReturns} activeTaxReturn={taxReturn}/>
                     <h1>Checklist</h1>
-                    <a class="fa-anchor-container">
-                        <i class="fa fa-file-pdf-o"></i> Print
-                    </a>
+                    {this.renderChecklist()}
                 </section>
             </main>
         )

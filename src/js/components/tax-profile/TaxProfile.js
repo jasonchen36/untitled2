@@ -15,8 +15,21 @@ import UserOptionsHeader from "../layout/UserOptionsHeader";
 })
 
 export default class TaxProfile extends React.Component {
+    
+    renderTaxProfile(){
+        //todo, get export urls
+        return (
+            <div>
+                <a class="fa-anchor-container">
+                    <i class="fa fa-file-excel-o"></i>Export CSV
+                </a>
+                <a class="fa-anchor-container">
+                    <i class="fa fa-file-pdf-o"></i>Export PDF
+                </a>
+            </div>
+        );
+    }
 
-    //todo, get export urls
     render() {
         const { taxReturns, taxReturn} = this.props;
         return (
@@ -25,14 +38,7 @@ export default class TaxProfile extends React.Component {
                 <section id="tax-profile-container" class="col-sm-8">
                     <UserOptionsHeader taxReturns={taxReturns} activeTaxReturn={taxReturn}/>
                     <h1>Tax Profile</h1>
-                    <div>
-                        <a class="fa-anchor-container">
-                            <i class="fa fa-file-excel-o"></i>Export CSV
-                        </a>
-                        <a class="fa-anchor-container">
-                            <i class="fa fa-file-pdf-o"></i>Export PDF
-                        </a>
-                    </div>
+                    {this.renderTaxProfile()}
                 </section>
             </main>
         )
