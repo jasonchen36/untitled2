@@ -8,7 +8,9 @@ import UserOptionsHeader from "../layout/UserOptionsHeader";
 
 @connect((store) => {
     return {
-        loginuser: store.loginuser.loginuser
+        loginuser: store.loginuser.loginuser,
+        taxReturns:store.accounts.taxReturns,
+        taxReturn:store.accounts.taxReturn
     };
 })
 
@@ -40,14 +42,13 @@ export default class Uploads extends React.Component {
     }
 
     render() {
-        //todo, pass in list of other users to userOptionsHeader
         //todo, pass in uploads to render
-        const { loginuser} = this.props;
+        const { taxReturns, taxReturn} = this.props;
         return (
             <main class="grid-container row">
                 <Sidebar activeScreen="uploads" userId={this.props.params.userId}/>
                 <section class="col-sm-8">
-                    <UserOptionsHeader usersList={[loginuser]} activeUser={loginuser}/>
+                    <UserOptionsHeader taxReturns={taxReturns} activeTaxReturn={taxReturn}/>
                     <h1>TAXitem Uploads</h1>
                     <div class="grid-container">
                         {this.renderUploads([])}

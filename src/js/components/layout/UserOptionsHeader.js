@@ -33,7 +33,7 @@ export default class UserOptionsHeader extends React.Component {
     render() {
         const { taxReturns, activeTaxReturn } = this.props;
         return (
-            <aside id="header-user-options" class="col-sm-12">
+            <aside id="header-user-options" class="col-sm-12 no-padding">
                 {this.renderUserOptions(taxReturns, activeTaxReturn)}
             </aside>
         );

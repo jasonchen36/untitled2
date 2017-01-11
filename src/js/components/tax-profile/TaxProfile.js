@@ -8,20 +8,22 @@ import UserOptionsHeader from "../layout/UserOptionsHeader";
 
 @connect((store) => {
     return {
-        loginuser: store.loginuser.loginuser
+        loginuser: store.loginuser.loginuser,
+        taxReturns:store.accounts.taxReturns,
+        taxReturn:store.accounts.taxReturn
     };
 })
 
 export default class TaxProfile extends React.Component {
+
     //todo, get export urls
-    //todo, pass in list of other users to userOptionsHeader
     render() {
-        const { loginuser} = this.props;
+        const { taxReturns, taxReturn} = this.props;
         return (
             <main class="grid-container row">
                 <Sidebar activeScreen="taxProfile" userId={this.props.params.userId}/>
                 <section id="tax-profile-container" class="col-sm-8">
-                    <UserOptionsHeader usersList={[loginuser]} activeUser={loginuser}/>
+                    <UserOptionsHeader taxReturns={taxReturns} activeTaxReturn={taxReturn}/>
                     <h1>Tax Profile</h1>
                     <div>
                         <a class="fa-anchor-container">

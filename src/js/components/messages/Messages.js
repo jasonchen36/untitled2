@@ -14,7 +14,9 @@ import { fetchUserMessages, sendMessage } from "../../actions/messagesActions";
         loginuserFetched: store.loginuser.fetched,
         user: store.users.user,
         messages: store.messages.messages,
-        messageSent: store.messages.messageSent
+        messageSent: store.messages.messageSent,
+        taxReturns:store.accounts.taxReturns,
+        taxReturn:store.accounts.taxReturn
     };
 })
 
@@ -122,14 +124,13 @@ export default class Messages extends React.Component {
     }
 
     render() {
-        //todo, pass in list of other users to userOptionsHeader
-        const { messages, loginuser } = this.props;
+        const { messages, taxReturns, taxReturn } = this.props;
         const userId = this.props.params.userId;
         return (
             <main class="grid-container row">
                 <Sidebar activeScreen="messages" userId={userId}/>
                 <section class="col-sm-8">
-                    <UserOptionsHeader usersList={[loginuser]} activeUser={loginuser}/>
+                    <UserOptionsHeader taxReturns={taxReturns} activeTaxReturn={taxReturn}/>
                     <h1>Messages</h1>
                     {this.renderSendMessage(userId)}
                     <div class="grid-container">

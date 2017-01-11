@@ -8,7 +8,9 @@ import UserOptionsHeader from "../layout/UserOptionsHeader";
 
 @connect((store) => {
     return {
-        loginuser: store.loginuser.loginuser
+        loginuser: store.loginuser.loginuser,
+        taxReturns:store.accounts.taxReturns,
+        taxReturn:store.accounts.taxReturn
     };
 })
 
@@ -94,16 +96,15 @@ export default class Notes extends React.Component {
     }
 
     render() {
-        //todo, pass in list of other users to userOptionsHeader
         //todo, pass in data to table
-        const { loginuser} = this.props;
+        const { taxReturns, taxReturn} = this.props;
         const userId = this.props.params.userId;
 
         return (
             <main class="grid-container row">
                 <Sidebar activeScreen="notes" userId={userId}/>
                 <section class="col-sm-8">
-                    <UserOptionsHeader usersList={[loginuser]} activeUser={loginuser}/>
+                    <UserOptionsHeader taxReturns={taxReturns} activeTaxReturn={taxReturn}/>
                     <h1>Notes</h1>
                     {this.renderSendNote(userId)}
                     {this.renderNotesTable([])}

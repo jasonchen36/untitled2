@@ -143,7 +143,6 @@ export default class PersonalProfile extends React.Component {
             userOutput= this.renderPersonalProfile(taxReturn);
         }
 
-//todo, pass in list of other users to userOptionsHeader
         return (
             <main class="grid-container row">
                 <Sidebar activeScreen="personalProfile" userId={this.props.params.userId}/>
