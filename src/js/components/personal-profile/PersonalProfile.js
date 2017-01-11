@@ -27,6 +27,7 @@ export default class PersonalProfile extends React.Component {
 
     componentWillMount() {
         const props = this.props;
+        //todo, redirects on page reload
         const { loginuser } = props;
         if(!loginuser || !loginuser.id) {
             props.router.push('/');
@@ -77,7 +78,7 @@ export default class PersonalProfile extends React.Component {
             first_name: this.first_name.value,
             last_name: this.last_name.value,
             title: this.title.value,
-            sin: this.sin.value,
+            sin: this.sin.value
         };
 
         let { id } = e.target;
@@ -115,14 +116,23 @@ export default class PersonalProfile extends React.Component {
     }
 
     render() {
-        const { taxReturns, taxReturn } = this.props;
+        // TODO: move to a helper
+        const { user, taxReturns, taxReturn } = this.props;
+        let userOutput='';
+        if (!taxReturn) {
+            userOutput = <div></div>
+        } else if (!user.id) {
+            userOutput=<button onClick={this.fetchUser.bind(this,this,props.params.userId)}>load users</button>
+        } else {
+            userOutput= this.renderPersonalProfile(taxReturn);
+        }
         return (
             <main class="grid-container row">
                 <Sidebar activeScreen="personalProfile" userId={this.props.params.userId}/>
                 <section class="col-sm-8 col-lg-9">
                     <UserOptionsHeader taxReturns={taxReturns} activeTaxReturn={taxReturn}/>
                     <h1>Personal Profile</h1>
-                    {this.renderPersonalProfile(taxReturn)}
+                    {userOutput}
                 </section>
             </main>
         );

@@ -54,10 +54,6 @@ export default class AccountProfile extends React.Component {
         this.phone.value = user.phone;
     };
 
-    fetchUser(userId) {
-        this.props.dispatch(fetchUser(userId))
-    };
-
     handleUpdateUser(e) {
         let updatedValues = {
             first_name: this.first_name.value,
@@ -106,7 +102,7 @@ export default class AccountProfile extends React.Component {
         }
         const renderedTaxPros= taxPros.map((taxPro) => {
             return (
-                <option key={taxPro.id} defaultValue={taxPro.id===user.assigned_tax_pro ? true: false}>
+                <option key={taxPro.id} defaultValue={taxPro.id===user.assigned_tax_pro}>
                     {taxPro.first_name}{ taxPro.last_name? ' '+taxPro.last_name:''}
                 </option>
             );
@@ -122,7 +118,7 @@ export default class AccountProfile extends React.Component {
                 <section class="col-sm-8 col-lg-9">
                     <UserOptionsHeader taxReturns={taxReturns} activeTaxReturn={taxReturn}/>
                     <h1>Account Profile</h1>
-                    {this.renderAccountProfile(user,taxPros)}
+                    {this.renderAccountProfile(user, taxPros)}
                 </section>
             </main>
         );
