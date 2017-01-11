@@ -157,7 +157,7 @@ export default class Users extends React.Component {
 
     if (!users) {
       //todo, redirect to login screen if no user session
-      return ( <div>Do you have</div> );
+      return ( <div></div> );
     } else if (!users.length) {
       return (
         <button onClick={this.fetchUsers.bind(this)}>load users</button>
