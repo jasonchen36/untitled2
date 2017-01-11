@@ -46,7 +46,6 @@ header {
   overflow: hidden;
   background-color: white;
   text-align: left;
-  min-width: 150px;
   @include transition-with-defaults(opacity);
   a {
     color: $color-global-text-grey;
