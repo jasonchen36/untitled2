@@ -27,6 +27,7 @@ export default class PersonalProfile extends React.Component {
 
     componentWillMount() {
         const props = this.props;
+        //todo, redirects on page reload
         const { loginuser } = props;
         if(!loginuser || !loginuser.id) {
             props.router.push('/');
@@ -38,22 +39,22 @@ export default class PersonalProfile extends React.Component {
         this.props.dispatch(fetchUser(userId));
 
         if(this.props.user && this.props.user.accountId) {
-          this.props.dispatch(fetchAccount(this.props.user.account_id));
+            this.props.dispatch(fetchAccount(this.props.user.account_id));
         }
     };
 
     componentWillReceiveProps(nextProps) {
         if(nextProps.user && nextProps.user.account_id && (!nextProps.account || nextProps.account.accountId!=nextProps.user.account_id)) {
-          this.props.dispatch(fetchAccount(nextProps.user.account_id));
+            this.props.dispatch(fetchAccount(nextProps.user.account_id));
         }
 
         if(nextProps.taxReturns && !nextProps.taxReturn && nextProps.taxReturns.length>0) {
-          this.props.dispatch(fetchTaxReturn(nextProps.taxReturns[0].id));
+            this.props.dispatch(fetchTaxReturn(nextProps.taxReturns[0].id));
         }
 
         if (nextProps.taxReturn && this.props.taxReturn) {
-          // Update the form with Props if a previous user was loaded
-          this.updateLocalProps(nextProps.taxReturn);
+            // Update the form with Props if a previous user was loaded
+            this.updateLocalProps(nextProps.taxReturn);
         } else {
             // If no previous user was loaded, then default Values will handle loading the form
         }
@@ -77,15 +78,15 @@ export default class PersonalProfile extends React.Component {
             first_name: this.first_name.value,
             last_name: this.last_name.value,
             title: this.title.value,
-            sin: this.sin.value,
+            sin: this.sin.value
         };
 
         let { id } = e.target;
 
         e.preventDefault();
 
-    // TODO: dispatch to update tax profile, only if account
-    //    this.props.dispatch(updateUser(id, updatedValues));
+        // TODO: dispatch to update tax profile, only if account
+        //    this.props.dispatch(updateUser(id, updatedValues));
     };
 
     handleFetchTaxReturn(e) {
@@ -116,41 +117,22 @@ export default class PersonalProfile extends React.Component {
 
     render() {
         // TODO: move to a helper
-        const addCalculatedDataToUser = (user) => {
-            if (user.name) {
-                user.fullName = user.name;
-            }
-            else if(user.first_name && user.last_name) {
-                user.fullName= user.first_name + ' ' + user.last_name;
-            } else if (user.first_name) {
-                user.fullName = user.first_name;
-
-            } else {
-                user.fullName = user.last_name;
-            }
-            return user;
-        };
-
-        const { loginuser, user, userId, taxReturns, taxReturn } = this.props;
-        const name=<h1>{loginuser.name}</h1>;
-
+        const { user, taxReturns, taxReturn } = this.props;
         let userOutput='';
         if (!taxReturn) {
-            userOutput = <div>No Tax Return</div>
+            userOutput = <div></div>
         } else if (!user.id) {
             userOutput=<button onClick={this.fetchUser.bind(this,this,props.params.userId)}>load users</button>
         } else {
             userOutput= this.renderPersonalProfile(taxReturn);
         }
-
-//todo, pass in list of other users to userOptionsHeader
         return (
             <main class="grid-container row">
                 <Sidebar activeScreen="personalProfile" userId={this.props.params.userId}/>
-                <section class="col-sm-8">
+                <section class="col-sm-8 col-lg-9">
                     <UserOptionsHeader taxReturns={taxReturns} activeTaxReturn={taxReturn}/>
                     <h1>Personal Profile</h1>
-                    <section class="col-sm-8">{name}{userOutput}</section>
+                    {userOutput}
                 </section>
             </main>
         );

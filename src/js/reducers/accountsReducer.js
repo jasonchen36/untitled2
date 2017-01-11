@@ -33,6 +33,7 @@ export default function reducer(state={
         return {...state, fetching: false, error: action.payload};
       }
       case "FETCH_ACCOUNT_FULFILLED": {
+          //todo, account variable is not getting saved to state by taxreturns and taxreturn are
         const account = action.payload.data;
         const taxReturns = account.taxReturns;
         const taxReturn = taxReturns && taxReturns.length>0 ? taxReturns[0]:null;
@@ -40,7 +41,7 @@ export default function reducer(state={
           ...state,
           fetching: false,
           fetched: true,
-          account: action.payload.data,
+          account: account,
           taxReturns:taxReturns,
           taxReturn:taxReturn
         };

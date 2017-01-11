@@ -64,7 +64,7 @@ export default class Layout extends React.Component {
         }
     }
 
-    getUserForm(){
+    renderUserForm(){
         const { loginuser, error } = this.props;
         if (!loginuser.id) {
             return (
@@ -96,7 +96,7 @@ export default class Layout extends React.Component {
     render() {
         return (
             <main class="grid-container row">
-                { this.getUserForm() }
+                { this.renderUserForm() }
             </main>
         );
     };

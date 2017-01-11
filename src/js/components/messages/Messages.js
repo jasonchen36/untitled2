@@ -7,6 +7,8 @@ import Sidebar from "../layout/Sidebar";
 import UserOptionsHeader from "../layout/UserOptionsHeader";
 
 import { fetchUserMessages, sendMessage } from "../../actions/messagesActions";
+import { fetchUser } from "../../actions/usersActions";
+import { fetchAccount, fetchTaxReturn } from "../../actions/accountsActions";
 
 @connect((store) => {
     return {
@@ -14,38 +16,50 @@ import { fetchUserMessages, sendMessage } from "../../actions/messagesActions";
         loginuserFetched: store.loginuser.fetched,
         user: store.users.user,
         messages: store.messages.messages,
-        messageSent: store.messages.messageSent
+        messageSent: store.messages.messageSent,
+        taxReturns:store.accounts.taxReturns,
+        taxReturn:store.accounts.taxReturn
     };
 })
 
 export default class Messages extends React.Component {
+
     constructor() {
         super();
         this.sendMessage = this.handleSendMessage.bind(this);
     }
 
     componentWillMount() {
-        const props = this.props;
-        const { loginuser } = props;
-        if(!loginuser || !loginuser.id) {
-            props.router.push('/');
-        } else {
-        }
-
         const userId = this.props.params.userId;
+        // this.props.dispatch(fetchUser(this.props.params.userId));
         this.props.dispatch(fetchUserMessages(userId));
     };
 
     componentWillReceiveProps(nextProps) {
-      this.clearMessageFieldsOnMessageSent(nextProps.messageSent,this.props.messageSent);
+        this.clearMessageFieldsOnMessageSent(nextProps.messageSent,this.props.messageSent);
+        //todo, stuck in infinite loop getting account
+        // if(nextProps.user && nextProps.user.account_id && (!nextProps.account || nextProps.account.accountId!=nextProps.user.account_id)) {
+        //     this.props.dispatch(fetchAccount(nextProps.user.account_id));
+        // }
+        //
+        // if(nextProps.taxReturns && !nextProps.taxReturn && nextProps.taxReturns.length>0) {
+        //     this.props.dispatch(fetchTaxReturn(nextProps.taxReturns[0].id));
+        // }
+        //
+        // if (nextProps.taxReturn && this.props.taxReturn) {
+        //     // Update the form with Props if a previous user was loaded
+        //     // this.updateLocalProps(nextProps.taxReturn);
+        // } else {
+        //     // If no previous user was loaded, then default Values will handle loading the form
+        // }
     };
 
     /// update all the form with the values from the user (prop)
     clearMessageFieldsOnMessageSent(messageSentStatus,messageSentPreviousStatus) {
-      if (messageSentStatus===true && messageSentPreviousStatus===false) {
-        this.message_subject.value = '';
-        this.message_text.value= '';
-      }
+        if (messageSentStatus===true && messageSentPreviousStatus===false) {
+            this.message_subject.value = '';
+            this.message_text.value= '';
+        }
     };
 
     /// Handlers
@@ -105,13 +119,13 @@ export default class Messages extends React.Component {
     }
 
     renderSendMessage(userId) {
-      return (
-        <form class="standard-form">
-          <input ref={(input) => {this.message_subject = input;}}  type="text" placeholder="Message Subject" />
-          <textarea rows="5" ref={(input) => {this.message_text = input;}} type="text" placeholder="Compose Messages"/>
-          <button id={userId} onClick={this.sendMessage}>Send</button>
-        </form>
-      );
+        return (
+            <form class="standard-form">
+                <input ref={(input) => {this.message_subject = input;}}  type="text" placeholder="Message Subject" />
+                <textarea rows="5" ref={(input) => {this.message_text = input;}} type="text" placeholder="Compose Messages"/>
+                <button id={userId} onClick={this.sendMessage}>Send</button>
+            </form>
+        );
     }
 
     renderMessages(messages){
@@ -122,14 +136,13 @@ export default class Messages extends React.Component {
     }
 
     render() {
-        //todo, pass in list of other users to userOptionsHeader
-        const { messages, loginuser } = this.props;
+        const { messages, taxReturns, taxReturn } = this.props;
         const userId = this.props.params.userId;
         return (
             <main class="grid-container row">
                 <Sidebar activeScreen="messages" userId={userId}/>
-                <section class="col-sm-8">
-                    <UserOptionsHeader usersList={[loginuser]} activeUser={loginuser}/>
+                <section class="col-sm-8 col-lg-9">
+                    <UserOptionsHeader taxReturns={taxReturns} activeTaxReturn={taxReturn}/>
                     <h1>Messages</h1>
                     {this.renderSendMessage(userId)}
                     <div class="grid-container">

@@ -6,9 +6,15 @@ import { Link  } from "react-router"
 import Sidebar from "../layout/Sidebar";
 import UserOptionsHeader from "../layout/UserOptionsHeader";
 
+import { fetchUser } from "../../actions/usersActions";
+import { fetchAccount, fetchTaxReturn } from "../../actions/accountsActions";
+
 @connect((store) => {
     return {
-        loginuser: store.loginuser.loginuser
+        loginuser: store.loginuser.loginuser,
+        user: store.users.user,
+        taxReturns:store.accounts.taxReturns,
+        taxReturn:store.accounts.taxReturn
     };
 })
 
@@ -17,6 +23,54 @@ export default class Notes extends React.Component {
     constructor() {
         super();
         this.sendNote = this.handleSendNote.bind(this);
+    }
+
+    componentWillMount() {
+        this.props.dispatch(fetchUser(this.props.params.userId));
+    };
+
+    componentWillReceiveProps(nextProps) {
+        //todo, stuck in infinite loop getting account
+        // if(nextProps.user && nextProps.user.account_id && (!nextProps.account || nextProps.account.accountId!=nextProps.user.account_id)) {
+        //     this.props.dispatch(fetchAccount(nextProps.user.account_id));
+        // }
+        //
+        // if(nextProps.taxReturns && !nextProps.taxReturn && nextProps.taxReturns.length>0) {
+        //     this.props.dispatch(fetchTaxReturn(nextProps.taxReturns[0].id));
+        // }
+        //
+        // if (nextProps.taxReturn && this.props.taxReturn) {
+        //     // Update the form with Props if a previous user was loaded
+        //     // this.updateLocalProps(nextProps.taxReturn);
+        // } else {
+        //     // If no previous user was loaded, then default Values will handle loading the form
+        // }
+    };
+
+    getDummyData(){
+        return [
+            {
+                id: 1,
+                date: '1/5/17 4:11 PM',
+                user: 'TAXplan Canada',
+                notes: 'Frank test',
+                done: false
+            },
+            {
+                id: 2,
+                date: '1/6/17 4:12 PM',
+                user: 'TAXplan Canada',
+                notes: 'Frank test2',
+                done: true
+            },
+            {
+                id: 3,
+                date: '1/7/17 4:13 PM',
+                user: 'TAXplan Canada',
+                notes: 'Frank test3',
+                done: false
+            }
+        ]
     }
 
     handleSendNote(e) {
@@ -42,8 +96,9 @@ export default class Notes extends React.Component {
 
     renderNotesRow(data){
         //todo, add handler to checkbox toggle
+        //todo, add logic for checkbox selected or not
         return (
-            <tr>
+            <tr key={data.id}>
                 <td>
                     {data.id}
                 </td>
@@ -56,7 +111,7 @@ export default class Notes extends React.Component {
                 <td>
                     {data.notes}
                 </td>
-                <td>
+                <td class="text-center">
                     <input type="checkbox" />
                 </td>
             </tr>
@@ -94,19 +149,17 @@ export default class Notes extends React.Component {
     }
 
     render() {
-        //todo, pass in list of other users to userOptionsHeader
         //todo, pass in data to table
-        const { loginuser} = this.props;
+        const { taxReturns, taxReturn} = this.props;
         const userId = this.props.params.userId;
-
         return (
             <main class="grid-container row">
                 <Sidebar activeScreen="notes" userId={userId}/>
-                <section class="col-sm-8">
-                    <UserOptionsHeader usersList={[loginuser]} activeUser={loginuser}/>
+                <section class="col-sm-8 col-lg-9">
+                    <UserOptionsHeader taxReturns={taxReturns} activeTaxReturn={taxReturn}/>
                     <h1>Notes</h1>
                     {this.renderSendNote(userId)}
-                    {this.renderNotesTable([])}
+                    {this.renderNotesTable(this.getDummyData())}
                 </section>
             </main>
         )

@@ -26,14 +26,14 @@ export default class UserOptionsHeader extends React.Component {
                 <button key={user.id} class={this.getButtonClass(user, activeUser)}>{user.first_name} {user.last_name}</button>
             );
         } else {
-            return <button key={0} class={this.getButtonClass(null, null)}>No Tax Returns</button>
+            return <button class="button disabled">No Tax Returns</button>
         }
     }
 
     render() {
         const { taxReturns, activeTaxReturn } = this.props;
         return (
-            <aside id="header-user-options" class="col-sm-12">
+            <aside id="header-user-options" class="col-sm-12 no-padding">
                 {this.renderUserOptions(taxReturns, activeTaxReturn)}
             </aside>
         );

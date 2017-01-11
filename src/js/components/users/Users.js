@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { Link } from "react-router";
 
 import { fetchUsers,fetchTaxPros, deleteUser, updateSearchTerms } from "../../actions/usersActions";
+import { renderTaxProSelection } from "../helpers/LayoutHelpers";
 import _ from "lodash";
 
 @connect((store) => {
@@ -114,22 +115,6 @@ export default class Users extends React.Component {
     );
   }
 
-  renderTaxProSelection(taxPros) {
-    const defaultSelection = <option defaultValue>TaxPros</option>;
-    
-    if(!taxPros) {
-      return defaultSelection;
-    }
-
-    const renderedTaxPros= taxPros.map((taxPro) => {
-      return (<option key={taxPro.id}>
-        {taxPro.first_name}{ taxPro.last_name? ' '+taxPro.last_name:''}
-      </option> );
-    });
-
-    return _.concat([defaultSelection],renderedTaxPros);
-  }
-
   renderTableFilters(taxPros){
     //todo, populate taxpros and status from db
     //todo, add event handlers to filters
@@ -138,7 +123,7 @@ export default class Users extends React.Component {
         <label class="col">Filter by:</label>
         <input class="col" type="text" placeholder="User Name"/>
         <select class="col">
-          {this.renderTaxProSelection(taxPros)}
+          {renderTaxProSelection(taxPros)}
         </select>
         <select class="col">
           <option disabled defaultValue>Select Status</option>
@@ -157,7 +142,7 @@ export default class Users extends React.Component {
 
     if (!users) {
       //todo, redirect to login screen if no user session
-      return ( <div>Do you have</div> );
+      return ( <div></div> );
     } else if (!users.length) {
       return (
         <button onClick={this.fetchUsers.bind(this)}>load users</button>
@@ -165,16 +150,16 @@ export default class Users extends React.Component {
     } else {
       const usersRows = users.map(user =>this.renderUsersRow(user));
       return (
-        <table>
+        <table class="standard-table">
           <thead>
           <tr>
             <th>#</th>
-            <th><button  onClick={this.sortByLastName} >Name</button></th>
+            <th><a onClick={this.sortByLastName} >Name</a></th>
             <th>Status</th>
             <th>Role</th>
             <th>Actions</th>
             <th>TaxPro</th>
-            <th><button onClick={this.sortByLastUpdated}>Last User Update</button></th>
+            <th><a onClick={this.sortByLastUpdated}>Last User Update</a></th>
           </tr>
           </thead>
           <tbody>

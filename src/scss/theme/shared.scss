@@ -8,7 +8,7 @@ Use helper classes to style elements that otherwise wouldn't need to have a full
 
 //main styles
 //-----------------------------
-h1,h2,h3,h4,h5,p,a,blockquote,span,div,input,textarea {
+h1,h2,h3,h4,h5,p,a,blockquote,span,div,input,textarea,select,option {
   @extend .f--futura-heavy;
   color: $color-global-text-grey;
 }
@@ -23,6 +23,10 @@ input, textarea {
   width: $width;
   padding: 0.5rem;
   border: 1px solid $color-input-border;
+  &[type="checkbox"] {
+    width: auto;
+    max-width: inherit;
+  }
 }
 
 button, .button {
@@ -60,6 +64,11 @@ a {
 
 ul {
   list-style: none;
+}
+
+hr {
+  color: $color-input-border;
+  background-color: $color-input-border;
 }
 
 select {
@@ -116,6 +125,9 @@ select {
     display: block;
     margin-bottom: 20px;
   }
+  hr {
+    margin-bottom: 15px;
+  }
 }
 
 .standard-form-padding {
@@ -164,6 +176,13 @@ select {
   position: relative;
 }
 
+.no-padding {
+  padding: 0;
+}
+
+.no-margin {
+  margin: 0;
+}
 
 //typography
 //-----------------------------
