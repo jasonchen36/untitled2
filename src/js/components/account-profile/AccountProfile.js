@@ -11,7 +11,9 @@ import { fetchUser, fetchTaxPros, updateUser } from "../../actions/usersActions"
         loginuser: store.loginuser.loginuser,
         loginuserFetched: store.loginuser.fetched,
         user: store.users.user,
-        taxPros: store.users.taxPros
+        taxPros: store.users.taxPros,
+        taxReturns:store.accounts.taxReturns,
+        taxReturn:store.accounts.taxReturn
     };
 })
 
@@ -31,7 +33,7 @@ export default class AccountProfile extends React.Component {
 
         const userId = this.props.params.userId;
 
-        this.props.dispatch(fetchTaxPros(userId));        
+        this.props.dispatch(fetchTaxPros(userId));
         this.props.dispatch(fetchUser(userId));
     };
 
@@ -72,6 +74,7 @@ export default class AccountProfile extends React.Component {
     };
 
     renderAccountProfile(user, taxPros){
+        //todo, change user role to a dropdown
         return (
             <form class="standard-form">
                 <label for="user-first-name">First Name &amp; Initials</label>
@@ -84,36 +87,32 @@ export default class AccountProfile extends React.Component {
                 <input id="user-address" ref={(input) => {this.address = input;}} type="text"  placeholder="Address" defaultValue={user.address} />
                 <label for="user-phone">Preferred Telephone #</label>
                 <input id="user-phone" ref={(input) => {this.phone = input;}} type="text"  placeholder="Phone" defaultValue={user.phone} />
-                ___
-
+                <hr/>
                 <label for="user-role">Account Role</label>
                 <input id="user-role" ref={(input) => {this.role = input;}} type="text"  placeholder="Role" defaultValue={user.role} />
                 <label for="user-tax-pro">Assigned TaxPro</label>
                 <select>
-                {this.renderTaxProSelection(user,taxPros)}
+                    {this.renderTaxProSelection(user,taxPros)}
                 </select>
                 <button id={user.id} onClick={this.updateUser}>update user</button>
             </form>
         );
     }
 
-  renderTaxProSelection(user, taxPros) {
-    const defaultSelection = <option key={-1} >TaxPros</option>;
-    
-    if(!taxPros) {
-      return defaultSelection;
+    renderTaxProSelection(user, taxPros) {
+        const defaultSelection = <option key={-1} disabled>TaxPros</option>;
+        if(!taxPros) {
+            return defaultSelection;
+        }
+        const renderedTaxPros= taxPros.map((taxPro) => {
+            return (
+                <option key={taxPro.id} defaultValue={taxPro.id===user.assigned_tax_pro ? true: false}>
+                    {taxPro.first_name}{ taxPro.last_name? ' '+taxPro.last_name:''}
+                </option>
+            );
+        });
+        return _.concat([defaultSelection],renderedTaxPros);
     }
-
-    const renderedTaxPros= taxPros.map((taxPro) => {
-      return (<option key={taxPro.id} defaultValue={taxPro.id===user.assigned_tax_pro ? true: false}>
-        {taxPro.first_name}{ taxPro.last_name? ' '+taxPro.last_name:''}
-      </option> );
-    });
-
-    var cdr = _.concat([defaultSelection],renderedTaxPros);
-    
-    return cdr;
-  }
     render() {
         // TODO: move to a helper
         const addCalculatedDataToUser = (user) => {
@@ -131,7 +130,7 @@ export default class AccountProfile extends React.Component {
             return user;
         };
 
-        const { loginuser, user, userId,taxPros } = this.props;
+        const { loginuser, user, userId,taxPros, taxReturns, taxReturn } = this.props;
         const name=<h1>{loginuser.name}</h1>;
 
         let userOutput='';
@@ -146,10 +145,10 @@ export default class AccountProfile extends React.Component {
 //todo, pass in list of other users to userOptionsHeader
         return (
             <main class="grid-container row">
-                <Sidebar activeScreen="personalProfile" userId={this.props.params.userId}/>
+                <Sidebar activeScreen="accountProfile" userId={this.props.params.userId}/>
                 <section class="col-sm-8">
-                    <UserOptionsHeader usersList={[loginuser]} activeUser={loginuser}/>
-                    <h1>Personal Profile</h1>
+                    <UserOptionsHeader taxReturns={taxReturns} activeTaxReturn={taxReturn}/>
+                    <h1>Account Profile</h1>
                     <section class="col-sm-8">{name}{userOutput}</section>
                 </section>
             </main>
