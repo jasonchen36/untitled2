@@ -115,41 +115,16 @@ export default class PersonalProfile extends React.Component {
     }
 
     render() {
-        // TODO: move to a helper
-        const addCalculatedDataToUser = (user) => {
-            if (user.name) {
-                user.fullName = user.name;
-            }
-            else if(user.first_name && user.last_name) {
-                user.fullName= user.first_name + ' ' + user.last_name;
-            } else if (user.first_name) {
-                user.fullName = user.first_name;
-
-            } else {
-                user.fullName = user.last_name;
-            }
-            return user;
-        };
-
-        const { loginuser, user, userId, taxReturns, taxReturn } = this.props;
-        const name=<h1>{loginuser.name}</h1>;
-
-        let userOutput='';
-        if (!taxReturn) {
-            userOutput = <div>No Tax Return</div>
-        } else if (!user.id) {
-            userOutput=<button onClick={this.fetchUser.bind(this,this,props.params.userId)}>load users</button>
-        } else {
-            userOutput= this.renderPersonalProfile(taxReturn);
-        }
-
+        const { taxReturns, taxReturn } = this.props;
         return (
             <main class="grid-container row">
                 <Sidebar activeScreen="personalProfile" userId={this.props.params.userId}/>
-                <section class="col-sm-8">
+                <section class="col-sm-8 col-lg-9">
                     <UserOptionsHeader taxReturns={taxReturns} activeTaxReturn={taxReturn}/>
                     <h1>Personal Profile</h1>
-                    <section class="col-sm-8">{name}{userOutput}</section>
+                    <section class="col-sm-8">
+                        {this.renderPersonalProfile(taxReturn)}
+                    </section>
                 </section>
             </main>
         );
