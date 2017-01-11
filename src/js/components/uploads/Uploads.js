@@ -38,11 +38,11 @@ export default class Uploads extends React.Component {
     renderUploadEntry(index, data){
         //todo, add handler to delete icon
         return (
-            <div class="row uploads-row">
+            <div key={data.id} class="row uploads-row">
                 <div class="col-sm-10">
                     <p>
                         {index}. <span class="fa-anchor-container"><i class="fa fa-file-o"></i></span>
-                        <a key={data.id} href={data.url}>{data.name}</a> (Uploaded {data.date}) - ({data.size})
+                        <a href={data.url}>{data.name}</a> (Uploaded {data.date}) - ({data.size})
                     </p>
                 </div>
                 <div class="col-sm-2 position-relative">
