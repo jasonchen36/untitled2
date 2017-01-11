@@ -35,7 +35,7 @@ export default class TaxProfile extends React.Component {
         return (
             <main class="grid-container row">
                 <Sidebar activeScreen="taxProfile" userId={this.props.params.userId}/>
-                <section id="tax-profile-container" class="col-sm-8">
+                <section id="tax-profile-container" class="col-sm-8 col-lg-9">
                     <UserOptionsHeader taxReturns={taxReturns} activeTaxReturn={taxReturn}/>
                     <h1>Tax Profile</h1>
                     {this.renderTaxProfile()}

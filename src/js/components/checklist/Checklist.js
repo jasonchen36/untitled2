@@ -32,7 +32,7 @@ export default class Checklist extends React.Component {
         return (
             <main class="grid-container row">
                 <Sidebar activeScreen="checklist" userId={this.props.params.userId}/>
-                <section class="col-sm-8">
+                <section class="col-sm-8 col-lg-9">
                     <UserOptionsHeader taxReturns={taxReturns} activeTaxReturn={taxReturn}/>
                     <h1>Checklist</h1>
                     {this.renderChecklist()}

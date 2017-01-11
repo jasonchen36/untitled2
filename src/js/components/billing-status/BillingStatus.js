@@ -106,14 +106,13 @@ export default class BillingStatus extends React.Component {
     }
 
     render() {
-        //todo, pass in list of other users to userOptionsHeader
         //todo, figure out what "No documents added to this package" means
         //todo, pass in data to table
         const { taxReturns, taxReturn} = this.props;
         return (
             <main class="grid-container row">
                 <Sidebar activeScreen="billingStatus" userId={this.props.params.userId}/>
-                <section class="col-sm-8">
+                <section class="col-sm-8 col-lg-9">
                     <UserOptionsHeader taxReturns={taxReturns} activeTaxReturn={taxReturn}/>
                     <h1>Billing Status</h1>
                     <h2>Personal Questionnaire 2015</h2>

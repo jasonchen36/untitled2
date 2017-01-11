@@ -67,7 +67,7 @@ export default class Uploads extends React.Component {
         return (
             <main class="grid-container row">
                 <Sidebar activeScreen="uploads" userId={this.props.params.userId}/>
-                <section class="col-sm-8">
+                <section class="col-sm-8 col-lg-9">
                     <UserOptionsHeader taxReturns={taxReturns} activeTaxReturn={taxReturn}/>
                     <h1>TAXitem Uploads</h1>
                     <div class="grid-container">
