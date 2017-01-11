@@ -165,16 +165,16 @@ export default class Users extends React.Component {
     } else {
       const usersRows = users.map(user =>this.renderUsersRow(user));
       return (
-        <table>
+        <table class="standard-table">
           <thead>
           <tr>
             <th>#</th>
-            <th><button  onClick={this.sortByLastName} >Name</button></th>
+            <th><a onClick={this.sortByLastName} >Name</a></th>
             <th>Status</th>
             <th>Role</th>
             <th>Actions</th>
             <th>TaxPro</th>
-            <th><button onClick={this.sortByLastUpdated}>Last User Update</button></th>
+            <th><a onClick={this.sortByLastUpdated}>Last User Update</a></th>
           </tr>
           </thead>
           <tbody>
