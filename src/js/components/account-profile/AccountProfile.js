@@ -63,7 +63,7 @@ export default class AccountProfile extends React.Component {
             first_name: this.first_name.value,
             last_name: this.last_name.value,
             email: this.email.value,
-            phone: this.phone.value,
+            phone: this.phone.value
         };
 
         let { id } = e.target;
@@ -113,43 +113,16 @@ export default class AccountProfile extends React.Component {
         });
         return _.concat([defaultSelection],renderedTaxPros);
     }
+
     render() {
-        // TODO: move to a helper
-        const addCalculatedDataToUser = (user) => {
-            if (user.name) {
-                user.fullName = user.name;
-            }
-            else if(user.first_name && user.last_name) {
-                user.fullName= user.first_name + ' ' + user.last_name;
-            } else if (user.first_name) {
-                user.fullName = user.first_name;
-
-            } else {
-                user.fullName = user.last_name;
-            }
-            return user;
-        };
-
-        const { loginuser, user, userId,taxPros, taxReturns, taxReturn } = this.props;
-        const name=<h1>{loginuser.name}</h1>;
-
-        let userOutput='';
-        if (!user) {
-            userOutput = <div>Please Log in</div>
-        } else if (!user.id) {
-            userOutput=<button onClick={this.fetchUser.bind(this,this,props.params.userId)}>load users</button>
-        } else {
-            userOutput= this.renderAccountProfile(user,taxPros);
-        }
-
-//todo, pass in list of other users to userOptionsHeader
+        const { user, taxPros, taxReturns, taxReturn } = this.props;
         return (
             <main class="grid-container row">
                 <Sidebar activeScreen="accountProfile" userId={this.props.params.userId}/>
-                <section class="col-sm-8">
+                <section class="col-sm-8 col-lg-9">
                     <UserOptionsHeader taxReturns={taxReturns} activeTaxReturn={taxReturn}/>
                     <h1>Account Profile</h1>
-                    <section class="col-sm-8">{name}{userOutput}</section>
+                    {this.renderAccountProfile(user,taxPros)}
                 </section>
             </main>
         );
