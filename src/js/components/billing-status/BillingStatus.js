@@ -53,7 +53,7 @@ export default class BillingStatus extends React.Component {
 
     renderBillingStatusRow(data){
         return (
-            <tr>
+            <tr key={data.id}>
                 <td>
                     {data.status}
                 </td>
