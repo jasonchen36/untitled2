@@ -38,22 +38,22 @@ export default class PersonalProfile extends React.Component {
         this.props.dispatch(fetchUser(userId));
 
         if(this.props.user && this.props.user.accountId) {
-          this.props.dispatch(fetchAccount(this.props.user.account_id));
+            this.props.dispatch(fetchAccount(this.props.user.account_id));
         }
     };
 
     componentWillReceiveProps(nextProps) {
         if(nextProps.user && nextProps.user.account_id && (!nextProps.account || nextProps.account.accountId!=nextProps.user.account_id)) {
-          this.props.dispatch(fetchAccount(nextProps.user.account_id));
+            this.props.dispatch(fetchAccount(nextProps.user.account_id));
         }
 
         if(nextProps.taxReturns && !nextProps.taxReturn && nextProps.taxReturns.length>0) {
-          this.props.dispatch(fetchTaxReturn(nextProps.taxReturns[0].id));
+            this.props.dispatch(fetchTaxReturn(nextProps.taxReturns[0].id));
         }
 
         if (nextProps.taxReturn && this.props.taxReturn) {
-          // Update the form with Props if a previous user was loaded
-          this.updateLocalProps(nextProps.taxReturn);
+            // Update the form with Props if a previous user was loaded
+            this.updateLocalProps(nextProps.taxReturn);
         } else {
             // If no previous user was loaded, then default Values will handle loading the form
         }
@@ -84,8 +84,8 @@ export default class PersonalProfile extends React.Component {
 
         e.preventDefault();
 
-    // TODO: dispatch to update tax profile, only if account
-    //    this.props.dispatch(updateUser(id, updatedValues));
+        // TODO: dispatch to update tax profile, only if account
+        //    this.props.dispatch(updateUser(id, updatedValues));
     };
 
     handleFetchTaxReturn(e) {
@@ -122,9 +122,7 @@ export default class PersonalProfile extends React.Component {
                 <section class="col-sm-8 col-lg-9">
                     <UserOptionsHeader taxReturns={taxReturns} activeTaxReturn={taxReturn}/>
                     <h1>Personal Profile</h1>
-                    <section class="col-sm-8">
-                        {this.renderPersonalProfile(taxReturn)}
-                    </section>
+                    {this.renderPersonalProfile(taxReturn)}
                 </section>
             </main>
         );
