@@ -14,6 +14,11 @@ export default class Sidebar extends React.Component {
         }
     }
     
+    getButtonUrl(url, userId){
+       return userId?url:'/';
+    }
+
+    
     render() {
       const { userId } = this.props;
         return (
@@ -26,25 +31,25 @@ export default class Sidebar extends React.Component {
                         <Link to={userId? "/users/"+userId+"/account-profile" : "/"} class={this.getButtonClass('accountProfile')}>Account Profile</Link>
                     </li>
                     <li>
-                        <Link to={userId? "/users/"+userId+"/personal-profile" : "/"} class={this.getButtonClass('personalProfile')}>Personal Profile</Link>
+                        <Link to={this.getButtonUrl('/users/'+userId+'/personal-profile', userId)} class={this.getButtonClass('personalProfile')}>Personal Profile</Link>
                     </li>
                     <li>
-                        <Link to={userId? "/users/"+userId+"/tax-profile" : "/"} class={this.getButtonClass('taxProfile')}>Tax Profile</Link>
+                        <Link to={this.getButtonUrl('/users/'+userId+'/tax-profile',userId)} class={this.getButtonClass('taxProfile')}>Tax Profile</Link>
                     </li>
                     <li>
-                        <Link to={userId? "/users/"+userId+"/uploads" : "/"} class={this.getButtonClass('uploads')}>TAXitem Uploads</Link>
+                        <Link to={this.getButtonUrl('/users/'+userId+'/uploads',userId)} class={this.getButtonClass('uploads')}>TAXitem Uploads</Link>
                     </li>
                     <li>
-                        <Link to={userId? "/users/"+userId+"/checklist" : "/"} class={this.getButtonClass('checklist')}>Checklist</Link>
+                        <Link to={this.getButtonUrl('/users/'+userId+'/checklist',userId)} class={this.getButtonClass('checklist')}>Checklist</Link>
                     </li>
                     <li>
-                        <Link to={userId? "/users/"+userId+"/messages" : "/"} class={this.getButtonClass('messages')}>Messages</Link>
+                        <Link to={this.getButtonUrl('/users/'+userId+'/messages',userId)} class={this.getButtonClass('messages')}>Messages</Link>
                     </li>
                     <li>
-                        <Link to={userId? "/users/"+userId+"/notes" : "/"} class={this.getButtonClass('notes')}>Notes</Link>
+                        <Link to={this.getButtonUrl('/users/'+userId+'/notes',userId)} class={this.getButtonClass('notes')}>Notes</Link>
                     </li>
                     <li>
-                        <Link to={userId? "/users/"+userId+"/billing-status" : "/"} class={this.getButtonClass('billingStatus')}>Billing Status</Link>
+                        <Link to={this.getButtonUrl('/users/'+userId+'/billing-status',userId)} class={this.getButtonClass('billingStatus')}>Billing Status</Link>
                     </li>
                 </ul>
             </aside>
