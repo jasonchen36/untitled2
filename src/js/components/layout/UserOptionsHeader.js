@@ -26,7 +26,7 @@ export default class UserOptionsHeader extends React.Component {
                 <button key={user.id} class={this.getButtonClass(user, activeUser)}>{user.first_name} {user.last_name}</button>
             );
         } else {
-            return <button key={0} class={this.getButtonClass(null, null)}>No Tax Returns</button>
+            return <button class="button disabled">No Tax Returns</button>
         }
     }
 
