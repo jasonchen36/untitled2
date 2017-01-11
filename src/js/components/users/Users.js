@@ -115,7 +115,7 @@ export default class Users extends React.Component {
   }
 
   renderTaxProSelection(taxPros) {
-    const defaultSelection = <option defaultValue>TaxPros</option>;
+    const defaultSelection = <option key="-1" defaultValue>TaxPros</option>;
     
     if(!taxPros) {
       return defaultSelection;
