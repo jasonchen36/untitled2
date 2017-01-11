@@ -2,6 +2,7 @@
 
 export default function reducer(state={
     users: null,
+    taxPros: null,
     userSearchTerms:[],
     searchChanged:false,
     user: null,
@@ -34,6 +35,18 @@ export default function reducer(state={
         return {
           ...state,
           userSearchTerms:action.payload
+        };
+      }
+      // Taxpro events
+      case "FETCH_TAXPROS_REJECTED": {
+        return {...state, fetching: false, error: action.payload};
+      }
+      case "FETCH_TAXPROS_FULFILLED": {
+        return {
+          ...state,
+          fetching: false,
+          fetched: true,
+          taxPros: action.payload.data
         };
       }
       // User events

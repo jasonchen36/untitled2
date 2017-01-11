@@ -25,7 +25,10 @@ export default class Sidebar extends React.Component {
             <aside class="col-sm-4">
                 <ul id="sidebar-menu">
                     <li>
-                        <p class="button disabled">Personal Tax 2015</p>
+                        <p class="button disabled">Personal Tax 2016</p>
+                    </li>
+                    <li>
+                        <Link to={userId? "/users/"+userId+"/account-profile" : "/"} class={this.getButtonClass('accountProfile')}>Account Profile</Link>
                     </li>
                     <li>
                         <Link to={this.getButtonUrl('/users/'+userId+'/personal-profile', userId)} class={this.getButtonClass('personalProfile')}>Personal Profile</Link>

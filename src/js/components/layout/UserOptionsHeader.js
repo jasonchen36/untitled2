@@ -8,27 +8,33 @@ export default class UserOptionsHeader extends React.Component {
     getButtonClass(entry, activeUser){
         if (entry && entry.id === activeUser.id){
             return 'button disabled';
+        } else if(!entry || !activeUser) {
+            return 'button disabled';
         } else {
             return 'button'
         }
     }
 
     //todo, add bindings to switch users on button click
-    
-    renderUserOptions(usersList, activeUser){
-        if (!activeUser){
-            activeUser = usersList[0];
+
+    renderUserOptions(taxReturns, activeUser){
+        if (taxReturns && taxReturns.length > 0){
+            if (!activeUser) {
+                activeUser = taxReturns[0];
+            }
+            return taxReturns.map(user =>
+                <button key={user.id} class={this.getButtonClass(user, activeUser)}>{user.first_name} {user.last_name}</button>
+            );
+        } else {
+            return <button key={0} class={this.getButtonClass(null, null)}>No Tax Returns</button>
         }
-        return usersList.map(user =>
-            <button class={this.getButtonClass(user, activeUser)} key={user.id}>{user.first_name} {user.last_name}</button>
-        );
     }
 
     render() {
-        const { usersList, activeUser } = this.props;
+        const { taxReturns, activeTaxReturn } = this.props;
         return (
             <aside id="header-user-options" class="col-sm-12">
-                {this.renderUserOptions(usersList, activeUser)}
+                {this.renderUserOptions(taxReturns, activeTaxReturn)}
             </aside>
         );
     }

@@ -14,6 +14,7 @@ import Layout from "./components/Layout";
 import Login from "./components/login/Login";
 import Register from "./components/register/Register";
 import Users from "./components/users/Users";
+import AccountProfile from "./components/account-profile/AccountProfile";
 import PersonalProfile from "./components/personal-profile/PersonalProfile";
 import TaxProfile from "./components/tax-profile/TaxProfile";
 import Uploads from "./components/uploads/Uploads";
@@ -38,6 +39,7 @@ ReactDOM.render(<Provider store={store}>
             <IndexRoute component={Login}></IndexRoute>
             <Route path="register" name="register" component={Register}></Route>
             <Route path="users" name="users" component={Users}></Route>
+            <Route path="users/:userId/account-profile" name="account-profile" component={AccountProfile}></Route>
             <Route path="users/:userId/personal-profile" name="personal-profile" component={PersonalProfile}></Route>
             <Route path="users/:userId/tax-profile" name="tax-profile" component={TaxProfile}></Route>
             <Route path="users/:userId/uploads" name="uploads" component={Uploads}></Route>
