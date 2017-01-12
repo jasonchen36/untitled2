@@ -3,24 +3,16 @@ import React from "react";
 import _ from "lodash";
 
 // common layout tasks
-export function renderTaxProSelection(taxPros, user) {
-    var defaultSelection = <option key={-1} disabled defaultValue>TaxPros</option>;
-    if(!taxPros) {
+export function renderSelectionOptions(list, defaultText) {
+    var defaultSelection = <option key={-1} value={-1}>{defaultText}</option>;
+    if(!list) {
         return defaultSelection;
     } else {
-        if (!user){
-            defaultSelection = <option key={-1} disabled defaultValue>TaxPros</option>;
-            user = {
-                assigned_tax_pro: ''
-            }
-        }
-        const renderedTaxPros = taxPros.map((taxPro) => {
-            return (
-                <option key={taxPro.id} defaultValue={taxPro.id===user.assigned_tax_pro}>
-                    {taxPro.first_name}{ taxPro.last_name ? ' ' + taxPro.last_name : ''}
-                </option>
-            );
+        const renderedList = list.map((item) => {
+            return <option key={item.id} value={item.id} >
+                     {item.val}
+                 </option>
         });
-        return _.concat([defaultSelection], renderedTaxPros);
+        return _.concat([defaultSelection], renderedList);
     }
 }

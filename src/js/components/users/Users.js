@@ -4,8 +4,9 @@ import { connect } from "react-redux";
 import { Link } from "react-router";
 
 import { fetchUsers,fetchTaxPros, deleteUser, updateSearchTerms } from "../../actions/usersActions";
-import { renderTaxProSelection } from "../helpers/LayoutHelpers";
 import _ from "lodash";
+
+import { renderTaxProSelectionOptions } from "../helpers/RenderTaxProsSelection";
 
 @connect((store) => {
   return {
@@ -23,7 +24,6 @@ export default class Users extends React.Component {
     this.sortByLastName = this.handleSortByLastName.bind(this);
     this.sortByLastUpdated = this.handleSortByLastUpdated.bind(this);
     this.fetchUsers = this.handleFetchUsers.bind(this);
-   // this.deleteUser = this.handleDeleteUser.bind(this);
   }
 
 
@@ -44,33 +44,39 @@ export default class Users extends React.Component {
   };
 
   componentWillReceiveProps(nextProps) {
-    if(nextProps.userSearchTerms && nextProps.userSearchTerms.length>0 && this.searchTermsNotInQuery(nextProps.userSearchTerms,nextProps.location.query)) {
-
+    if(this.searchTermsNotInQuery(nextProps.userSearchTerms,nextProps.location.query)) {
       let objectQuery = {};
 
       _.each(nextProps.userSearchTerms,(ust) => {
         objectQuery[ust.key] = ust.val;
       });
-      const newQueries= _.merge(nextProps.location.query,objectQuery);
-    this.props.router.push({pathname:'/users',query:newQueries});
-    } else {
+
+      this.props.router.push({pathname:'/users',query:objectQuery});
     }
   }
 
   searchTermsNotInQuery(searchTerms, query) {
-    let isSame = true;
-    if(searchTerms && searchTerms.length>0 && !query) {  return true; }
+    const queryKeys = _.keys(query);
 
-    isSame = _.some(searchTerms,(st) => {
+    if((searchTerms && searchTerms.length>0 && !query) ||
+      ((!searchTerms || searchTerms.length==0) && queryKeys && queryKeys.length>0)
+    ) { 
+      return true;
+    }
+
+    const isNotSame = _.some(searchTerms,(st) => {
       return (typeof query[st.key] ==='undefined') || query[st.key] !== st.val;
     });
 
-    return isSame;
+    const queryKeysNotInSearchTerms = _.some(queryKeys, (k) => {
+        return !_.some(searchTerms,(st) => { return st.key === k});
+    });
+
+    return isNotSame ||  queryKeysNotInSearchTerms;
   }
 
   /// Handlers
   handleFetchUsers() {
-    userSearchTerms
     this.props.dispatch(fetchUsers())
   };
 
@@ -91,13 +97,28 @@ export default class Users extends React.Component {
 
   handleSortByLastUpdated(e) {
     e.preventDefault();
+
     const oldSearchTerms = this.props.userSearchTerms;
-//    this.props.dispatch(fetchUsers());
+
     this.props.dispatch(updateSearchTerms(oldSearchTerms,[{key:"orderBy",val:"lastUpdated"}]));
-    
   };
 
-  renderUsersRow(user){
+  renderUsersRow(user, taxPros){
+    var taxPro = <td></td>
+
+    if(user.taxpro_id) {
+      var selectedTaxPro = _.find(taxPros,(tp) => { return tp.id===user.taxpro_id;  });
+
+      if(selectedTaxPro) {
+        taxPro = <td>
+          <Link to={`/users/${selectedTaxPro.id}/personal-profile`}>
+            {selectedTaxPro.first_name} {selectedTaxPro.last_name}
+          </Link>
+        </td>
+      }
+    }
+
+
     return (
       <tr key={user.id}>
         <td>{user.id}</td>
@@ -109,10 +130,23 @@ export default class Users extends React.Component {
         <td>
           <a href="#" key={user.id} onClick={this.deleteUser.bind(this,user)}>delete</a>
         </td>
-        <td>todo</td>
+        {taxPro}
         <td>{user.updated_at}</td>
       </tr>
     );
+  }
+
+  handleTaxProSelected(e) {
+    e.preventDefault();
+    const selected=  e.target.value;
+    const oldSearchTerms = this.props.userSearchTerms;
+    const newSearchTerm = {key:"taxPro",val:selected};
+
+    if (_.parseInt(selected)<=0) {
+      newSearchTerm.removeTerm=true;
+    }
+
+    this.props.dispatch(updateSearchTerms(oldSearchTerms,[newSearchTerm]));
   }
 
   renderTableFilters(taxPros){
@@ -122,8 +156,8 @@ export default class Users extends React.Component {
       <div id="users-table-filters" class="text-right">
         <label class="col">Filter by:</label>
         <input class="col" type="text" placeholder="User Name"/>
-        <select class="col">
-          {renderTaxProSelection(taxPros)}
+        <select class="col" onChange={this.handleTaxProSelected.bind(this)}>
+          {renderTaxProSelectionOptions(taxPros)}
         </select>
         <select class="col">
           <option disabled defaultValue>Select Status</option>
@@ -132,7 +166,7 @@ export default class Users extends React.Component {
     );
   }
 
-  renderUsersTable(users,loginuser){
+  renderUsersTable(users,loginuser,taxPros){
     if(loginuser && loginuser.role==='Customer') {
       return ( <div>Sorry, you currently don't have permission to Access Users.  If you are a Tax Pro, please ask your Admin to change your role. </div> );
 
@@ -148,7 +182,7 @@ export default class Users extends React.Component {
         <button onClick={this.fetchUsers.bind(this)}>load users</button>
       );
     } else {
-      const usersRows = users.map(user =>this.renderUsersRow(user));
+      const usersRows = users.map(user =>this.renderUsersRow(user,taxPros));
       return (
         <table class="standard-table">
           <thead>
@@ -177,7 +211,7 @@ export default class Users extends React.Component {
         <section class="col-sm-12">
           <h1>Users</h1>
           {this.renderTableFilters(taxPros)}
-          {this.renderUsersTable(users, loginuser)}
+          {this.renderUsersTable(users, loginuser, taxPros)}
         </section>
       </main>
     )

@@ -54,6 +54,11 @@ export function updateSearchTerms(searchTerms,newSearchTerms) {
 
     newTermResults = _.concat(newTermResults,remainingOldTerms);
 
+    // remove terms that have removeTerm==true
+    newTermResults = _.filter(newTermResults,(newTerm) => {
+      return typeof newTerm.removeTerm === 'undefined' || !newTerm.removeTerm;
+    });
+
     dispatch({type:"SEARCH_TERMS_UPDATED",payload:newTermResults});
 
     getUsers(dispatch,newTermResults);
@@ -66,14 +71,12 @@ const getNewOrderAscendingSearchTerm = (searchTerms,newSearchTerms) => {
   let newOrderBy = _.find(newSearchTerms,(nst) => { return nst.key==="orderBy" });
 
   if(newOrderBy) {
-
     let oldOrderBy = _.find(searchTerms,(nst) => { return nst.key==="orderBy"});
 
     if(oldOrderBy && oldOrderBy.val===newOrderBy.val) {
       let oldOrderAscending = _.find(searchTerms,(nst) => { return nst.key==="orderAscending"});
 
       orderAscending.val = oldOrderAscending? oldOrderAscending.val : orderAscending.val;
-
       orderAscending.val = orderAscending.val==="true" ? "false": "true";
     }
     return [orderAscending];

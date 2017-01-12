@@ -5,7 +5,8 @@ import UserOptionsHeader from "../layout/UserOptionsHeader";
 
 import { createLoginuser, loginLoginuser, fetchLoginuser } from "../../actions/loginuserActions";
 import { fetchUser, fetchTaxPros, updateUser } from "../../actions/usersActions";
-import { renderTaxProSelection } from "../helpers/LayoutHelpers";
+import { renderTaxProSelectionOptions } from "../helpers/RenderTaxProsSelection";
+
 
 @connect((store) => {
     return {
@@ -19,16 +20,16 @@ import { renderTaxProSelection } from "../helpers/LayoutHelpers";
 })
 
 export default class AccountProfile extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.updateUser = this.handleUpdateUser.bind(this);
+        this.selectedTaxPro = { value:null};
     }
 
     componentWillMount() {
-        const props = this.props;
-        const { loginuser } = props;
+        const { loginuser } = this.props;
         if(!loginuser || !loginuser.id) {
-            props.router.push('/');
+            this.props.router.push('/');
         } else {
         }
 
@@ -43,7 +44,6 @@ export default class AccountProfile extends React.Component {
             // Update the form with Props if a previous user was loaded
             this.updateLocalProps(nextProps.user);
         } else {
-            // If no previous user was loaded, then default Values will handle loading the form
         }
     };
 
@@ -53,27 +53,38 @@ export default class AccountProfile extends React.Component {
         this.last_name.value = user.last_name;
         this.email.value = user.email;
         this.phone.value = user.phone;
+        this.selectedTaxPro.value = user.taxpro_id;
     };
 
     handleUpdateUser(e) {
-        let updatedValues = {
-            first_name: this.first_name.value,
-            last_name: this.last_name.value,
-            email: this.email.value,
-            phone: this.phone.value
-        };
+      e.preventDefault();
 
-        let { id } = e.target;
+      let updatedValues = {
+          first_name: this.first_name.value,
+          last_name: this.last_name.value,
+          email: this.email.value,
+          phone: this.phone.value,
+          taxpro_id: this.selectedTaxPro.value
+      };
 
-        e.preventDefault();
+      let { id } = e.target;
 
-        this.props.dispatch(updateUser(id, updatedValues));
+      this.props.dispatch(updateUser(id, updatedValues));
     };
 
+    handleTaxProSelected(e) {
+        var selected=  e.target.value;
+        this.selectedTaxPro.value = selected;
+    }
+
     renderAccountProfile(user, taxPros){
+        if(!user) {
+          return <div>Getting User...</div>
+        }
+
         //todo, change user role to a dropdown
         return (
-            <form class="standard-form">
+            <form class="standard-form" id={user.id} onSubmit={this.updateUser}>
                 <label for="user-first-name">First Name &amp; Initials</label>
                 <input id="user-first-name" ref={(input) => {this.first_name = input;}} type="text"  placeholder="First Name" defaultValue={user.first_name} />
                 <label for="user-last-name">Last Name</label>
@@ -88,10 +99,10 @@ export default class AccountProfile extends React.Component {
                 <label for="user-role">Account Role</label>
                 <input id="user-role" ref={(input) => {this.role = input;}} type="text"  placeholder="Role" defaultValue={user.role} />
                 <label for="user-tax-pro">Assigned TaxPro</label>
-                <select>
-                    {renderTaxProSelection(taxPros, user)}
+                <select defaultValue={user.taxpro_id} onChange={this.handleTaxProSelected.bind(this)}>
+                    {renderTaxProSelectionOptions(taxPros)}
                 </select>
-                <button id={user.id} onClick={this.updateUser}>update user</button>
+                <button id={user.id} >update user</button>
             </form>
         );
     }
@@ -102,7 +113,6 @@ export default class AccountProfile extends React.Component {
             <main class="grid-container row">
                 <Sidebar activeScreen="accountProfile" userId={this.props.params.userId}/>
                 <section class="col-sm-8 col-lg-9">
-                    <UserOptionsHeader taxReturns={taxReturns} activeTaxReturn={taxReturn}/>
                     <h1>Account Profile</h1>
                     {this.renderAccountProfile(user, taxPros)}
                 </section>

@@ -110,6 +110,7 @@ export default class PersonalProfile extends React.Component {
                 <input id="user-last-name" ref={(input) => {this.last_name = input;}} type="text"  placeholder="Last Name" defaultValue={taxReturn.last_name? taxReturn.last_name:''} />
                 <label for="user-address">Address</label>
                 <input id="user-address" ref={(input) => {this.address = input;}} type="text"  placeholder="Address" defaultValue={taxReturn.address ? taxReturn.address:''} />
+
                 <button id={taxReturn.id} onClick={this.updateUser}>update profile</button>
             </form>
         );
