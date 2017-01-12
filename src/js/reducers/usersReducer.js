@@ -81,7 +81,7 @@ export default function reducer(state={
       case "DELETE_USER_FULFILLED": {
         return {
           ...state,
-          users: state.users.filter(user => user.id !== action.payload),
+          users: state.users.filter(user => user.id.toString() !== action.payload.toString()),
         }
       }
     }

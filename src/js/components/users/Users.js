@@ -80,13 +80,25 @@ export default class Users extends React.Component {
     this.props.dispatch(fetchUsers())
   };
 
-  deleteUser(user) {
-    if(confirm("are you sure you want to delete '"+user.fullName+"'?")) {
-      this.props.dispatch(deleteUser(user.id));
+  deleteUser(userName,userId) {
+    if(confirm("are you sure you want to delete '"+userName+"'?")) {
+      this.props.dispatch(deleteUser(userId));
     } else {
       console.log('canceled delete');
     }
   };
+
+  handleRowClick(e) {
+    const action = e.target.dataset.userAction;
+    const userId = e.target.dataset.userId;
+    const userName = e.target.dataset.userName;
+
+    if(action  && action==="delete" && userId) {
+      this.deleteUser(userName, userId);
+
+    }
+    
+  }
 
   handleSortByLastName(e) {
     e.preventDefault();
@@ -128,13 +140,15 @@ export default class Users extends React.Component {
         <td>{user.status}</td>
         <td>{user.role}</td>
         <td>
-          <a href="#" key={user.id} onClick={this.deleteUser.bind(this,user)}>delete</a>
-        </td>
+          <a key={user.id} data-user-name={user.first_name + (user.last_name ? " " : "") + user.last_name} data-user-action={"delete"} data-user-id={user.id}>delete</a>        
+      </td>
         {taxPro}
         <td>{user.updated_at}</td>
       </tr>
     );
   }
+
+
 
   handleTaxProSelected(e) {
     e.preventDefault();
@@ -196,7 +210,7 @@ export default class Users extends React.Component {
             <th><a onClick={this.sortByLastUpdated}>Last User Update</a></th>
           </tr>
           </thead>
-          <tbody>
+          <tbody onClick={this.handleRowClick.bind(this)}>
           {usersRows}
           </tbody>
         </table>
