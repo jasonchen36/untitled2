@@ -29,7 +29,7 @@ export function fetchTaxReturn(taxReturnId) {
 
     base.get(searchUrl)
       .then((response) => {
-        dispatch({type: "FETCH_TAX_RETURN_FULFILLED", payload: err});
+        dispatch({type: "FETCH_TAX_RETURN_FULFILLED", payload: response});
       })
       .catch((err) => {
         dispatch({type: "FETCH_TAX_RETURN_REJECTED", payload: err});
@@ -37,4 +37,17 @@ export function fetchTaxReturn(taxReturnId) {
   };
 }
 
+export function fetchAllTaxReturnStatuses() {
+  return function(dispatch) {
+    let url = "/admin/tax_returns/statuses";
+
+    base.get(url)
+      .then((response) => {
+        dispatch({type: "FETCH_ALL_TAX_RETURN_STATUSES_FULFILLED",payload:response});
+      })
+      .catch((err) => {
+        dispatch({type: "FETCH_ALL_TAX_RETURN_STATUSES_REJECTED",payload:err});
+      });
+  };
+}
 

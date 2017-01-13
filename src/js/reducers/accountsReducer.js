@@ -4,6 +4,7 @@ export default function reducer(state={
     account:null,
     taxReturns: null,
     taxReturn: null,
+    taxReturnStatuses:null,
     searchChanged:false,
     user: null,
     fetching: false,
@@ -44,6 +45,20 @@ export default function reducer(state={
           account: account,
           taxReturns:taxReturns,
           taxReturn:taxReturn
+        };
+      }
+      case "FETCH_ALL_TAX_RETURN_STATUSES_FULFILLED": {
+        return {
+          ...state,
+          fetchin:false,
+          taxReturnStatuses: action.payload.data
+        };
+      }
+      case "FETCH_ALL_TAX_RETURN_STATUSES_REJECTED": {
+        return {
+          ...state,
+          fetchin:false,
+          error:action.payload
         };
       }
     }

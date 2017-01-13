@@ -11,7 +11,7 @@ export function fetchUsers(searchTerms) {
 }
 
 export function fetchTaxPros() {
- let searchUrl = "/users?role=TaxPro";
+  let searchUrl = "/users?role=TaxPro";
   
   return function(dispatch) {
   base.get(searchUrl)
@@ -25,7 +25,7 @@ export function fetchTaxPros() {
   };
 }
 
-const  getUsers = (dispatch, searchTerms) => {
+const getUsers = (dispatch, searchTerms) => {
   let searchUrl = "/users";
   
   if(searchTerms) {

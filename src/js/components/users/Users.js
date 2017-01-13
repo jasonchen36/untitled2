@@ -5,8 +5,10 @@ import { Link } from "react-router";
 
 import { fetchUsers,fetchTaxPros, deleteUser, updateSearchTerms } from "../../actions/usersActions";
 import _ from "lodash";
+import { fetchAllTaxReturnStatuses } from "../../actions/accountsActions";
 
 import { renderTaxProSelectionOptions } from "../helpers/RenderTaxProsSelection";
+import { renderTaxReturnStatusSelectionOptions } from "../helpers/RenderTaxReturnStatusSelection";
 
 @connect((store) => {
   return {
@@ -14,7 +16,8 @@ import { renderTaxProSelectionOptions } from "../helpers/RenderTaxProsSelection"
     loginuserFetched: store.loginuser.fetched,
     users: store.users.users,
     userSearchTerms: store.users.userSearchTerms,
-    taxPros: store.users.taxPros
+    taxPros: store.users.taxPros,
+    taxReturnStatuses: store.accounts.taxReturnStatuses
   };
 })
 
@@ -30,6 +33,7 @@ export default class Users extends React.Component {
   componentWillMount() {
     this.props.dispatch(fetchUsers());
     this.props.dispatch(fetchTaxPros());
+    this.props.dispatch(fetchAllTaxReturnStatuses());
     
 
     const newProps = this.props;
@@ -95,9 +99,7 @@ export default class Users extends React.Component {
 
     if(action  && action==="delete" && userId) {
       this.deleteUser(userName, userId);
-
     }
-    
   }
 
   handleSortByLastName(e) {
@@ -115,7 +117,7 @@ export default class Users extends React.Component {
     this.props.dispatch(updateSearchTerms(oldSearchTerms,[{key:"orderBy",val:"lastUpdated"}]));
   };
 
-  renderUsersRow(user, taxPros){
+  renderUsersRow(user, taxPros) {
     var taxPro = <td></td>
 
     if(user.taxpro_id) {
@@ -130,14 +132,15 @@ export default class Users extends React.Component {
       }
     }
 
-
     return (
       <tr key={user.id}>
         <td>{user.id}</td>
         <td>
           <Link to={`/users/${user.id}/personal-profile`}>{user.first_name} {user.last_name}</Link>
         </td>
-        <td>{user.status}</td>
+        <td>
+          <ul>{this.renderStatuses(user.statuses)}</ul>
+        </td>
         <td>{user.role}</td>
         <td>
           <a key={user.id} data-user-name={user.first_name + (user.last_name ? " " : "") + user.last_name} data-user-action={"delete"} data-user-id={user.id}>delete</a>        
@@ -148,6 +151,27 @@ export default class Users extends React.Component {
     );
   }
 
+
+  /// render a list of statuses for a user (the tax return's name, and then the status of that tax return)
+  /// userStatuses = [{tax_return_id:1, first_name:'Bob', last_name:'Carl', display_text:'New User', status_id:1}]
+  renderStatuses(userStatuses) {
+    if(!userStatuses) {
+      return '';
+    }
+
+    const userStatusesRendered = _.map(userStatuses, (usr) => {
+      const {tax_return_id, first_name, last_name, name, status_id} = usr;
+
+      return  <li key={tax_return_id}>
+        <ul>
+          <li>{first_name}{last_name? ' ':''}{last_name}</li>
+          <li key={status_id}>- {name}</li>
+        </ul>
+      </li>
+    });
+
+    return userStatusesRendered;
+  }
 
 
   handleTaxProSelected(e) {
@@ -163,18 +187,43 @@ export default class Users extends React.Component {
     this.props.dispatch(updateSearchTerms(oldSearchTerms,[newSearchTerm]));
   }
 
-  renderTableFilters(taxPros){
+   handleStatusSelected(e) {
+    e.preventDefault();
+    const selected=  e.target.value;
+    const oldSearchTerms = this.props.userSearchTerms;
+    const newSearchTerm = {key:"status",val:selected};
+
+    if (_.parseInt(selected)<0) {
+      newSearchTerm.removeTerm=true;
+    }
+
+    this.props.dispatch(updateSearchTerms(oldSearchTerms,[newSearchTerm]));
+
+
+   }
+
+   /// filter name on press enter
+   handleNameFilterKeyDown(e) {
+    if(e.key==='Enter') {
+      const oldSearchTerms = this.props.userSearchTerms;
+      const newSearchTerm = {key:"q", val:e.target.value};
+
+      this.props.dispatch(updateSearchTerms(oldSearchTerms,[newSearchTerm]));
+    }
+   }
+
+  renderTableFilters(taxPros,statuses){
     //todo, populate taxpros and status from db
     //todo, add event handlers to filters
     return (
       <div id="users-table-filters" class="text-right">
         <label class="col">Filter by:</label>
-        <input class="col" type="text" placeholder="User Name"/>
+        <input class="col" type="text" placeholder="User Name" onKeyDown={this.handleNameFilterKeyDown.bind(this)} />
         <select class="col" onChange={this.handleTaxProSelected.bind(this)}>
           {renderTaxProSelectionOptions(taxPros)}
         </select>
-        <select class="col">
-          <option disabled defaultValue>Select Status</option>
+        <select class="col" onChange={this.handleStatusSelected.bind(this)}>
+          {renderTaxReturnStatusSelectionOptions(statuses)}        
         </select>
       </div>
     );
@@ -193,7 +242,7 @@ export default class Users extends React.Component {
       return ( <div></div> );
     } else if (!users.length) {
       return (
-        <button onClick={this.fetchUsers.bind(this)}>load users</button>
+        <button onClick={this.fetchUsers.bind(this)}>no users found</button>
       );
     } else {
       const usersRows = users.map(user =>this.renderUsersRow(user,taxPros));
@@ -219,12 +268,12 @@ export default class Users extends React.Component {
   }
 
   render() {
-    const { users, loginuser, taxPros } = this.props;
+    const { users, loginuser, taxPros, taxReturnStatuses } = this.props;
     return (
       <main class="grid-container row">
         <section class="col-sm-12">
           <h1>Users</h1>
-          {this.renderTableFilters(taxPros)}
+          {this.renderTableFilters(taxPros,taxReturnStatuses)}
           {this.renderUsersTable(users, loginuser, taxPros)}
         </section>
       </main>

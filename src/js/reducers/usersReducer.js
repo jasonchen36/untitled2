@@ -3,7 +3,7 @@
 export default function reducer(state={
     users: null,
     taxPros: null,
-    userSearchTerms:[],
+    userSearchTerms:[{key:"orderBy",val:"lastUpdated"}],
     searchChanged:false,
     user: null,
     fetching: false,
