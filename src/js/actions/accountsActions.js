@@ -25,7 +25,12 @@ const  getAccount = (dispatch, accountId) => {
 
 export function fetchTaxReturn(taxReturnId) {
   return function(dispatch) {
-    let searchUrl = "/tax_return/"+taxReturnId;
+    getTaxReturn(dispatch, taxReturnId);
+  };
+}
+
+const getTaxReturn = (dispatch, taxReturnId) => {
+   let searchUrl = "/tax_return/"+taxReturnId;
 
     base.get(searchUrl)
       .then((response) => {
@@ -34,8 +39,7 @@ export function fetchTaxReturn(taxReturnId) {
       .catch((err) => {
         dispatch({type: "FETCH_TAX_RETURN_REJECTED", payload: err});
       });
-  };
-}
+};
 
 export function fetchAllTaxReturnStatuses() {
   return function(dispatch) {
@@ -49,5 +53,20 @@ export function fetchAllTaxReturnStatuses() {
         dispatch({type: "FETCH_ALL_TAX_RETURN_STATUSES_REJECTED",payload:err});
       });
   };
+}
+
+export function updateTaxProfile(id, updateValues) {
+  return function(dispatch) {
+    const url = "/tax_return/"+id;
+
+    base.put(url,updateValues)
+      .then((response) => {
+        dispatch({type: "UPDATE_TAX_RETURN_FULFILLED", payload: response});
+
+        // fetch updated tax return
+        return getTaxReturn(dispatch, id);
+      });
+  };
+
 }
 

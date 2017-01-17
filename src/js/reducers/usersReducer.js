@@ -61,7 +61,7 @@ export default function reducer(state={
           user: action.payload
         };
       }
-          case "ADD_USER": {
+      case "ADD_USER": {
         return {
           ...state,
           users: [...state.users, action.payload],
