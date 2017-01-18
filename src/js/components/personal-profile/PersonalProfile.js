@@ -76,7 +76,6 @@ export default class PersonalProfile extends React.Component {
     this.canadianCitizen.value = taxReturn.canadian_citizen;
 
     this.selectedFilerType.value = taxReturn.filer_type;
-    this.address.value = taxReturn.address;
   };
 
   fetchUser(userId) {
