@@ -3,7 +3,7 @@
 export default function reducer(state={
     users: null,
     taxPros: null,
-    userSearchTerms:[],
+    userSearchTerms:[{key:"orderBy",val:"lastUpdated"}],
     searchChanged:false,
     user: null,
     fetching: false,
@@ -61,7 +61,7 @@ export default function reducer(state={
           user: action.payload
         };
       }
-          case "ADD_USER": {
+      case "ADD_USER": {
         return {
           ...state,
           users: [...state.users, action.payload],
@@ -81,7 +81,7 @@ export default function reducer(state={
       case "DELETE_USER_FULFILLED": {
         return {
           ...state,
-          users: state.users.filter(user => user.id !== action.payload),
+          users: state.users.filter(user => user.id.toString() !== action.payload.toString()),
         }
       }
     }

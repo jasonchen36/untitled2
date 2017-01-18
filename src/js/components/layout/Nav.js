@@ -27,6 +27,9 @@ export default class Nav extends React.Component {
             return (
               <ul class="standard-menu">
                 <li>
+                    <Link to="/users">Accounts</Link>
+                </li>
+                <li>
                   {user.first_name} ({user.role})
                   <ul class="sub-menu">
                       <li>

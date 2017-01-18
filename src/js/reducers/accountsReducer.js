@@ -1,13 +1,17 @@
 // The reducer for state involving handling taxreturns (viewing all users in the app, or details for an individual user)
 
+import _ from "lodash";
+
 export default function reducer(state={
     account:null,
     taxReturns: null,
     taxReturn: null,
+    taxReturnStatuses:null,
     searchChanged:false,
     user: null,
     fetching: false,
     fetched: false,
+    updating: false,
     error: null,
   }, action) {
     switch (action.type) {
@@ -22,11 +26,21 @@ export default function reducer(state={
         return {...state, fetching: false, error: action.payload};
       }
       case "FETCH_TAX_RETURN_FULFILLED": {
+        const taxReturn = action.payload.data;
+        const newTaxReturns = _.map(state.taxReturns,(tr) => { 
+          if(tr.id === taxReturn.id) {
+            return taxReturn;
+          } else {
+            return tr;
+          }
+        });
+
         return {
           ...state,
           fetching: false,
           fetched: true,
-          taxReturn: action.payload.data
+          taxReturn: taxReturn,
+          taxReturns: newTaxReturns
         };
       }
       case "FETCH_ACCOUNT_REJECTED": {
@@ -44,6 +58,26 @@ export default function reducer(state={
           account: account,
           taxReturns:taxReturns,
           taxReturn:taxReturn
+        };
+      }
+      case "FETCH_ALL_TAX_RETURN_STATUSES_FULFILLED": {
+        return {
+          ...state,
+          fetching:false,
+          taxReturnStatuses: action.payload.data
+        };
+      }
+      case "FETCH_ALL_TAX_RETURN_STATUSES_REJECTED": {
+        return {
+          ...state,
+          fetching:false,
+          error:action.payload
+        };
+      }
+      case "UPDATE_TAX_RETURN_FULFILLED": {
+        return {
+          ...state,
+          updating:false
         };
       }
     }
