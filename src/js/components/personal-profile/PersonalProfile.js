@@ -4,7 +4,7 @@ import Sidebar from "../layout/Sidebar";
 import UserOptionsHeader from "../layout/UserOptionsHeader";
 
 import { fetchUser } from "../../actions/usersActions";
-import { fetchAccount, fetchTaxReturn, updateTaxProfile } from "../../actions/accountsActions";
+import { fetchAccount, fetchTaxReturn, updateTaxProfile, clearAccount } from "../../actions/accountsActions";
 
 import { renderSelectionOptions } from "../helpers/LayoutHelpers";
 
@@ -46,25 +46,41 @@ export default class PersonalProfile extends React.Component {
       this.props.dispatch(fetchTaxReturn(taxReturnId));
     }
 
-    if(this.props.user && this.props.user.accountId) {
+    if(this.props.user && this.props.user.account_id) {
         this.props.dispatch(fetchAccount(this.props.user.account_id));
+    } else {
+      // no accountId, clear account
+      this.props.dispatch(clearAccount());
     }
   };
 
   componentWillReceiveProps(nextProps) {
-    if(nextProps.user && nextProps.user.account_id && (!nextProps.account || nextProps.account.accountId!=nextProps.user.account_id)) {
-        this.props.dispatch(fetchAccount(nextProps.user.account_id));
-    }
+    if(nextProps.user && !nextProps.user.account_id) {
+      // no accountId, clear account
+      if(nextProps.account
+        || nextProps.taxReturns
+        || nextProps.taxReturn) {
+        this.props.dispatch(clearAccount());
+      }
 
-    if(nextProps.taxReturns && !nextProps.taxReturn && nextProps.taxReturns.length>0) {
-        this.props.dispatch(fetchTaxReturn(nextProps.taxReturns[0].id));
-    }
-
-    if (nextProps.taxReturn && this.props.taxReturn) {
-        // Update the form with Props if a previous user was loaded
-        this.updateLocalProps(nextProps.taxReturn);
+      return;
     } else {
-        // If no previous user was loaded, then default Values will handle loading the form
+      if(nextProps.user && nextProps.user.account_id 
+        && (!nextProps.account 
+          || nextProps.account.accountId!=nextProps.user.account_id)) {
+        this.props.dispatch(fetchAccount(nextProps.user.account_id));
+      }
+
+      if(nextProps.taxReturns && !nextProps.taxReturn && nextProps.taxReturns.length>0) {
+        this.props.dispatch(fetchTaxReturn(nextProps.taxReturns[0].id));
+      }
+
+      if (nextProps.taxReturn && this.props.taxReturn) {
+          // Update the form with Props if a previous user was loaded
+        this.updateLocalProps(nextProps.taxReturn);
+      } else {
+          // If no previous user was loaded, then default Values will handle loading the form
+      }
     }
   };
 

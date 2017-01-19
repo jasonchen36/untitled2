@@ -46,6 +46,9 @@ export default function reducer(state={
       case "FETCH_ACCOUNT_REJECTED": {
         return {...state, fetching: false, error: action.payload};
       }
+      case "CLEAR_ACCOUNT": {
+        return {...state, account:null, taxReturns:null, taxReturn:null};
+      }
       case "FETCH_ACCOUNT_FULFILLED": {
           //todo, account variable is not getting saved to state by taxreturns and taxreturn are
         const account = action.payload.data;

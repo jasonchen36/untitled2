@@ -23,6 +23,12 @@ const  getAccount = (dispatch, accountId) => {
     });
 }
 
+export function clearAccount() {
+  return function(dispatch) {
+    dispatch({type:"CLEAR_ACCOUNT",payload:null});
+  };
+}
+
 export function fetchTaxReturn(taxReturnId) {
   return function(dispatch) {
     getTaxReturn(dispatch, taxReturnId);
