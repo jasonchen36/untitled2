@@ -1,5 +1,4 @@
 // The reducer for state involving handling taxreturns (viewing all users in the app, or details for an individual user)
-
 import _ from "lodash";
 
 export default function reducer(state={
@@ -12,6 +11,7 @@ export default function reducer(state={
     fetching: false,
     fetched: false,
     updating: false,
+    taxReturnDetailsFetched:false,
     error: null,
   }, action) {
     switch (action.type) {
@@ -27,7 +27,7 @@ export default function reducer(state={
       }
       case "FETCH_TAX_RETURN_FULFILLED": {
         const taxReturn = action.payload.data;
-        const newTaxReturns = _.map(state.taxReturns,(tr) => { 
+        const newTaxReturns = _.map(state.taxReturns, (tr) => { 
           if(tr.id === taxReturn.id) {
             return taxReturn;
           } else {
@@ -40,27 +40,35 @@ export default function reducer(state={
           fetching: false,
           fetched: true,
           taxReturn: taxReturn,
-          taxReturns: newTaxReturns
+          taxReturns: newTaxReturns,
+          taxReturnDetailsFetched: true
         };
       }
       case "FETCH_ACCOUNT_REJECTED": {
         return {...state, fetching: false, error: action.payload};
       }
       case "CLEAR_ACCOUNT": {
-        return {...state, account:null, taxReturns:null, taxReturn:null};
+        return {...state, account:null, taxReturns:null, taxReturn:null,address:null};
       }
       case "FETCH_ACCOUNT_FULFILLED": {
           //todo, account variable is not getting saved to state by taxreturns and taxreturn are
         const account = action.payload.data;
-        const taxReturns = account.taxReturns;
-        const taxReturn = taxReturns && taxReturns.length>0 ? taxReturns[0]:null;
+        let taxReturns = account.taxReturns;
+        let taxReturn = null;
+        let taxReturnDetailsFetched = state.taxReturnDetailsFetched;
+        if(taxReturns && taxReturns.length>0) {
+          taxReturn = state.taxReturn ?  _.find(taxReturns,(tr) => { return tr.id===state.taxReturn.id;}) : taxReturns[0];
+          taxReturnDetailsFetched=false;
+        }
+
         return {
           ...state,
           fetching: false,
           fetched: true,
           account: account,
           taxReturns:taxReturns,
-          taxReturn:taxReturn
+          taxReturn:taxReturn,
+          taxReturnDetailsFetched: false
         };
       }
       case "FETCH_ALL_TAX_RETURN_STATUSES_FULFILLED": {
