@@ -1,20 +1,21 @@
-import React from "react"
-import { connect } from "react-redux"
+import React from "react";
+import { connect } from "react-redux";
 
-import { Link  } from "react-router"
-
+import { Link  } from "react-router";
+import moment from "moment";
 import Sidebar from "../layout/Sidebar";
 import UserOptionsHeader from "../layout/UserOptionsHeader";
 
 import { fetchUser } from "../../actions/usersActions";
-import { fetchAccount, fetchTaxReturn } from "../../actions/accountsActions";
+import { fetchAccount, fetchTaxReturn, fetchChecklist } from "../../actions/accountsActions";
 
 @connect((store) => {
     return {
         loginuser: store.loginuser.loginuser,
         user: store.users.user,
         taxReturns:store.accounts.taxReturns,
-        taxReturn:store.accounts.taxReturn
+        taxReturn:store.accounts.taxReturn,
+        quoteChecklist: store.accounts.quoteChecklist
     };
 })
 
@@ -29,6 +30,18 @@ export default class Uploads extends React.Component {
     };
 
     componentWillReceiveProps(nextProps) {
+        let quoteId = nextProps.account && nextProps.account.quotes && nextProps.account.quotes.length>0 ? nextProps.account.quotes[0].id : -1;
+
+        if(!nextProps.quoteChecklist)
+        {
+          console.log('nextcheck',nextProps.quoteChecklist);
+           this.props.dispatch(fetchChecklist(21));
+        } else {
+
+          console.log('foundcheck',nextProps.quoteChecklist);
+        }
+
+
         //todo, stuck in infinite loop getting account
         // if(nextProps.user && nextProps.user.account_id && (!nextProps.account || nextProps.account.accountId!=nextProps.user.account_id)) {
         //     this.props.dispatch(fetchAccount(nextProps.user.account_id));
@@ -65,14 +78,14 @@ export default class Uploads extends React.Component {
         ]
     }
 
-    renderUploadEntry(index, data){
+    renderUploadEntry( data,key){
         //todo, add handler to delete icon
         return (
-            <div key={data.id} class="row uploads-row">
+            <div key={key} class="row uploads-row">
                 <div class="col-sm-10">
                     <p>
-                        {index}. <span class="fa-anchor-container"><i class="fa fa-file-o"></i></span>
-                        <a href={data.url}>{data.name}</a> (Uploaded {data.date}) - ({data.size})
+                        {key}. <span class="fa-anchor-container"><i class="fa fa-file-o"></i></span>
+                        <a href={data.url}>{data.name}</a> (Uploaded {moment(data.createdAt).format('YYYY-MM-DD HH:mm')})
                     </p>
                 </div>
                 <div class="col-sm-2 position-relative">
@@ -84,16 +97,37 @@ export default class Uploads extends React.Component {
         );
     }
 
-    renderUploads(data){
-        if (data){
-            //todo, pass in correct index
-            return data.map(row =>this.renderUploadEntry(1, row));
-        }
-    }
+
+    renderUploads(uploads){
+
+            return uploads.map((upload,key) => {
+              return this.renderUploadEntry(upload,key)
+            });
+         }
 
     render() {
         //todo, pass in uploads to render
-        const { taxReturns, taxReturn} = this.props;
+        const { taxReturns, taxReturn,quoteChecklist} = this.props;
+
+        console.log('quote checklist',quoteChecklist);
+        let checkListItems = quoteChecklist && quoteChecklist.checklistitems ? quoteChecklist.checklistitems : [];
+
+        let checklistDocuments = _.reduce(checkListItems,(result,value,key) => {
+          let documents = _.map(value.documents,(doc) => {
+            return _.merge({checklistName:value.name},doc);
+          });
+
+          result = _.concat(result,documents);
+          return result;
+        },{});
+
+        let additionalDocuments = _.map(quoteChecklist && quoteChecklist.additionalDocuments ? quoteChecklist.additionalDocuments : [],(ad) => {
+          return _.merge({checklistName:'Additional Documents',checkListItemId:-1},ad);
+        });
+
+
+        checklistDocuments = _.concat(checklistDocuments, additionalDocuments);
+
         return (
             <main class="grid-container row">
                 <Sidebar activeScreen="uploads" userId={this.props.params.userId}/>
@@ -101,7 +135,7 @@ export default class Uploads extends React.Component {
                     <UserOptionsHeader taxReturns={taxReturns} activeTaxReturn={taxReturn}/>
                     <h1>TAXitem Uploads</h1>
                     <div class="grid-container">
-                        {this.renderUploads(this.getDummyData())}
+                        {this.renderUploads(checklistDocuments)}
                     </div>
                 </section>
             </main>

@@ -78,6 +78,20 @@ export function updateTaxProfile(id, updateValues, addressId, updateAddressValue
   };
 }
 
+export function fetchChecklist(id) {
+  return function(dispatch) {
+    let url="/quote/"+id+"/checklist";
+
+    base.get(url)
+      .then((response) => {
+        dispatch({type: "FETCH_CHECKLIST_FULFILLED",payload:response});
+      })
+      .catch((err) => {
+        dispatch({type: "FETCH_CHECKLIST_REJECTED",payload:err});
+      });
+  };
+}
+
 const callUpdateTaxProfile = (dispatch,id,updateValues) => {
   const url = "/tax_return/"+id;
 

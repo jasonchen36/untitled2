@@ -6,6 +6,7 @@ export default function reducer(state={
     taxReturns: null,
     taxReturn: null,
     taxReturnStatuses:null,
+    quoteChecklist: null,
     searchChanged:false,
     user: null,
     fetching: false,
@@ -48,7 +49,14 @@ export default function reducer(state={
         return {...state, fetching: false, error: action.payload};
       }
       case "CLEAR_ACCOUNT": {
-        return {...state, account:null, taxReturns:null, taxReturn:null,address:null};
+        return {...state, 
+          account:null, 
+          taxReturns:null, 
+          taxReturn:null,
+          address:null,
+          taxReturnDetailsFetched:false, 
+          quoteChecklist:null
+        };
       }
       case "FETCH_ACCOUNT_FULFILLED": {
           //todo, account variable is not getting saved to state by taxreturns and taxreturn are
@@ -91,6 +99,21 @@ export default function reducer(state={
           updating:false
         };
       }
+      case "FETCH_CHECKLIST_FULFILLED": {
+        return {
+          ...state,
+          fetching:false,
+          quoteChecklist:action.payload.data
+        };
+      }
+      case "FETCH_CHECKLIST_REJECTED": {
+        return {
+          ...state,
+          fetching:false,
+          error: action.payload
+        };
+      }
+
     }
 
     return state;
