@@ -4,7 +4,7 @@ import Sidebar from "../layout/Sidebar";
 import UserOptionsHeader from "../layout/UserOptionsHeader";
 
 import { fetchUser } from "../../actions/usersActions";
-import { fetchAccount, fetchTaxReturn, updateTaxProfile } from "../../actions/accountsActions";
+import { fetchAccount, fetchTaxReturn, updateTaxProfile, clearAccount } from "../../actions/accountsActions";
 
 import { renderSelectionOptions } from "../helpers/LayoutHelpers";
 
@@ -15,7 +15,8 @@ import { renderSelectionOptions } from "../helpers/LayoutHelpers";
     user: store.users.user,
     account:store.accounts.account,
     taxReturns:store.accounts.taxReturns,
-    taxReturn:store.accounts.taxReturn
+    taxReturn:store.accounts.taxReturn,
+    taxReturnDetailsFetched: store.accounts.taxReturnDetailsFetched
   };
 })
 
@@ -46,25 +47,42 @@ export default class PersonalProfile extends React.Component {
       this.props.dispatch(fetchTaxReturn(taxReturnId));
     }
 
-    if(this.props.user && this.props.user.accountId) {
+    if(this.props.user && this.props.user.account_id) {
         this.props.dispatch(fetchAccount(this.props.user.account_id));
+    } else {
+      // no accountId, clear account
+      this.props.dispatch(clearAccount());
     }
   };
 
   componentWillReceiveProps(nextProps) {
-    if(nextProps.user && nextProps.user.account_id && (!nextProps.account || nextProps.account.accountId!=nextProps.user.account_id)) {
-        this.props.dispatch(fetchAccount(nextProps.user.account_id));
-    }
+    if(nextProps.user && !nextProps.user.account_id) {
+      // no accountId, clear account
+      if(nextProps.account
+        || nextProps.taxReturns
+        || nextProps.taxReturn) {
+        this.props.dispatch(clearAccount());
+      }
 
-    if(nextProps.taxReturns && !nextProps.taxReturn && nextProps.taxReturns.length>0) {
-        this.props.dispatch(fetchTaxReturn(nextProps.taxReturns[0].id));
-    }
-
-    if (nextProps.taxReturn && this.props.taxReturn) {
-        // Update the form with Props if a previous user was loaded
-        this.updateLocalProps(nextProps.taxReturn);
+      return;
     } else {
-        // If no previous user was loaded, then default Values will handle loading the form
+      if(nextProps.user && nextProps.user.account_id 
+        && (!nextProps.account 
+          || nextProps.account.accountId!=nextProps.user.account_id)) {
+        this.props.dispatch(fetchAccount(nextProps.user.account_id));
+      }
+
+      if(nextProps.taxReturns && nextProps.taxReturns.length>0 && 
+        (!nextProps.taxReturn || !nextProps.taxReturnDetailsFetched )) {
+        this.props.dispatch(fetchTaxReturn(nextProps.taxReturns[0].id));
+      }
+
+      if (nextProps.taxReturn && this.props.taxReturn) {
+          // Update the form with Props if a previous user was loaded
+        this.updateLocalProps(nextProps.taxReturn);
+      } else {
+          // If no previous user was loaded, then default Values will handle loading the form
+      }
     }
   };
 
@@ -74,9 +92,15 @@ export default class PersonalProfile extends React.Component {
     this.lastName.value = taxReturn.last_name;
     this.provinceOfResidence.value = taxReturn.province_of_residence;
     this.canadianCitizen.value = taxReturn.canadian_citizen;
-
     this.selectedFilerType.value = taxReturn.filer_type;
-    this.address.value = taxReturn.address;
+
+    const address = taxReturn.address ? taxReturn.address : {};
+    
+    this.addressLine1.value = address.address_line1 ? address.address_line1: '';
+    this.city.value = address.city ? address.city : '';
+    this.postalCode.value = address.postal_code ? address.postal_code : '';
+    this.province.value = address.providence ? address.providence : '';
+    this.country.value = address.country ? address.country : '';
   };
 
   fetchUser(userId) {
@@ -85,8 +109,8 @@ export default class PersonalProfile extends React.Component {
 
   handleUpdateTaxProfile(e) {
     e.preventDefault();
- 
-    let { id } = e.target;
+
+    let { id, addressId } = e.target.dataset;
     let updateTaxProfileParams = {
       firstName: this.firstName.value,
       lastName: this.lastName.value,
@@ -94,12 +118,20 @@ export default class PersonalProfile extends React.Component {
       filerType: this.selectedFilerType.value
     };
 
+    let updateAddressParams = {
+      addressLine1: this.addressLine1.value,
+      city: this.city.value,
+      postalCode: this.postalCode.value,
+      province: this.province.value,
+      country: this.country.value
+    };
 
-    this.props.dispatch(updateTaxProfile(id,updateTaxProfileParams));
+
+    this.props.dispatch(updateTaxProfile(id,updateTaxProfileParams, addressId, updateAddressParams));
   };
 
   handleFilerTypeSelected(e) {
-    var selected=  e.target.value;
+    var selected =  e.target.value;
     this.selectedFilerType.value = selected;
     this.setState({value:this.selectedFilerType.value});
   }
@@ -110,6 +142,28 @@ export default class PersonalProfile extends React.Component {
     return <select value={this.selectedFilerType.value} onChange={this.handleFilerTypeSelected.bind(this)}>
       {renderSelectionOptions(listOfFilerTypes, "Filer Type")}
     </select>
+  }
+
+  renderAddress(address) {
+    address = address? address : {};
+    
+    return  <div>
+        <p>
+          ____________
+          <br />
+          Address
+        </p>
+        <label for="user-address-line1">Address Line 1</label>
+        <input id="user-address-line1" ref={(input) => {this.addressLine1 = input;}} type="text"  placeholder="Address Line 1" />
+        <label for="user-address-city">City</label>
+        <input id="user-address-city" ref={(input) => {this.city = input;}} type="text"  placeholder="City"  />
+        <label for="user-address-province">Province</label>
+        <input id="user-address-province" maxLength="2" ref={(input) => {this.province = input;}} type="text"  placeholder="Province" />
+        <label for="user-address-postal-code">Postal Code</label>
+        <input id="user-address-postal-code" ref={(input) => {this.postalCode = input;}} type="text"  placeholder="City" />
+        <label for="user-address-country">Country</label>
+        <input id="user-address-country" ref={(input) => {this.country = input;}} type="text"  placeholder="Country" defaultValue={address.country ? address.country:''} />
+      </div>
   }
 
   renderPersonalProfile(taxReturn){
@@ -126,8 +180,8 @@ export default class PersonalProfile extends React.Component {
         <input id="user-canadian-citizen" ref={(input) => {this.canadianCitizen = input;}} type="checkbox"   defaultValue={taxReturn.canadian_citizen ? taxReturn.canadian_citizen:false} />
         <label for="user-filer-type">Filer Type</label>
         {this.renderFilerType(taxReturn.filer_type)}
-
-        <button id={taxReturn.id} data-id={taxReturn.id} onClick={this.updateTaxReturn}>update profile</button>
+        {this.renderAddress(taxReturn.address)}
+        <button id={taxReturn.id} data-id={taxReturn.id} data-address-id={taxReturn.address ? taxReturn.address.id:-1} onClick={this.updateTaxReturn}>update profile</button>
       </form>
     );
   }
@@ -139,7 +193,6 @@ export default class PersonalProfile extends React.Component {
   }
 
   render() {
-      // TODO: move to a helper
       const { user, taxReturns, taxReturn } = this.props;
       let userOutput='';
 

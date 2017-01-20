@@ -2,6 +2,9 @@ var debug = process.env.NODE_ENV !== 'production';
 var webpack = require('webpack');
 var path = require('path');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var jsonLoader = require('json-loader');
+
+
 
 module.exports = {
     context: path.join(__dirname, 'src'),
@@ -41,6 +44,10 @@ module.exports = {
                     path.join(__dirname, 'src'),
                     path.join(__dirname, 'node_modules')
                 ]
+            },
+            {
+             include: /\.json$/,
+             loaders: [jsonLoader]
             }
         ]
     },
