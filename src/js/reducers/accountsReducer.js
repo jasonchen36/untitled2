@@ -12,6 +12,7 @@ export default function reducer(state={
     fetched: false,
     updating: false,
     taxReturnDetailsFetched:false,
+    quoteChecklistPdf: null,
     error: null,
   }, action) {
     switch (action.type) {
@@ -89,6 +90,20 @@ export default function reducer(state={
         return {
           ...state,
           updating:false
+        };
+      }
+      case "FETCH_CHECKLIST_PDF_FULFILLED": {
+        return {
+          ...state,
+          fetching:false,
+          quoteChecklistPdf: action.payload.data
+        };
+      }
+      case "FETCH_CHECKLIST_PDF_REJECTED": {
+        return {
+          ...state,
+          fetching:false,
+          error:action.payload
         };
       }
     }

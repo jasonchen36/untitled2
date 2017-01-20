@@ -21,16 +21,22 @@ const getHeaders = () => {
   return headers;
 };
 
-const getConfig = () => {
-  return {
+const getConfig = (overrideParams) => {
+  overrideParams = overrideParams ? overrideParams : {};
+
+  return _.merge({
     headers:getHeaders()
-  };
+  }, overrideParams);
 };
 
 /// Functions for getting info from API 
 
 export function get(endpoint) {
   return axios.get(endpoint,getConfig());
+}
+
+export function getBlob(endpoint) {
+  return axios.get(endpoint,getConfig({responseType:'blob'}));
 }
 
 export function post(endpoint,data) {
