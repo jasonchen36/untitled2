@@ -5,6 +5,8 @@ import { Link } from "react-router";
 
 import { fetchUsers,fetchTaxPros, deleteUser, updateSearchTerms } from "../../actions/usersActions";
 import _ from "lodash";
+import moment from "moment";
+
 import { fetchAllTaxReturnStatuses } from "../../actions/accountsActions";
 
 import { renderTaxProSelectionOptions } from "../helpers/RenderTaxProsSelection";
@@ -118,19 +120,7 @@ export default class Users extends React.Component {
   };
 
   renderUsersRow(user, taxPros) {
-    var taxPro = <td></td>
 
-    if(user.taxpro_id) {
-      var selectedTaxPro = _.find(taxPros,(tp) => { return tp.id===user.taxpro_id;  });
-
-      if(selectedTaxPro) {
-        taxPro = <td>
-          <Link to={`/users/${selectedTaxPro.id}/personal-profile`}>
-            {selectedTaxPro.first_name} {selectedTaxPro.last_name}
-          </Link>
-        </td>
-      }
-    }
 
     return (
       <tr key={user.id}>
@@ -145,10 +135,53 @@ export default class Users extends React.Component {
         <td>
           <a key={user.id} data-user-name={user.first_name + (user.last_name ? " " : "") + user.last_name} data-user-action={"delete"} data-user-id={user.id}>delete</a>        
       </td>
-        {taxPro}
-        <td>{user.updated_at}</td>
+        {this.renderTaxPro(user,taxPros)}
+        {this.renderDateTd(user) }
       </tr>
     );
+  }
+
+  renderTaxPro(user,taxPros) {
+    let taxPro = <td></td>
+
+    if(user.taxpro_id) {
+      const selectedTaxPro = _.find(taxPros,(tp) => { return tp.id===user.taxpro_id;  });
+
+      if(selectedTaxPro) {
+        taxPro = <td>
+          <Link to={`/users/${selectedTaxPro.id}/personal-profile`}>
+            {selectedTaxPro.first_name} {selectedTaxPro.last_name}
+          </Link>
+        </td>
+      }
+    }
+
+    return taxPro;
+  }
+
+  renderDateTd(user) {
+    const {last_user_activity} = user;
+  
+      // has useractivity & is a customer
+    if(last_user_activity && user.role==="Customer") {
+      const lastActivity = moment(last_user_activity);
+      const currentTime = moment();
+
+      if(lastActivity.isBefore(currentTime.clone().subtract(24,'hours'))) {
+        return <td className="red-alert">R:{currentTime.diff(lastActivity,'days')} days ago</td>;
+      } else if(lastActivity.isBefore(currentTime.clone().subtract(12,'hours'))) {
+        return <td className="yellow-alert">Y:{currentTime.diff(lastActivity,'hours')} hours ago</td>;
+      } else if(lastActivity.isBefore(currentTime.clone().subtract(6,'hours'))) {
+        return <td className="green-alert">G:{currentTime.diff(lastActivity,'hours')} hours ago</td>;
+      } else if(lastActivity.isBefore(currentTime.clone().subtract(1,'hours'))) {
+        return <td className="green-alert">{currentTime.diff(lastActivity,'hours')} hours ago</td>;
+      } else {
+        // within 1 hour
+        return <td className="green-alert">{currentTime.diff(lastActivity,'minutes').toString()} minutes ago</td>
+      }
+    } else {
+      return <td></td>
+    }
   }
 
 

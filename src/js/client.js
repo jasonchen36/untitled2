@@ -41,6 +41,7 @@ ReactDOM.render(<Provider store={store}>
             <Route path="users" name="users" component={Users}></Route>
             <Route path="users/:userId/account-profile" name="account-profile" component={AccountProfile}></Route>
             <Route path="users/:userId/personal-profile" name="personal-profile" component={PersonalProfile}></Route>
+            <Route path="users/:userId/personal-profile/:taxReturnId" name="personal-profile-id" component={PersonalProfile}></Route>
             <Route path="users/:userId/tax-profile" name="tax-profile" component={TaxProfile}></Route>
             <Route path="users/:userId/uploads" name="uploads" component={Uploads}></Route>
             <Route path="users/:userId/checklist" name="checklist" component={Checklist}></Route>
