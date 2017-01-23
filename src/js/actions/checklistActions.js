@@ -1,5 +1,5 @@
 import * as base from "./lib/baseActions";
-
+import { downloadFile } from "./lib/directDownloadActions";
 import _ from "lodash";
 
 /// These actions may be outside of redux, as we don't want to save the PDF in memory?
@@ -15,15 +15,7 @@ export function fetchChecklistPdf(quoteId) {
 };
 
 export function directDownloadChecklistPdf(quoteId) {
-    return callDownloadListPdf(quoteId);
-};
-
-const callDownloadListPdf =(quoteId)=> {
   let url = '/quote/'+quoteId+'/checklist/PDF';
-
-  return base.getBlob(url)
-    .then((response) => {
-      return response;
-    });
+  
+  return downloadFile(url);
 };
-

@@ -69,7 +69,7 @@ export default function reducer(state={
           account: account,
           taxReturns:taxReturns,
           taxReturn:taxReturn,
-          taxReturnDetailsFetched: false
+          taxReturnDetailsFetched: taxReturnDetailsFetched
         };
       }
       case "FETCH_ALL_TAX_RETURN_STATUSES_FULFILLED": {

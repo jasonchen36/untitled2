@@ -3,9 +3,8 @@
 import axios from "axios";
 import _ from "lodash";
 
-
 ///TODO: move this to an external config
-import { baseAPIUrl } from "../config.js"
+import { baseAPIUrl } from "../../config.js"
 
 axios.defaults.baseURL = baseAPIUrl;
 
