@@ -1,6 +1,6 @@
 /// Actions for viewing and managing users
 
-import * as base from "./baseActions";
+import * as base from "./lib/baseActions";
 
 /// Fetch a list of users, optionally with search Terms
 export function fetchMessages(id) {
@@ -51,6 +51,7 @@ export function fetchUserMessages(id) {
 
 /// Fetch user details by id
 /// id=3
+/// we don't need subject
 /// data = { subject: "Hello World", body: "How are you doing?" }
 export function sendMessage(id,data) {
   const messageData = {

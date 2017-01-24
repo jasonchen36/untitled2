@@ -13,6 +13,7 @@ export default function reducer(state={
     fetched: false,
     updating: false,
     taxReturnDetailsFetched:false,
+    quoteChecklistPdf: null,
     error: null,
   }, action) {
     switch (action.type) {
@@ -76,7 +77,7 @@ export default function reducer(state={
           account: account,
           taxReturns:taxReturns,
           taxReturn:taxReturn,
-          taxReturnDetailsFetched: false
+          taxReturnDetailsFetched: taxReturnDetailsFetched
         };
       }
       case "FETCH_ALL_TAX_RETURN_STATUSES_FULFILLED": {
@@ -113,7 +114,20 @@ export default function reducer(state={
           error: action.payload
         };
       }
-
+      case "FETCH_CHECKLIST_PDF_FULFILLED": {
+        return {
+          ...state,
+          fetching:false,
+          quoteChecklistPdf: action.payload.data
+        };
+      }
+      case "FETCH_CHECKLIST_PDF_REJECTED": {
+        return {
+          ...state,
+          fetching:false,
+          error:action.payload
+        };
+      }
     }
 
     return state;

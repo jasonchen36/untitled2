@@ -1,4 +1,4 @@
-import * as base from "./baseActions";
+import * as base from "./lib/baseActions";
 import _ from "lodash";
 
 /// Fetch a list of users, optionally with search Terms
@@ -110,6 +110,11 @@ const callUpdateAddress = (dispatch, id, addressId, updateValues) => {
   updateValues.country = updateValues.country && updateValues.country==='' ? null : updateValues.country;
 
   let upsertPromise = null;
+
+  if(!updateValues.addressLine1 && !updateValues.city && !updateValues.postalCode && !updateValues.province) {
+    // no values, so obviously not updating address.  Skip updating address.
+    return Promise.resolve({});
+  }
 
   if(addressId > 0) {
     url+= "/" + addressId;

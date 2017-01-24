@@ -253,7 +253,7 @@ export default class Users extends React.Component {
         <label class="col">Filter by:</label>
         <input class="col" type="text" placeholder="User Name" onKeyDown={this.handleNameFilterKeyDown.bind(this)} />
         <select class="col" onChange={this.handleTaxProSelected.bind(this)}>
-          {renderTaxProSelectionOptions(taxPros)}
+          {renderTaxProSelectionOptions(taxPros, 'All Tax Pros')}
         </select>
         <select class="col" onChange={this.handleStatusSelected.bind(this)}>
           {renderTaxReturnStatusSelectionOptions(statuses)}        

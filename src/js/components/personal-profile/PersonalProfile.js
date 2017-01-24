@@ -140,7 +140,7 @@ export default class PersonalProfile extends React.Component {
     const listOfFilerTypes = [{id:"primary",val:"primary"},{id:"spouse",val:"spouse"},{id:"other",val:"other"}];
 
     return <select value={this.selectedFilerType.value} onChange={this.handleFilerTypeSelected.bind(this)}>
-      {renderSelectionOptions(listOfFilerTypes, "Filer Type")}
+      {renderSelectionOptions(listOfFilerTypes, "Choose Filer Type")}
     </select>
   }
 
@@ -149,8 +149,6 @@ export default class PersonalProfile extends React.Component {
     
     return  <div>
         <p>
-          ____________
-          <br />
           Address
         </p>
         <label for="user-address-line1">Address Line 1</label>
@@ -180,6 +178,7 @@ export default class PersonalProfile extends React.Component {
         <input id="user-canadian-citizen" ref={(input) => {this.canadianCitizen = input;}} type="checkbox"   defaultValue={taxReturn.canadian_citizen ? taxReturn.canadian_citizen:false} />
         <label for="user-filer-type">Filer Type</label>
         {this.renderFilerType(taxReturn.filer_type)}
+        <hr/>
         {this.renderAddress(taxReturn.address)}
         <button id={taxReturn.id} data-id={taxReturn.id} data-address-id={taxReturn.address ? taxReturn.address.id:-1} onClick={this.updateTaxReturn}>update profile</button>
       </form>

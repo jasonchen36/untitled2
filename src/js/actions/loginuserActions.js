@@ -1,4 +1,4 @@
-import * as base from "./baseActions";
+import * as base from "./lib/baseActions";
 
 /// Fetch data for logged in user
 export function fetchLoginuser() {
