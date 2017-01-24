@@ -3,7 +3,7 @@ import { renderSelectionOptions } from "../helpers/LayoutHelpers";
 // common layout tasks
 export function renderTaxReturnStatusSelectionOptions(statuses) {
 
-  var defaultText = 'Tax Return Statuses';
+  var defaultText = 'All Tax Return Statuses';
   var list = [];
   if(statuses) {
     list = statuses.map((status) => {

@@ -1,6 +1,4 @@
-/// Actions for viewing and managing users
-
-import * as base from "./baseActions";
+import * as base from "./lib/baseActions";
 import _ from "lodash";
 
 /// Fetch a list of users, optionally with search Terms
@@ -23,19 +21,36 @@ const  getAccount = (dispatch, accountId) => {
     });
 }
 
-export function fetchTaxReturn(taxReturnId) {
+export function clearAccount() {
   return function(dispatch) {
-    let searchUrl = "/tax_return/"+taxReturnId;
-
-    base.get(searchUrl)
-      .then((response) => {
-        dispatch({type: "FETCH_TAX_RETURN_FULFILLED", payload: response});
-      })
-      .catch((err) => {
-        dispatch({type: "FETCH_TAX_RETURN_REJECTED", payload: err});
-      });
+    dispatch({type:"CLEAR_ACCOUNT",payload:null});
   };
 }
+
+export function fetchTaxReturn(taxReturnId) {
+  return function(dispatch) {
+    getTaxReturn(dispatch, taxReturnId);
+  };
+}
+
+const getTaxReturn = (dispatch, taxReturnId) => {
+  const searchUrl = "/tax_return/"+taxReturnId;
+  const addressSearchUrl = "/tax_return/"+taxReturnId+"/addresses";
+
+  Promise.all([base.get(searchUrl), base.get(addressSearchUrl)])
+    .then((responses) => {
+      const taxResponse = responses[0];
+
+      // only 1 address
+      taxResponse.data.address = responses[1].data && responses[1].data.length>0 ? responses[1].data[0] : null ;
+
+      taxResponse.addressResponse = responses[1];
+      dispatch({type: "FETCH_TAX_RETURN_FULFILLED", payload: taxResponse});
+    })
+    .catch((err) => {
+      dispatch({type: "FETCH_TAX_RETURN_REJECTED", payload: err});
+    });
+};
 
 export function fetchAllTaxReturnStatuses() {
   return function(dispatch) {
@@ -50,4 +65,61 @@ export function fetchAllTaxReturnStatuses() {
       });
   };
 }
+
+export function updateTaxProfile(id, updateValues, addressId, updateAddressValues) {
+  return function(dispatch) {
+    const updateTaxProfilePromise = callUpdateTaxProfile(dispatch, id, updateValues);
+    const updateAddressPromise = callUpdateAddress(dispatch, id, addressId, updateAddressValues);
+
+    Promise.all([updateTaxProfilePromise, updateAddressPromise])
+      .then(function(responses) {
+        return getTaxReturn(dispatch, id);
+      });
+  };
+}
+
+const callUpdateTaxProfile = (dispatch,id,updateValues) => {
+  const url = "/tax_return/"+id;
+
+  return base.put(url,updateValues)
+    .then((response) => {
+      dispatch({type: "UPDATE_TAX_RETURN_FULFILLED", payload: response});
+
+      return response;
+    });
+};
+
+const callUpdateAddress = (dispatch, id, addressId, updateValues) => {
+  let url = "/tax_return/"+id+"/address";
+
+  // if country is blank, set it as null
+  updateValues.country = updateValues.country && updateValues.country==='' ? null : updateValues.country;
+
+  let upsertPromise = null;
+
+  if(!updateValues.addressLine1 && !updateValues.city && !updateValues.postalCode && !updateValues.province) {
+    // no values, so obviously not updating address.  Skip updating address.
+    return Promise.resolve({});
+  }
+
+  if(addressId > 0) {
+    url+= "/" + addressId;
+    upsertPromise = base.put(url, updateValues);
+  } else {
+    upsertPromise = base.post(url, updateValues)
+      .then((result) => {
+        addressId = result.data.addressId;
+        const linkUrl="/tax_return/"+id+"/address/"+addressId;
+
+        return base.post(linkUrl,{});
+      });
+  }
+  
+  return upsertPromise
+    .then((response) => {
+      dispatch({type: "UPDATE_TAX_RETURN_FULFILLED", payload: response});
+
+      return response;
+    });
+};
 

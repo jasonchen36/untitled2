@@ -1,6 +1,6 @@
 /// Actions for viewing and managing users
 
-import * as base from "./baseActions";
+import * as base from "./lib/baseActions";
 import _ from "lodash";
 
 /// Fetch a list of users, optionally with search Terms

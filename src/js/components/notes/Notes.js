@@ -156,7 +156,6 @@ export default class Notes extends React.Component {
             <main class="grid-container row">
                 <Sidebar activeScreen="notes" userId={userId}/>
                 <section class="col-sm-8 col-lg-9">
-                    <UserOptionsHeader taxReturns={taxReturns} activeTaxReturn={taxReturn}/>
                     <h1>Notes</h1>
                     {this.renderSendNote(userId)}
                     {this.renderNotesTable(this.getDummyData())}

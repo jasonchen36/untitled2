@@ -3,9 +3,8 @@
 import axios from "axios";
 import _ from "lodash";
 
-
 ///TODO: move this to an external config
-import { baseAPIUrl } from "../config.js"
+import { baseAPIUrl } from "../../config.js"
 
 axios.defaults.baseURL = baseAPIUrl;
 
@@ -21,16 +20,22 @@ const getHeaders = () => {
   return headers;
 };
 
-const getConfig = () => {
-  return {
+const getConfig = (overrideParams) => {
+  overrideParams = overrideParams ? overrideParams : {};
+
+  return _.merge({
     headers:getHeaders()
-  };
+  }, overrideParams);
 };
 
 /// Functions for getting info from API 
 
 export function get(endpoint) {
   return axios.get(endpoint,getConfig());
+}
+
+export function getBlob(endpoint) {
+  return axios.get(endpoint,getConfig({responseType:'blob'}));
 }
 
 export function post(endpoint,data) {
