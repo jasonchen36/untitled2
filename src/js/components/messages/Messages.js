@@ -37,27 +37,11 @@ export default class Messages extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         this.clearMessageFieldsOnMessageSent(nextProps.messageSent,this.props.messageSent);
-        //todo, stuck in infinite loop getting account
-        // if(nextProps.user && nextProps.user.account_id && (!nextProps.account || nextProps.account.accountId!=nextProps.user.account_id)) {
-        //     this.props.dispatch(fetchAccount(nextProps.user.account_id));
-        // }
-        //
-        // if(nextProps.taxReturns && !nextProps.taxReturn && nextProps.taxReturns.length>0) {
-        //     this.props.dispatch(fetchTaxReturn(nextProps.taxReturns[0].id));
-        // }
-        //
-        // if (nextProps.taxReturn && this.props.taxReturn) {
-        //     // Update the form with Props if a previous user was loaded
-        //     // this.updateLocalProps(nextProps.taxReturn);
-        // } else {
-        //     // If no previous user was loaded, then default Values will handle loading the form
-        // }
     };
 
     /// update all the form with the values from the user (prop)
     clearMessageFieldsOnMessageSent(messageSentStatus,messageSentPreviousStatus) {
         if (messageSentStatus===true && messageSentPreviousStatus===false) {
-            this.message_subject.value = '';
             this.message_text.value= '';
         }
     };
@@ -69,7 +53,6 @@ export default class Messages extends React.Component {
 
     handleSendMessage(e) {
         const updatedValues = {
-            subject: this.message_subject.value,
             body: this.message_text.value
         };
 
@@ -102,13 +85,10 @@ export default class Messages extends React.Component {
                         From: {message.fromname}
                     </p>
                     <p>
-                        Subject: {message.subject}
-                    </p>
-                    <p>
                         Date: {message.date}
                     </p>
                     <p class="message-body">
-                        Body:
+                        Message:
                     </p>
                     <p>
                         {message.body}
@@ -121,7 +101,6 @@ export default class Messages extends React.Component {
     renderSendMessage(userId) {
         return (
             <form class="standard-form">
-                <input ref={(input) => {this.message_subject = input;}}  type="text" placeholder="Message Subject" />
                 <textarea rows="5" ref={(input) => {this.message_text = input;}} type="text" placeholder="Compose Messages"/>
                 <button id={userId} onClick={this.sendMessage}>Send</button>
             </form>
@@ -142,7 +121,6 @@ export default class Messages extends React.Component {
             <main class="grid-container row">
                 <Sidebar activeScreen="messages" userId={userId}/>
                 <section class="col-sm-8 col-lg-9">
-                    <UserOptionsHeader taxReturns={taxReturns} activeTaxReturn={taxReturn}/>
                     <h1>Messages</h1>
                     {this.renderSendMessage(userId)}
                     <div class="grid-container">

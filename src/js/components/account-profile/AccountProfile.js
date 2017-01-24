@@ -106,7 +106,7 @@ export default class AccountProfile extends React.Component {
       const listOfFilerTypes = [{id:"Customer",val:"Customer"},{id:"TaxPro",val:"TaxPro"},{id:"Admin",val:"Admin"}];
 
       return <select value={this.selectedRole.value} onChange={this.handleRoleSelected.bind(this)}>
-        {renderSelectionOptions(listOfFilerTypes, "Role")}
+        {renderSelectionOptions(listOfFilerTypes, "Choose Role")}
       </select>
       } else {
         return <div>{this.selectedRole.value}</div>
@@ -125,16 +125,13 @@ export default class AccountProfile extends React.Component {
                 <input id="user-first-name" ref={(input) => {this.first_name = input;}} type="text"  placeholder="First Name" defaultValue={user.first_name} />
                 <label for="user-last-name">Last Name</label>
                 <input id="user-last-name" ref={(input) => {this.last_name = input;}} type="text"  placeholder="Last Name" defaultValue={user.last_name} />
-                <label for="user-email">Preferred Email</label>
+                <label for="user-email">Email</label>
                 <input id="user-email" ref={(input) => {this.email = input;}} type="text"  placeholder="Email" defaultValue={user.email} />
-                <label for="user-address">Address</label>
-                <input id="user-address" ref={(input) => {this.address = input;}} type="text"  placeholder="Address" defaultValue={user.address} />
-                <label for="user-phone">Preferred Telephone #</label>
+                <label for="user-phone">Phone Number</label>
                 <input id="user-phone" ref={(input) => {this.phone = input;}} type="text"  placeholder="Phone" defaultValue={user.phone} />
                 <hr/>
                 <label for="user-role">Account Role</label>
                 {this.renderRole(loginuser)}
-                <input id="user-role" ref={(input) => {this.role = input;}} type="text"  placeholder="Role" defaultValue={user.role} />
                 <label for="user-tax-pro">Assigned TaxPro</label>
                   {this.renderTaxPro(loginuser,taxPros)}
                 <button id={user.id} >update user</button>

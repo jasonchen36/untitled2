@@ -1,9 +1,9 @@
 import { renderSelectionOptions } from "../helpers/LayoutHelpers";
 
 // common layout tasks
-export function renderTaxProSelectionOptions(taxPros) {
+export function renderTaxProSelectionOptions(taxPros,defaultText) {
 
-  var defaultText = 'Tax Pros';
+  defaultText = defaultText ? defaultText : 'Choose Tax Pros';
   var list = [];
   if(taxPros) {
     list = taxPros.map((taxPro) => {
