@@ -3,9 +3,9 @@ import { downloadFile } from "./lib/directDownloadActions";
 import _ from "lodash";
 
 /// These actions may be outside of redux, as we don't want to save the PDF in memory?
-export function fetchUploads(quoteId, checklistItemId) {
+export function fetchUploads(quoteId, documentId) {
   return function(dispatch) {
-    let url = '/quote/'+quoteId+'/document/'+checklistItemId;    
+    let url = '/quote/'+quoteId+'/document/'+documentId;    
     return downloadFile(quoteId)
       .then((response) => {
         dispatch({type:"FETCH_DOWNLOAD_UPLOADS_FULFILLED",payload: response});
@@ -15,8 +15,29 @@ export function fetchUploads(quoteId, checklistItemId) {
   };
 };
 
-export function directDownloadChecklistItems(quoteId, checklistItemId) {
-  let url = '/quote/'+quoteId+'/document/'+checklistItemId;    
+export function directDownloadChecklistItems(quoteId, documentId) {
+  let url = '/quote/'+quoteId+'/document/'+documentId;    
 
   return downloadFile(url);
+};
+
+export function deleteDocument(quoteId, documentId) {
+  return function(dispatch) {
+    let url = '/quote/'+quoteId+'/document/'+documentId;
+    return base.del(url)
+      .then((response) => {
+        dispatch({type:"DELETE_DOCUMENT_FULFILLED",payload:{quoteId:parseInt(quoteId), documentId: parseInt(documentId)}});
+      });
+  };
+};
+
+export function viewedDocument(quoteId, documentId) {
+  return function(dispatch) {
+    let url = '/admin/quote/' + quoteId + '/document/'+documentId + '/viewed';
+
+    return base.put(url)
+      .then((response) => {
+        dispatch({type:"DOCUMENT_VIEWED", payload:{quoteId: parseInt(quoteId), documentId: parseInt(documentId), viewed:1}});
+      });
+  };
 };

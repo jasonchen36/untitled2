@@ -119,6 +119,55 @@ export default function reducer(state={
           quoteChecklistFetching:false
         };
       }
+      case "DELETE_DOCUMENT_FULFILLED": {
+        let result = action.payload;
+        let checklist = state.quoteChecklist;
+        if(checklist.quoteId === result.quoteId) {
+          checklist = _.cloneDeep(state.quoteChecklist);
+          _.each(checklist.checklistitems,(cli) => {
+              cli.documents = _.filter(cli.documents,(doc) => {
+                  return doc.documentId!==result.documentId;
+              });
+          });
+          checklist.additionalDocuments = _.filter(checklist.additionalDocuments, (ad) => {
+              return ad.documentId !== result.documentId;
+          });
+
+        }
+
+        return {
+          ...state,
+          fetching:false,
+          quoteChecklist:checklist
+        };
+
+      }
+      case "DOCUMENT_VIEWED" : {
+        let result = action.payload;
+        let checklist = _.cloneDeep(state.quoteChecklist);
+        if(checklist.quoteId === result.quoteId) {
+          _.each(checklist.checklistitems,(cli) => {
+              _.each(cli.documents,(doc) => {
+                  if(doc.documentId===result.documentId) {
+                    doc.viewedByTaxPro=result.viewed;
+                  }
+              });
+          });
+          _.each(checklist.additionalDocuments, (ad) => {
+              if(ad.documentId === result.documentId) {
+                ad.viewedByTaxPro = result.viewed;
+              }
+          });
+
+        }
+
+        return {
+          ...state,
+          fetching:false,
+          quoteChecklist:checklist
+        };
+
+      }
       case "FETCH_CHECKLIST_REJECTED": {
         return {
           ...state,

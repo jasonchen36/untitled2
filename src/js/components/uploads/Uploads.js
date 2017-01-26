@@ -7,7 +7,7 @@ import Sidebar from "../layout/Sidebar";
 
 import { fetchUser } from "../../actions/usersActions";
 import { fetchAccount, fetchTaxReturn, fetchChecklist, clearChecklist } from "../../actions/accountsActions";
-import { directDownloadChecklistItems } from "../../actions/uploadsActions";
+import { directDownloadChecklistItems, deleteDocument, viewedDocument } from "../../actions/uploadsActions";
 import { saveBlob } from "../../lib/saveBlob";
 import { loadAccountIfNeeded, loadChecklistIfNeeded } from "../loaders/loadUser";
 
@@ -30,7 +30,8 @@ export default class Uploads extends React.Component {
     constructor() {
         super();
         this.clickDownloadItem = this.handleClickDownloadItem.bind(this);
-        
+        this.clickDeleteItem = this.handleClickDeleteItem.bind(this);
+        this.clickViewed = this.handleClickViewed.bind(this); 
     }
 
     componentWillMount() {
@@ -43,7 +44,7 @@ export default class Uploads extends React.Component {
     };
 
     handleClickDownloadItem(e) {
-      let { name, url, documentId, quoteId } = e.target.dataset;
+      let { name, url, documentId, quoteId } = e.currentTarget.dataset;
      
       directDownloadChecklistItems(quoteId,documentId)
         .then((response) => {
@@ -54,18 +55,35 @@ export default class Uploads extends React.Component {
         });
     }
 
+    handleClickDeleteItem(e) {
+      let { documentId, quoteId, documentName } = e.currentTarget.dataset;
+       
+       if(confirm("are you sure you want to delete document '"+documentName+"'?")) {
+        this.props.dispatch(deleteDocument(quoteId,documentId));
+      } else {
+      }
+    }
+
+    handleClickViewed(e) {
+      let { documentId, quoteId } = e.currentTarget.dataset;
+    
+      this.props.dispatch(viewedDocument(quoteId,documentId));
+    }
+
     renderUploadEntry( data,key){
         //todo, add handler to delete icon
         return (
             <div key={key} class="row uploads-row">
                 <div class="col-sm-10">
+                                  
                     <p>
+                    <input name="isViewed"  data-quote-id={data.quoteId} data-document-id={data.documentId}  type="checkbox" checked={data.viewedByTaxPro} onChange={this.clickViewed} />
                         {key+1}. <span class="fa-anchor-container"><i class="fa fa-file-o"></i></span>
                         <a data-name={data.name} data-url={data.url} data-quote-id={data.quoteId} data-document-id={data.documentId}  onClick={this.clickDownloadItem}>{data.checklistName} ({data.firstName}{data.lastName ? ' ' : ''}{data.lastName}) - {data.name}</a> (Uploaded {moment(data.createdAt).format('YYYY-MM-DD HH:mm')})
                     </p>
                 </div>
                 <div class="col-sm-2 position-relative">
-                    <a class="uploads-button-delete">
+                    <a class="uploads-button-delete" data-quote-id={data.quoteId} data-document-id={data.documentId} data-document-name={data.name} onClick={this.clickDeleteItem}>
                         <i class="fa fa-trash-o"></i>
                     </a>
                 </div>
