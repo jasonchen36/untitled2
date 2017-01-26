@@ -51,6 +51,7 @@ export function fetchUserMessages(id) {
 
 /// Fetch user details by id
 /// id=3
+/// we don't need subject
 /// data = { subject: "Hello World", body: "How are you doing?" }
 export function sendMessage(id,data) {
   const messageData = {
