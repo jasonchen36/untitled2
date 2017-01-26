@@ -1,6 +1,7 @@
 // TODO: Move this to action on loading of a user. (get account and other info)
 import { fetchAccount, fetchTaxReturn, clearAccount,fetchChecklist } from "../../actions/accountsActions";
 
+/// REQUIRES PROPS: taxReturns, taxReturn, account, taxReturnDetailsFetched
 export function loadAccountIfNeeded(nextProps, currentProps) {
   if(nextProps.user && !nextProps.user.account_id) {
   // no accountId, clear account
@@ -28,6 +29,8 @@ export function loadAccountIfNeeded(nextProps, currentProps) {
   }
 };
 
+
+// REQUIRES PROPS: quoteChecklistFetched, quoteChecklistFetching, account, quoteChecklist
 export function loadChecklistIfNeeded(nextProps, currentProps) {
   let quoteId = nextProps.account && nextProps.account.quotes && nextProps.account.quotes.length>0 ? nextProps.account.quotes[0].id : -1;
 

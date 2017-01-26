@@ -8,20 +8,29 @@ import UserOptionsHeader from "../layout/UserOptionsHeader";
 
 import { fetchUser } from "../../actions/usersActions";
 import { fetchAccount, fetchTaxReturn } from "../../actions/accountsActions";
+import { loadAccountIfNeeded } from "../loaders/loadUser";
+import { saveBlob } from "../../lib/saveBlob";
+
+import { directDownloadTaxProfiles } from "../../actions/taxProfilesActions";
 
 @connect((store) => {
     return {
         loginuser: store.loginuser.loginuser,
+        loginuserFetched: store.loginuser.fetched,   
         user: store.users.user,
+        account:store.accounts.account,
         taxReturns:store.accounts.taxReturns,
-        taxReturn:store.accounts.taxReturn
+        taxReturn:store.accounts.taxReturn,
+        taxReturnDetailsFetched: store.accounts.taxReturnDetailsFetched
     };
 })
 
 export default class TaxProfile extends React.Component {
 
     constructor() {
-        super();
+      super();
+      this.clickTaxReturnProfile = this.handleClickTaxReturnProfile.bind(this);  
+      this.clickDownloadTaxProfileCsv = this.handleClickDownloadTaxProfileCsv.bind(this);
     }
 
     componentWillMount() {
@@ -29,36 +38,48 @@ export default class TaxProfile extends React.Component {
     };
 
     componentWillReceiveProps(nextProps) {
-        //todo, stuck in infinite loop getting account
-        // if(nextProps.user && nextProps.user.account_id && (!nextProps.account || nextProps.account.accountId!=nextProps.user.account_id)) {
-        //     this.props.dispatch(fetchAccount(nextProps.user.account_id));
-        // }
-        //
-        // if(nextProps.taxReturns && !nextProps.taxReturn && nextProps.taxReturns.length>0) {
-        //     this.props.dispatch(fetchTaxReturn(nextProps.taxReturns[0].id));
-        // }
-        //
-        // if (nextProps.taxReturn && this.props.taxReturn) {
-        //     // Update the form with Props if a previous user was loaded
-        //     // this.updateLocalProps(nextProps.taxReturn);
-        // } else {
-        //     // If no previous user was loaded, then default Values will handle loading the form
-        // }
+      loadAccountIfNeeded(nextProps, this.props);
     };
 
-    renderTaxProfile(){
+    renderTaxProfile(taxReturn){
         //todo, get export urls
+        if(!taxReturn) {
+          return <div>
+              No Tax Profile Loaded
+            </div>
+
+        }
+
         return (
             <div>
-                <a class="fa-anchor-container">
+                <a class="fa-anchor-container" data-tax-return-id={taxReturn.id} onClick={this.clickDownloadTaxProfileCsv}>
                     <i class="fa fa-file-excel-o"></i>Export CSV
-                </a>
-                <a class="fa-anchor-container">
-                    <i class="fa fa-file-pdf-o"></i>Export PDF
                 </a>
             </div>
         );
+       // <a class="fa-anchor-container">
+       //             <i class="fa fa-file-pdf-o"></i>Export PDF
+       //         </a>
+
     }
+
+    handleClickDownloadTaxProfileCsv(e) {
+      let { taxReturnId } = e.currentTarget.dataset;
+     
+      directDownloadTaxProfiles(taxReturnId)
+        .then((response) => {
+          const data = response.data;
+          const fileName = 'taxProfile'+taxReturnId+'.csv';
+
+          saveBlob(fileName, response);
+        });
+    }
+
+  handleClickTaxReturnProfile(e) {
+    e.preventDefault();
+    
+    this.props.dispatch(fetchTaxReturn(e.target.dataset.id));
+  }
 
     render() {
         const { taxReturns, taxReturn} = this.props;
@@ -66,9 +87,9 @@ export default class TaxProfile extends React.Component {
             <main class="grid-container row">
                 <Sidebar activeScreen="taxProfile" userId={this.props.params.userId}/>
                 <section id="tax-profile-container" class="col-sm-8 col-lg-9">
-                    <UserOptionsHeader taxReturns={taxReturns} activeTaxReturn={taxReturn}/>
+                    <UserOptionsHeader taxReturns={taxReturns} activeTaxReturn={taxReturn}  handleClickTaxReturnProfile={this.clickTaxReturnProfile} />
                     <h1>Tax Profile</h1>
-                    {this.renderTaxProfile()}
+                    {this.renderTaxProfile(taxReturn)}
                 </section>
             </main>
         )
