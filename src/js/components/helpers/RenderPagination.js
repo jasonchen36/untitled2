@@ -15,12 +15,12 @@ export function renderPagination(currentPage, perPage, usersCount, handleClickPa
 
 
     return (
-      <div>Pages:
-    <ul onClick={handleClickPage}>
-      {prevPage}
-      {renderedPageNumbers}
-      {nextPage}
-    </ul>
+      <div className="user pagination">
+        <ul onClick={handleClickPage}>
+          {prevPage}
+          {renderedPageNumbers}
+          {nextPage}
+        </ul>
     </div>)
 }
 
@@ -72,15 +72,15 @@ const renderPageNumbers = function(pageNumbers, currentPage, totalPages) {
         let pageNumber =null;
         
         if(i===currentPage) {
-          pageNumber = <li key={i}>C<a class="current-page" data-page={i}>{i}</a></li>;
+          pageNumber = <li key={i} className="current-page"><a data-page={i}>{i}</a></li>;
         } else {
-          pageNumber = <li key={i}><a data-page={i}>{i}</a></li>;
+          pageNumber = <li key={i} className="other-page"><a data-page={i}>{i}</a></li>;
         }
 
         renderedPageNumbers.push(pageNumber);
       } else if(dotdotdot===false) {
         dotdotdot=true;
-        renderedPageNumbers.push(<li>...</li>);
+        renderedPageNumbers.push(<li className="dotdotdot-page" key={-3}>...</li>);
       }
     }
 
@@ -91,11 +91,11 @@ const renderPageNumbers = function(pageNumbers, currentPage, totalPages) {
 
 const renderPrevPage = function(currentPage) {
   const prevPageText = "Prev Page";
-  let prevPage = <li><a class="grey">{prevPageText}</a></li>;
+  let prevPage = <li className="prev-page disabled" key={-1}><a>{prevPageText}</a></li>;
 
   if(currentPage>1) {
     const prevPageNumber = currentPage-1;
-    prevPage = <li><a  data-page={prevPageNumber}>{prevPageText}</a></li>
+    prevPage = <li className="prev-page" key={-1}><a  data-page={prevPageNumber}>{prevPageText}</a></li>
   }
 
   return prevPage;
@@ -104,11 +104,11 @@ const renderPrevPage = function(currentPage) {
 const renderNextPage = function(currentPage,maxPages) {
   const nextPageText = "Next Page";
 
-  let nextPage = <li>< a class="grey">{nextPageText}</a></li>;
+  let nextPage = <li className="next-page disabled" key={-2}><a>{nextPageText}</a></li>;
 
   if(currentPage<maxPages) {
     const nextPageNumber = currentPage+1;
-    nextPage = <li><a  data-page={nextPageNumber}>{nextPageText}</a></li>
+    nextPage = <li className="next-page" key={-2}><a  data-page={nextPageNumber}>{nextPageText}</a></li>
   }
 
   return nextPage;

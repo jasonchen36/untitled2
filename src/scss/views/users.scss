@@ -24,3 +24,21 @@
 .green-alert {
   background-color: #78d79c;
 }
+
+.pagination {
+
+  li {
+    background-color: #87ad5c;
+    display:inline;
+    margin: 2px 2px 2px 2px;
+    padding: 2px 4px 2px 4px;
+
+   &.current-page {
+      background-color: #561457;
+   }
+
+    a {
+      color:#FFF;
+    }
+  }
+}
