@@ -4,10 +4,12 @@ import { connect } from "react-redux";
 import { Link  } from "react-router";
 import moment from "moment";
 import Sidebar from "../layout/Sidebar";
-import UserOptionsHeader from "../layout/UserOptionsHeader";
 
 import { fetchUser } from "../../actions/usersActions";
-import { fetchAccount, fetchTaxReturn, fetchChecklist } from "../../actions/accountsActions";
+import { fetchAccount, fetchTaxReturn, fetchChecklist, clearChecklist } from "../../actions/accountsActions";
+import { directDownloadChecklistItems } from "../../actions/uploadsActions";
+import { saveBlob } from "../../lib/saveBlob";
+import { loadAccountIfNeeded, loadChecklistIfNeeded } from "../loaders/loadUser";
 
 @connect((store) => {
     return {
@@ -15,7 +17,11 @@ import { fetchAccount, fetchTaxReturn, fetchChecklist } from "../../actions/acco
         user: store.users.user,
         taxReturns:store.accounts.taxReturns,
         taxReturn:store.accounts.taxReturn,
-        quoteChecklist: store.accounts.quoteChecklist
+        taxReturnDetailsFetched: store.accounts.taxReturnDetailsFetched,
+        account: store.accounts.account,
+        quoteChecklist: store.accounts.quoteChecklist,
+        quoteChecklistFetched: store.accounts.quoteChecklistFetched,
+        quoteChecklistFetching: store.accounts.quoteChecklistFetching 
     };
 })
 
@@ -23,6 +29,8 @@ export default class Uploads extends React.Component {
 
     constructor() {
         super();
+        this.clickDownloadItem = this.handleClickDownloadItem.bind(this);
+        
     }
 
     componentWillMount() {
@@ -30,35 +38,20 @@ export default class Uploads extends React.Component {
     };
 
     componentWillReceiveProps(nextProps) {
-        let quoteId = nextProps.account && nextProps.account.quotes && nextProps.account.quotes.length>0 ? nextProps.account.quotes[0].id : -1;
-
-        if(!nextProps.quoteChecklist)
-        {
-          console.log('nextcheck',nextProps.quoteChecklist);
-           this.props.dispatch(fetchChecklist(21));
-        } else {
-
-          console.log('foundcheck',nextProps.quoteChecklist);
-        }
+      loadAccountIfNeeded(nextProps, this.props);
+      loadChecklistIfNeeded(nextProps, this.props);
     };
 
-    getDummyData(){
-        return [
-            {
-                id: 1,
-                url: '',
-                name: 'Document 0',
-                date: 'Feb 2, 2016 3:37:50 PM',
-                size: '5.0 MB'
-            },
-            {
-                id: 2,
-                url: '',
-                name: 'Document 1',
-                date: 'Feb 2, 2016 3:39:27 PM',
-                size: '4.9 MB'
-            }
-        ]
+    handleClickDownloadItem(e) {
+      let { name, url, documentId, quoteId } = e.target.dataset;
+     
+      directDownloadChecklistItems(quoteId,documentId)
+        .then((response) => {
+          const data = response.data;
+          const fileName = name;
+
+          saveBlob(fileName, response);
+        });
     }
 
     renderUploadEntry( data,key){
@@ -67,8 +60,8 @@ export default class Uploads extends React.Component {
             <div key={key} class="row uploads-row">
                 <div class="col-sm-10">
                     <p>
-                        {key}. <span class="fa-anchor-container"><i class="fa fa-file-o"></i></span>
-                        <a href={data.url}>{data.name}</a> (Uploaded {moment(data.createdAt).format('YYYY-MM-DD HH:mm')})
+                        {key+1}. <span class="fa-anchor-container"><i class="fa fa-file-o"></i></span>
+                        <a data-name={data.name} data-url={data.url} data-quote-id={data.quoteId} data-document-id={data.documentId}  onClick={this.clickDownloadItem}>{data.checklistName} ({data.firstName}{data.lastName ? ' ' : ''}{data.lastName}) - {data.name}</a> (Uploaded {moment(data.createdAt).format('YYYY-MM-DD HH:mm')})
                     </p>
                 </div>
                 <div class="col-sm-2 position-relative">
@@ -82,17 +75,19 @@ export default class Uploads extends React.Component {
 
 
     renderUploads(uploads){
+      if(!uploads || uploads.length==0) {
+        return <div> No Uploads </div>
+      }
 
-            return uploads.map((upload,key) => {
-              return this.renderUploadEntry(upload,key)
-            });
-         }
+      return uploads.map((upload,key) => {
+            return this.renderUploadEntry(upload,key)
+          });
+    }
 
     render() {
         //todo, pass in uploads to render
         const { taxReturns, taxReturn,quoteChecklist} = this.props;
 
-        console.log('quote checklist',quoteChecklist);
         let checkListItems = quoteChecklist && quoteChecklist.checklistitems ? quoteChecklist.checklistitems : [];
 
         let checklistDocuments = _.reduce(checkListItems,(result,value,key) => {
@@ -102,12 +97,11 @@ export default class Uploads extends React.Component {
 
           result = _.concat(result,documents);
           return result;
-        },{});
+        },[]);
 
         let additionalDocuments = _.map(quoteChecklist && quoteChecklist.additionalDocuments ? quoteChecklist.additionalDocuments : [],(ad) => {
           return _.merge({checklistName:'Additional Documents',checkListItemId:-1},ad);
         });
-
 
         checklistDocuments = _.concat(checklistDocuments, additionalDocuments);
 

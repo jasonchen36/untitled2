@@ -21,12 +21,6 @@ const  getAccount = (dispatch, accountId) => {
     });
 }
 
-export function clearAccount() {
-  return function(dispatch) {
-    dispatch({type:"CLEAR_ACCOUNT",payload:null});
-  };
-}
-
 export function fetchTaxReturn(taxReturnId) {
   return function(dispatch) {
     getTaxReturn(dispatch, taxReturnId);
@@ -82,14 +76,27 @@ export function fetchChecklist(id) {
   return function(dispatch) {
     let url="/quote/"+id+"/checklist";
 
+    dispatch({type: "FETCH_CHECKLIST",payload:null});
+
     base.get(url)
       .then((response) => {
+        // add quoteId
+        if(response && response.data) {
+          response.data.quoteId = id;
+        }
+
         dispatch({type: "FETCH_CHECKLIST_FULFILLED",payload:response});
       })
       .catch((err) => {
         dispatch({type: "FETCH_CHECKLIST_REJECTED",payload:err});
       });
   };
+}
+
+export function clearChecklist() {
+  return function(dispatch) {
+    dispatch({type:"CLEAR_CHECKLIST", payload:null});
+  }
 }
 
 const callUpdateTaxProfile = (dispatch,id,updateValues) => {

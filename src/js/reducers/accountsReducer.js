@@ -13,6 +13,8 @@ export default function reducer(state={
     fetched: false,
     updating: false,
     taxReturnDetailsFetched:false,
+    quoteChecklistFetched:false,
+    quoteChecklistFetching:false,
     quoteChecklistPdf: null,
     error: null,
   }, action) {
@@ -56,7 +58,8 @@ export default function reducer(state={
           taxReturn:null,
           address:null,
           taxReturnDetailsFetched:false, 
-          quoteChecklist:null
+          quoteChecklist:null,
+          quoteChecklistFetched:false
         };
       }
       case "FETCH_ACCOUNT_FULFILLED": {
@@ -77,7 +80,8 @@ export default function reducer(state={
           account: account,
           taxReturns:taxReturns,
           taxReturn:taxReturn,
-          taxReturnDetailsFetched: taxReturnDetailsFetched
+          taxReturnDetailsFetched: taxReturnDetailsFetched,
+          quoteChecklistFetching:false
         };
       }
       case "FETCH_ALL_TAX_RETURN_STATUSES_FULFILLED": {
@@ -100,11 +104,19 @@ export default function reducer(state={
           updating:false
         };
       }
+      case "FETCH_CHECKLIST": {
+        return {
+          ...state,
+          quoteChecklistFetching:true
+        }
+      }
       case "FETCH_CHECKLIST_FULFILLED": {
         return {
           ...state,
           fetching:false,
-          quoteChecklist:action.payload.data
+          quoteChecklist:action.payload.data,
+          quoteChecklistFetched:true,
+          quoteChecklistFetching:false
         };
       }
       case "FETCH_CHECKLIST_REJECTED": {

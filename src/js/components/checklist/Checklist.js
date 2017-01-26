@@ -25,7 +25,7 @@ import { loadAccountIfNeeded } from "../loaders/loadUser";
         quoteChecklistPdf: store.accounts.quoteChecklistPdf,
         account: store.accounts.account,
         taxReturnDetailsFetched: store.accounts.taxReturnDetailsFetched
-    };
+        };
 })
 
 export default class Checklist extends React.Component {
