@@ -11,7 +11,7 @@ export function fetchUsers(searchTerms) {
 }
 
 export function fetchTaxPros() {
-  let searchUrl = "/users?role=TaxPro";
+  let searchUrl = "/users?role=TaxPro&perPage=all";
   
   return function(dispatch) {
   base.get(searchUrl)
@@ -35,6 +35,7 @@ const getUsers = (dispatch, searchTerms) => {
   base.get(searchUrl)
     .then((response) => {
       let result = { searchTerms: searchTerms, data: response.data };
+
       dispatch({type: "FETCH_USERS_FULFILLED", payload:  result});
     })
     .catch((err) => {
