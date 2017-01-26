@@ -31,13 +31,13 @@ export function deleteDocument(quoteId, documentId) {
   };
 };
 
-export function viewedDocument(quoteId, documentId) {
+export function viewedDocument(quoteId, documentId, viewed) {
   return function(dispatch) {
     let url = '/admin/quote/' + quoteId + '/document/'+documentId + '/viewed';
 
     return base.put(url)
       .then((response) => {
-        dispatch({type:"DOCUMENT_VIEWED", payload:{quoteId: parseInt(quoteId), documentId: parseInt(documentId), viewed:1}});
+        dispatch({type:"DOCUMENT_VIEWED", payload:{quoteId: parseInt(quoteId), documentId: parseInt(documentId), viewed:(parseInt(viewed) === 0 ? 1 : 0) }});
       });
   };
 };

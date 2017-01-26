@@ -65,9 +65,10 @@ export default class Uploads extends React.Component {
     }
 
     handleClickViewed(e) {
-      let { documentId, quoteId } = e.currentTarget.dataset;
-    
-      this.props.dispatch(viewedDocument(quoteId,documentId));
+      let { documentId, quoteId, viewed } = e.currentTarget.dataset;
+      console.log('click viewed', viewed);
+
+      this.props.dispatch(viewedDocument(quoteId, documentId, viewed));
     }
 
     renderUploadEntry( data,key){
@@ -77,7 +78,7 @@ export default class Uploads extends React.Component {
                 <div class="col-sm-10">
                                   
                     <p>
-                    <input name="isViewed"  data-quote-id={data.quoteId} data-document-id={data.documentId}  type="checkbox" checked={data.viewedByTaxPro} onChange={this.clickViewed} />
+                    <input name="isViewed"  data-quote-id={data.quoteId} data-document-id={data.documentId}  type="checkbox" checked={data.viewedByTaxPro} data-viewed={data.viewedByTaxPro} onChange={this.clickViewed} />
                         {key+1}. <span class="fa-anchor-container"><i class="fa fa-file-o"></i></span>
                         <a data-name={data.name} data-url={data.url} data-quote-id={data.quoteId} data-document-id={data.documentId}  onClick={this.clickDownloadItem}>{data.checklistName} ({data.firstName}{data.lastName ? ' ' : ''}{data.lastName}) - {data.name}</a> (Uploaded {moment(data.createdAt).format('YYYY-MM-DD HH:mm')})
                     </p>
