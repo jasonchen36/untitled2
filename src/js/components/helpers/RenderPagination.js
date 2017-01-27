@@ -11,7 +11,7 @@ export function renderPagination(currentPage, perPage, usersCount, handleClickPa
     let paginationPageNumbers = getPageNumbers(currentPage, totalPages, maxPages, minPagesOnEachSide);
     let renderedPageNumbers = renderPageNumbers(paginationPageNumbers, currentPage,totalPages);
     let prevPage = renderPrevPage(currentPage);
-    let nextPage = renderNextPage(currentPage,maxPages);
+    let nextPage = renderNextPage(currentPage,totalPages);
 
 
     return (
@@ -101,12 +101,12 @@ const renderPrevPage = function(currentPage) {
   return prevPage;
 };
 
-const renderNextPage = function(currentPage,maxPages) {
+const renderNextPage = function(currentPage,totalPages) {
   const nextPageText = "Next Page";
 
   let nextPage = <li className="next-page disabled" key={-2}><a>{nextPageText}</a></li>;
 
-  if(currentPage<maxPages) {
+  if(currentPage<totalPages) {
     const nextPageNumber = currentPage+1;
     nextPage = <li className="next-page" key={-2}><a  data-page={nextPageNumber}>{nextPageText}</a></li>
   }
