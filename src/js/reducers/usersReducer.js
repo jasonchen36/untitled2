@@ -2,7 +2,11 @@
 
 export default function reducer(state={
     users: null,
+    usersCount:null,
+    usersPerPage:20,
+    usersPage:1,
     taxPros: null,
+    taxProsCount:null,
     userSearchTerms:[{key:"orderBy",val:"lastUpdated"}],
     searchChanged:false,
     user: null,
@@ -14,7 +18,7 @@ export default function reducer(state={
     switch (action.type) {
       // Users events
       case "CLEAR_USERS": {
-        return {...state, users:null};
+        return {...state, users:null, usersCount:null, usersPage:1};
       }
       case "FETCH_USERS": {
         return {...state, fetching: true};
@@ -23,18 +27,33 @@ export default function reducer(state={
         return {...state, fetching: false, error: action.payload};
       }
       case "FETCH_USERS_FULFILLED": {
+        const users = action.payload.data.users;
+        const usersCount = action.payload.data.count;
+
         return {
           ...state,
           fetching: false,
           fetched: true,
-          users: action.payload.data,
+          users: users,
+          usersCount: usersCount,
           userSearchTerms:action.payload.searchTerms
         };
       }
       case "SEARCH_TERMS_UPDATED": {
+        const searchTerms = action.payload;
+
+        let usersPageTerm = _.find(searchTerms,(st) => { return st.key==='page';});
+        let usersPage = state.usersPage;
+        
+        if(usersPageTerm) {
+          usersPage = _.parseInt(usersPageTerm.val);
+        }
+
         return {
           ...state,
-          userSearchTerms:action.payload
+
+          userSearchTerms:action.payload,
+          usersPage:usersPage
         };
       }
       // Taxpro events
@@ -42,11 +61,15 @@ export default function reducer(state={
         return {...state, fetching: false, error: action.payload};
       }
       case "FETCH_TAXPROS_FULFILLED": {
+        const taxPros = action.payload.data.users;
+        const taxProsCount = action.payload.data.count;
+
         return {
           ...state,
           fetching: false,
           fetched: true,
-          taxPros: action.payload.data
+          taxPros: taxPros,
+          taxProsCount: taxProsCount
         };
       }
       // User events
@@ -82,6 +105,7 @@ export default function reducer(state={
         return {
           ...state,
           users: state.users.filter(user => user.id.toString() !== action.payload.toString()),
+          usersCount:state.usersCount-1
         }
       }
     }

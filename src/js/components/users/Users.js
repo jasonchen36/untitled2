@@ -11,12 +11,17 @@ import { fetchAllTaxReturnStatuses } from "../../actions/accountsActions";
 
 import { renderTaxProSelectionOptions } from "../helpers/RenderTaxProsSelection";
 import { renderTaxReturnStatusSelectionOptions } from "../helpers/RenderTaxReturnStatusSelection";
+import { renderPagination } from "../helpers/RenderPagination";
+
 
 @connect((store) => {
   return {
     loginuser: store.loginuser.loginuser,
     loginuserFetched: store.loginuser.fetched,
     users: store.users.users,
+    usersCount:store.users.usersCount,
+    usersPage:store.users.usersPage,
+    usersPerPage: store.users.usersPerPage,
     userSearchTerms: store.users.userSearchTerms,
     taxPros: store.users.taxPros,
     taxReturnStatuses: store.accounts.taxReturnStatuses
@@ -29,6 +34,7 @@ export default class Users extends React.Component {
     this.sortByLastName = this.handleSortByLastName.bind(this);
     this.sortByLastUpdated = this.handleSortByLastUpdated.bind(this);
     this.fetchUsers = this.handleFetchUsers.bind(this);
+    this.clickPage = this.handleClickPage.bind(this);
   }
 
 
@@ -298,14 +304,26 @@ export default class Users extends React.Component {
     }
   }
 
+  handleClickPage(e) {
+    let { page } = e.target.dataset;
+
+    e.preventDefault();
+    const oldSearchTerms = this.props.userSearchTerms;
+    if(page && page!==this.props.usersPage) {
+      this.props.dispatch(updateSearchTerms(oldSearchTerms,[{key:"page",val:page}]));
+    }
+  }
+
+
   render() {
-    const { users, loginuser, taxPros, taxReturnStatuses } = this.props;
+    const { users, loginuser, taxPros, taxReturnStatuses, usersCount, usersPage, usersPerPage } = this.props;
     return (
       <main class="grid-container row">
         <section class="col-sm-12">
           <h1>Users</h1>
           {this.renderTableFilters(taxPros,taxReturnStatuses)}
           {this.renderUsersTable(users, loginuser, taxPros)}
+          {renderPagination(usersPage, usersPerPage, usersCount,this.clickPage)}
         </section>
       </main>
     )
