@@ -79,7 +79,7 @@ export default class Layout extends React.Component {
                     {this.getErrorBlock(error)}
                     <div class="text-center">
                         <p>Don't have an account? <Link to={"/register"}>Sign up here »</Link></p>
-                        <p>Forgot password? <a href={baseWEBUrl+"/reset"}>Reset password here »</a></p>
+                        <p>Forgot password? <a href={baseWEBUrl+"/forgot-password"}>Reset password here »</a></p>
                     </div>
                 </section>
             );
