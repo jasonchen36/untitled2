@@ -25,6 +25,7 @@ export function renderPagination(currentPage, perPage, usersCount, handleClickPa
     </div>)
 }
 
+/// Get the Page Numbers to display
 const getPageNumbers = function(currentPage, totalPages, maxPages, minPagesAtStartAndEnd, minPagesOnEachSide) {
     let pageNumbers = [];
 
@@ -63,6 +64,7 @@ const getPageNumbers = function(currentPage, totalPages, maxPages, minPagesAtSta
     return pageNumbers;
 };
 
+/// Render the Page Numbers
 const renderPageNumbers = function(pageNumbers, currentPage, totalPages) {
   let renderedPageNumbers = [];
   let dotdotdot= false;
@@ -86,13 +88,12 @@ const renderPageNumbers = function(pageNumbers, currentPage, totalPages) {
     }
 
   return renderedPageNumbers;
-
 };
 
-
+/// Render the Prev Page button
 const renderPrevPage = function(currentPage) {
   const prevPageText = "Prev Page";
-  let prevPage = <li className="prev-page disabled" key={-1}><a>{prevPageText}</a></li>;
+  let prevPage = <li className="prev-page disabled" key={-1}>{prevPageText}</li>;
 
   if(currentPage>1) {
     const prevPageNumber = currentPage-1;
@@ -102,10 +103,11 @@ const renderPrevPage = function(currentPage) {
   return prevPage;
 };
 
+/// Render the Next Page button
 const renderNextPage = function(currentPage,totalPages) {
   const nextPageText = "Next Page";
 
-  let nextPage = <li className="next-page disabled" key={-2}><a>{nextPageText}</a></li>;
+  let nextPage = <li className="next-page disabled" key={-2}>{nextPageText}</li>;
 
   if(currentPage<totalPages) {
     const nextPageNumber = currentPage+1;
