@@ -220,7 +220,7 @@ export default class Users extends React.Component {
     this.props.dispatch(updateSearchTerms(oldSearchTerms,[newSearchTerm]));
   }
 
-   handleStatusSelected(e) {
+  handleStatusSelected(e) {
     e.preventDefault();
     const selected=  e.target.value;
     const oldSearchTerms = this.props.userSearchTerms;
@@ -231,9 +231,7 @@ export default class Users extends React.Component {
     }
 
     this.props.dispatch(updateSearchTerms(oldSearchTerms,[newSearchTerm]));
-
-
-   }
+  }
 
    /// filter name on press enter
    handleNameFilterKeyDown(e) {

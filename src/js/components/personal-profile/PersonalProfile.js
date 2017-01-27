@@ -8,6 +8,9 @@ import { fetchAccount, fetchTaxReturn, updateTaxProfile, clearAccount } from "..
 
 import { renderSelectionOptions } from "../helpers/LayoutHelpers";
 
+import { loadAccountIfNeeded } from "../loaders/loadUser";
+
+
 @connect((store) => {
   return {
     loginuser: store.loginuser.loginuser,
@@ -24,7 +27,7 @@ export default class PersonalProfile extends React.Component {
   constructor() {
     super();
     this.updateTaxReturn = this.handleUpdateTaxProfile.bind(this);
-
+    this.clickTaxReturnProfile = this.handleClickTaxReturnProfile.bind(this);
     this.selectedFilerType = { value:"other"};
   }
 
@@ -56,33 +59,14 @@ export default class PersonalProfile extends React.Component {
   };
 
   componentWillReceiveProps(nextProps) {
-    if(nextProps.user && !nextProps.user.account_id) {
-      // no accountId, clear account
-      if(nextProps.account
-        || nextProps.taxReturns
-        || nextProps.taxReturn) {
-        this.props.dispatch(clearAccount());
-      }
+    loadAccountIfNeeded(nextProps, this.props);
 
-      return;
+    if (nextProps.user && nextProps.user.account_id && nextProps.account &&
+      nextProps.taxReturn && this.props.taxReturn) {
+        // Update the form with Props if a previous user was loaded
+      this.updateLocalProps(nextProps.taxReturn);
     } else {
-      if(nextProps.user && nextProps.user.account_id 
-        && (!nextProps.account 
-          || nextProps.account.accountId!=nextProps.user.account_id)) {
-        this.props.dispatch(fetchAccount(nextProps.user.account_id));
-      }
-
-      if(nextProps.taxReturns && nextProps.taxReturns.length>0 && 
-        (!nextProps.taxReturn || !nextProps.taxReturnDetailsFetched )) {
-        this.props.dispatch(fetchTaxReturn(nextProps.taxReturns[0].id));
-      }
-
-      if (nextProps.taxReturn && this.props.taxReturn) {
-          // Update the form with Props if a previous user was loaded
-        this.updateLocalProps(nextProps.taxReturn);
-      } else {
-          // If no previous user was loaded, then default Values will handle loading the form
-      }
+      // If no previous user was loaded, then default Values will handle loading the form
     }
   };
 
@@ -206,7 +190,7 @@ export default class PersonalProfile extends React.Component {
           <main class="grid-container row">
               <Sidebar activeScreen="personalProfile" userId={this.props.params.userId}/>
               <section class="col-sm-8 col-lg-9">
-                  <UserOptionsHeader taxReturns={taxReturns} activeTaxReturn={taxReturn} handleClickTaxReturnProfile={this.handleClickTaxReturnProfile.bind(this)} />
+                  <UserOptionsHeader taxReturns={taxReturns} activeTaxReturn={taxReturn} handleClickTaxReturnProfile={this.clickTaxReturnProfile} />
                   <h1>Personal Profile</h1>
                   {userOutput}
               </section>

@@ -6,12 +6,15 @@ export default function reducer(state={
     taxReturns: null,
     taxReturn: null,
     taxReturnStatuses:null,
+    quoteChecklist: null,
     searchChanged:false,
     user: null,
     fetching: false,
     fetched: false,
     updating: false,
     taxReturnDetailsFetched:false,
+    quoteChecklistFetched:false,
+    quoteChecklistFetching:false,
     quoteChecklistPdf: null,
     error: null,
   }, action) {
@@ -49,7 +52,15 @@ export default function reducer(state={
         return {...state, fetching: false, error: action.payload};
       }
       case "CLEAR_ACCOUNT": {
-        return {...state, account:null, taxReturns:null, taxReturn:null,address:null};
+        return {...state, 
+          account:null, 
+          taxReturns:null, 
+          taxReturn:null,
+          address:null,
+          taxReturnDetailsFetched:false, 
+          quoteChecklist:null,
+          quoteChecklistFetched:false
+        };
       }
       case "FETCH_ACCOUNT_FULFILLED": {
           //todo, account variable is not getting saved to state by taxreturns and taxreturn are
@@ -69,7 +80,8 @@ export default function reducer(state={
           account: account,
           taxReturns:taxReturns,
           taxReturn:taxReturn,
-          taxReturnDetailsFetched: taxReturnDetailsFetched
+          taxReturnDetailsFetched: taxReturnDetailsFetched,
+          quoteChecklistFetching:false
         };
       }
       case "FETCH_ALL_TAX_RETURN_STATUSES_FULFILLED": {
@@ -90,6 +102,77 @@ export default function reducer(state={
         return {
           ...state,
           updating:false
+        };
+      }
+      case "FETCH_CHECKLIST": {
+        return {
+          ...state,
+          quoteChecklistFetching:true
+        }
+      }
+      case "FETCH_CHECKLIST_FULFILLED": {
+        return {
+          ...state,
+          fetching:false,
+          quoteChecklist:action.payload.data,
+          quoteChecklistFetched:true,
+          quoteChecklistFetching:false
+        };
+      }
+      case "DELETE_DOCUMENT_FULFILLED": {
+        let result = action.payload;
+        let checklist = state.quoteChecklist;
+        if(checklist.quoteId === result.quoteId) {
+          checklist = _.cloneDeep(state.quoteChecklist);
+          _.each(checklist.checklistitems,(cli) => {
+              cli.documents = _.filter(cli.documents,(doc) => {
+                  return doc.documentId!==result.documentId;
+              });
+          });
+          checklist.additionalDocuments = _.filter(checklist.additionalDocuments, (ad) => {
+              return ad.documentId !== result.documentId;
+          });
+
+        }
+
+        return {
+          ...state,
+          fetching:false,
+          quoteChecklist:checklist
+        };
+
+      }
+      case "DOCUMENT_VIEWED" : {
+        let result = action.payload;
+        let checklist = _.cloneDeep(state.quoteChecklist);
+        if(checklist.quoteId === result.quoteId) {
+          _.each(checklist.checklistitems,(cli) => {
+              _.each(cli.documents,(doc) => {
+                  if(doc.documentId===result.documentId) {
+                    doc.viewedByTaxPro=result.viewed;
+                  }
+              });
+          });
+          _.each(checklist.additionalDocuments, (ad) => {
+              if(ad.documentId === result.documentId) {
+                ad.viewedByTaxPro = result.viewed;
+              }
+          });
+
+        }
+
+        return {
+          ...state,
+          fetching:false,
+          quoteChecklist:checklist
+        };
+
+      }
+      case "FETCH_CHECKLIST_REJECTED": {
+        return {
+          ...state,
+          fetching:false,
+          error: action.payload
         };
       }
       case "FETCH_CHECKLIST_PDF_FULFILLED": {
