@@ -2,13 +2,14 @@ import _ from "lodash";
 import React from "react";
 
 /// Render pagination
-export function renderPagination(currentPage, perPage, usersCount, handleClickPage, maxPages,minPagesOnEachSide) {
-    maxPages = maxPages ? maxPages: 8;
+export function renderPagination(currentPage, perPage, usersCount, handleClickPage, maxPages,minPagesAtStartAndEnd, minPagesOnEachSide) {
+    maxPages = maxPages ? maxPages: 12;
     minPagesOnEachSide= minPagesOnEachSide? minPagesOnEachSide : 2;
+    minPagesAtStartAndEnd = minPagesAtStartAndEnd ? minPagesAtStartAndEnd : 3;
 
      let totalPages = _.ceil(usersCount/perPage);
 
-    let paginationPageNumbers = getPageNumbers(currentPage, totalPages, maxPages, minPagesOnEachSide);
+    let paginationPageNumbers = getPageNumbers(currentPage, totalPages, maxPages, minPagesAtStartAndEnd, minPagesOnEachSide);
     let renderedPageNumbers = renderPageNumbers(paginationPageNumbers, currentPage,totalPages);
     let prevPage = renderPrevPage(currentPage);
     let nextPage = renderNextPage(currentPage,totalPages);
@@ -24,15 +25,15 @@ export function renderPagination(currentPage, perPage, usersCount, handleClickPa
     </div>)
 }
 
-const getPageNumbers = function(currentPage, totalPages, maxPages, minPagesOnEachSide) {
+const getPageNumbers = function(currentPage, totalPages, maxPages, minPagesAtStartAndEnd, minPagesOnEachSide) {
     let pageNumbers = [];
 
     if(totalPages<=maxPages) {
-      for(let i=1; i<totalPages; i++) {
+      for(let i=1; i<=totalPages; i++) {
           pageNumbers.push(i);
       }
     } else if (totalPages>maxPages) {
-      for(let i=1;i<=minPagesOnEachSide;i++) {
+      for(let i=1;i<=minPagesAtStartAndEnd;i++) {
         pageNumbers.push(i);
         pageNumbers.push(totalPages+1-i);
       }
