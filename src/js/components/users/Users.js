@@ -24,7 +24,7 @@ import { renderPagination } from "../helpers/RenderPagination";
     usersPerPage: store.users.usersPerPage,
     userSearchTerms: store.users.userSearchTerms,
     taxPros: store.users.taxPros,
-    taxReturnStatuses: store.accounts.taxReturnStatuses
+    taxReturnStatuses: store.accounts.taxReturnStatuses,
   };
 })
 

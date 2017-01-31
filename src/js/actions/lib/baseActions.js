@@ -54,3 +54,13 @@ export function request(config) {
   let newConfig = _.merge(getConfig(),config);
   return axios.request(newConfig);
 }
+
+export function cleanErrorObject(error) {
+  const errorObject = {data:error.data,
+    status: error.status,
+    statusText: error.statusText,
+    message: error.data && error.data.msg ? error.data.msg: error.statusText
+  };
+
+  return errorObject;
+}

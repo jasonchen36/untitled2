@@ -7,17 +7,22 @@ import { createLoginuser, loginLoginuser, fetchLoginuser } from "../../actions/l
 import { fetchUser, fetchTaxPros, updateUser } from "../../actions/usersActions";
 import { renderTaxProSelectionOptions } from "../helpers/RenderTaxProsSelection";
 import { renderSelectionOptions } from "../helpers/LayoutHelpers";
+import { renderErrors } from "../helpers/RenderErrors";
 
+const updateState = { initialized:0, updating:1, updated:2};
 
 @connect((store) => {
-    return {
-        loginuser: store.loginuser.loginuser,
-        loginuserFetched: store.loginuser.fetched,
-        user: store.users.user,
-        taxPros: store.users.taxPros,
-        taxReturns:store.accounts.taxReturns,
-        taxReturn:store.accounts.taxReturn
-    };
+  return {
+    loginuser: store.loginuser.loginuser,
+    loginuserFetched: store.loginuser.fetched,
+    user: store.users.user,
+    taxPros: store.users.taxPros,
+    taxReturns:store.accounts.taxReturns,
+    taxReturn:store.accounts.taxReturn,
+    accountError: store.accounts.error,
+    updating: store.users.updating,
+    userUpdated: store.users.userUpdated
+  };
 })
 
 export default class AccountProfile extends React.Component {
@@ -26,6 +31,7 @@ export default class AccountProfile extends React.Component {
         this.updateUser = this.handleUpdateUser.bind(this);
         this.selectedTaxPro = { value:null};
         this.selectedRole = {value:"Customer"};
+        this.userUpdateState = {value:updateState.initialised};
     }
 
     componentWillMount() {
@@ -47,7 +53,23 @@ export default class AccountProfile extends React.Component {
             this.updateLocalProps(nextProps.user);
         } else {
         }
+        this.userUpdateState.value = this.getUpdatedState(nextProps.updating, nextProps.userUpdated);
     };
+
+      // Local updated state, to set the form button text
+  getUpdatedState(updating, updated) {
+    let taxReturnUpdateState = updateState.initialised;
+
+    if (updating) {
+      taxReturnUpdateState = updateState.updating;
+    } else if(!updating && updated) {
+      taxReturnUpdateState = updateState.updated;
+    } else {
+      taxReturnUpdateState = updateState.initialised;
+    }
+
+    return taxReturnUpdateState;
+  }
 
     /// update all the form with the values from the user (prop)
     updateLocalProps(user) {
@@ -113,12 +135,23 @@ export default class AccountProfile extends React.Component {
       }
     }
 
-    renderAccountProfile(user, taxPros,loginuser){
+  renderFormButton(user,updatedState) {
+    let buttonText = "update user";
+
+    if(updatedState.value===updateState.updating) {
+      buttonText="updating";
+    } else if(updatedState.value===updateState.updated) {
+      buttonText="updated";
+    }
+
+    return <button id={user.id} data-id={user.id} className={updatedState.value===updateState.updated ? "flash" : ""} >{buttonText}</button>
+  }
+
+    renderAccountProfile(user, taxPros,loginuser, userUpdateState){
         if(!user) {
           return <div>Getting User...</div>
         }
 
-        //todo, change user role to a dropdown
         return (
             <form class="standard-form" id={user.id} onSubmit={this.updateUser}>
                 <label for="user-first-name">First Name &amp; Initials</label>
@@ -134,21 +167,22 @@ export default class AccountProfile extends React.Component {
                 {this.renderRole(loginuser)}
                 <label for="user-tax-pro">Assigned TaxPro</label>
                   {this.renderTaxPro(loginuser,taxPros)}
-                <button id={user.id} >update user</button>
+                {this.renderFormButton(user, this.userUpdateState)}
             </form>
         );
     }
 
     render() {
-        const { loginuser,user, taxPros, taxReturns, taxReturn } = this.props;
-        return (
-            <main class="grid-container row">
-                <Sidebar activeScreen="accountProfile" userId={this.props.params.userId}/>
-                <section class="col-sm-8 col-lg-9">
-                    <h1>Account Profile</h1>
-                    {this.renderAccountProfile(user, taxPros,loginuser)}
-                </section>
-            </main>
-        );
+      const { loginuser,user, taxPros, taxReturns, taxReturn, accountError, userUpdated } = this.props;
+      return (
+        <main class="grid-container row">
+          <Sidebar activeScreen="accountProfile" userId={this.props.params.userId}/>
+          <section class="col-sm-8 col-lg-9">
+            <h1>Account Profile</h1>
+            {this.renderAccountProfile(user, taxPros, loginuser, userUpdated)}
+            {renderErrors(accountError)}
+          </section>
+        </main>
+      );
     }
 }

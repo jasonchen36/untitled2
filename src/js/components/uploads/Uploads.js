@@ -11,6 +11,9 @@ import { directDownloadChecklistItems, deleteDocument, viewedDocument } from "..
 import { saveBlob } from "../../lib/saveBlob";
 import { loadAccountIfNeeded, loadChecklistIfNeeded } from "../loaders/loadUser";
 
+import { renderErrors } from "../helpers/RenderErrors";
+
+
 @connect((store) => {
     return {
         loginuser: store.loginuser.loginuser,
@@ -21,7 +24,8 @@ import { loadAccountIfNeeded, loadChecklistIfNeeded } from "../loaders/loadUser"
         account: store.accounts.account,
         quoteChecklist: store.accounts.quoteChecklist,
         quoteChecklistFetched: store.accounts.quoteChecklistFetched,
-        quoteChecklistFetching: store.accounts.quoteChecklistFetching 
+        quoteChecklistFetching: store.accounts.quoteChecklistFetching,
+        accountError: store.accounts.error
     };
 })
 
@@ -105,7 +109,7 @@ export default class Uploads extends React.Component {
 
     render() {
         //todo, pass in uploads to render
-        const { taxReturns, taxReturn,quoteChecklist} = this.props;
+        const { taxReturns, taxReturn,quoteChecklist, accountError} = this.props;
 
         let checkListItems = quoteChecklist && quoteChecklist.checklistitems ? quoteChecklist.checklistitems : [];
 
@@ -130,6 +134,7 @@ export default class Uploads extends React.Component {
                 <section class="col-sm-8 col-lg-9">
                     <h1>TAXitem Uploads</h1>
                     <div class="grid-container">
+                        {renderErrors(accountError)}
                         {this.renderUploads(checklistDocuments)}
                     </div>
                 </section>
