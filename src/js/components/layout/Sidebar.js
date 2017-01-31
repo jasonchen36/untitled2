@@ -2,38 +2,54 @@ import React from "react";
 
 import { IndexLink, Link } from "react-router";
 
-// Footer for all pages
+// sidebar for tax return information pages
 export default class Sidebar extends React.Component {
+
+    getButtonClass(screenLink){
+        const { activeScreen } = this.props;
+        if (activeScreen === screenLink){
+            return 'button disabled';
+        } else {
+            return 'button'
+        }
+    }
+    
+    getButtonUrl(url, userId){
+       return userId?url:'/';
+    }
+
+    
     render() {
+      const { userId } = this.props;
         return (
-            <aside class="col-sm-4">
+            <aside class="col-sm-4 col-lg-3">
                 <ul id="sidebar-menu">
                     <li>
-                        <Link to="personal-profile" class="button grey">Personal Tax 2015</Link>
+                        <p class="button disabled">Personal Tax 2016</p>
                     </li>
                     <li>
-                        <Link to="personal-profile" class="button">Personal Profile</Link>
+                        <Link to={this.getButtonUrl('/users/'+userId+'/personal-profile', userId)} class={this.getButtonClass('personalProfile')}>Personal Profile</Link>
                     </li>
                     <li>
-                        <Link to="tax-profile" class="button">Tax Profile</Link>
+                        <Link to={this.getButtonUrl('/users/'+userId+'/account-profile', userId)} class={this.getButtonClass('accountProfile')}>Account Profile</Link>
                     </li>
                     <li>
-                        <Link to="uploads" class="button">TAXitem Uploads</Link>
+                        <Link to={this.getButtonUrl('/users/'+userId+'/tax-profile',userId)} class={this.getButtonClass('taxProfile')}>Tax Profile</Link>
                     </li>
                     <li>
-                        <Link to="checklist" class="button">Checklist</Link>
+                        <Link to={this.getButtonUrl('/users/'+userId+'/uploads',userId)} class={this.getButtonClass('uploads')}>TAXitem Uploads</Link>
                     </li>
                     <li>
-                        <Link to="messages" class="button">Messages</Link>
+                        <Link to={this.getButtonUrl('/users/'+userId+'/checklist',userId)} class={this.getButtonClass('checklist')}>Checklist</Link>
                     </li>
                     <li>
-                        <Link to="notes" class="button">Notes</Link>
+                        <Link to={this.getButtonUrl('/users/'+userId+'/messages',userId)} class={this.getButtonClass('messages')}>Messages</Link>
                     </li>
                     <li>
-                        <Link to="billing-status" class="button">Billing Status</Link>
+                        <Link to={this.getButtonUrl('/users/'+userId+'/notes',userId)} class={this.getButtonClass('notes')}>Notes</Link>
                     </li>
                     <li>
-                        <Link to="users" class="button grey disabled">Users</Link>
+                        <Link to={this.getButtonUrl('/users/'+userId+'/billing-status',userId)} class={this.getButtonClass('billingStatus')}>Billing Status</Link>
                     </li>
                 </ul>
             </aside>

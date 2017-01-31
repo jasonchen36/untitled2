@@ -1,0 +1,52 @@
+#users-table-filters {
+  margin-bottom: 30px;
+  select {
+    margin: 0 10px;
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+  input {
+    max-width: 150px;
+    margin: 0 10px;
+  }
+}
+
+.red-alert {
+  background-color: #d47373;
+}
+
+.yellow-alert {
+  background-color: #e7c770;
+}
+
+
+.green-alert {
+  background-color: #78d79c;
+}
+
+.pagination {
+
+  li {
+    background-color: #87ad5c;
+    display:inline;
+    margin: 2px 2px 2px 2px;
+    padding: 2px 4px 2px 4px;
+
+
+
+    &.disabled {
+      background-color: #c3d6af;
+      color:#FFF;      
+    }
+
+   &.current-page {
+      background-color: #561457;
+      color:#FFF;      
+   }
+
+    a {
+      color:#FFF;
+    }
+  }
+}

@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux"
 import { IndexLink, Link } from "react-router";
 
-import { fetchLoginuser, logoutLoginuser } from "../../actions/loginuserActions"
+import { logoutLoginuser } from "../../actions/loginuserActions"
 
 @connect((store) => {
     return {
@@ -16,47 +16,41 @@ export default class Nav extends React.Component {
         this.state = {};
     }
 
-    componentWillMount() {
-        this.props.dispatch(fetchLoginuser())
-    }
-
     //listeners
     logoutLoginuser(e) {
         this.props.dispatch(logoutLoginuser())
     }
 
     //templates
-    renderNavMenu(){
-        const { loginuser } = this.props;
-        if (loginuser.id) {
+    renderNavMenu(user){
+        if (user && user.hasOwnProperty('first_name')) {
             return (
-                <ul class="standard-menu">
+              <ul class="standard-menu">
+                <li>
+                    <Link to="/users">Accounts</Link>
+                </li>
+                <li>
+                  {user.first_name} ({user.role})
+                  <ul class="sub-menu">
+                      <li>
+                          <Link to="/users">Accounts</Link>
+                      </li>
                     <li>
-                        {loginuser.first_name} ({loginuser.role})
-                        <ul class="sub-menu">
-                            <li>
-                                <IndexLink to="/" onClick={this.logoutLoginuser.bind(this)}>Logout</IndexLink>
-                            </li>
-                        </ul>
+                      <IndexLink to="/" onClick={this.logoutLoginuser.bind(this)}>Logout</IndexLink>
                     </li>
-                </ul>
-            );
-        } else {
-            return (
-                <ul>
-                    <li>
-                        <IndexLink to="/">Login</IndexLink>
-                    </li>
-                </ul>
+                  </ul>
+                </li>
+              </ul>
             );
         }
     }
 
 /// Nav for all pages
     render() {
+        const { loginuser } = this.props;
         return (
             <nav id="header-menu-container" role="navigation">
-                { this.renderNavMenu() }
+                { this.renderNavMenu(loginuser) }
             </nav>
         );
     }

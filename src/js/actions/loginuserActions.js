@@ -1,4 +1,4 @@
-import * as base from "./baseActions";
+import * as base from "./lib/baseActions";
 
 /// Fetch data for logged in user
 export function fetchLoginuser() {
@@ -32,12 +32,10 @@ export function loginLoginuser(data) {
         return base.get("/users/me");
       })
       .then((response) => {
-        console.log('users',response);
         dispatch({type: "FETCH_LOGINUSER_FULFILLED",payload:response.data});
 
       })
       .catch((err) => {
-        console.log('error?',err);
         dispatch({type: "LOGIN_LOGINUSER_REJECTED", payload: err});
       })
   };
@@ -64,17 +62,23 @@ export function logoutLoginuser() {
 // create login user
 // data : { email: "email@email.com", first_name: "Bob", last_name:"Sagat", password:"password" }
 export function createLoginuser(data) {
-   return function(dispatch) {
+  return function(dispatch) {
      //TODO: pass create user variables
     base.post("/users",
       data
      )
       .then((response) => {
-        dispatch({type: "CREATE_LOGINUSER_FULFILLED", payload:  response.data})
+        localStorage.setItem('auth_token', response.data.token);
+        dispatch({type: "CREATE_LOGINUSER_FULFILLED", authenticated:true,payload:  response.data});
+        return base.get("/users/me");
+      })
+      .then((response) => {
+        dispatch({type: "FETCH_LOGINUSER_FULFILLED",payload:response.data});
+
       })
       .catch((err) => {
-        dispatch({type: "CREATE_LOGINUSER_REJECTED", payload: err})
-      })
-  }
+        dispatch({type: "CREATE_LOGINUSER_REJECTED", payload: err});
+      });
+  };
 }
 

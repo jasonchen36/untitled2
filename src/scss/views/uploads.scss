@@ -1,0 +1,21 @@
+.uploads-row {
+  border-bottom: 1px solid $color-input-border;
+  padding: 10px 5px;
+}
+
+.uploads-button-delete {
+  $icon-size: 1.25rem;
+  display: block;
+  margin: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: $icon-size;
+  width: $icon-size;
+  text-align: center;
+  .fa {
+    font-size: $icon-size;
+  }
+}
