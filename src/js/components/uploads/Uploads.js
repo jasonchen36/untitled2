@@ -70,7 +70,6 @@ export default class Uploads extends React.Component {
 
     handleClickViewed(e) {
       let { documentId, quoteId, viewed } = e.currentTarget.dataset;
-      console.log('click viewed', viewed);
 
       this.props.dispatch(viewedDocument(quoteId, documentId, viewed));
     }

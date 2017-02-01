@@ -9,6 +9,7 @@ import accounts from "./accountsReducer"
 import users from "./usersReducer"
 import loginuser from "./loginuserReducer"
 import messages from "./messagesReducer"
+import notes from "./notesReducer"
 
 
 export default combineReducers({
@@ -16,5 +17,6 @@ export default combineReducers({
   accounts,
   loginuser,
   messages,
+  notes,
   routing: routerReducer
 });

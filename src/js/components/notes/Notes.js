@@ -2,19 +2,20 @@ import React from "react"
 import { connect } from "react-redux"
 
 import { Link  } from "react-router"
-
+import moment from "moment"
 import Sidebar from "../layout/Sidebar";
 import UserOptionsHeader from "../layout/UserOptionsHeader";
 
 import { fetchUser } from "../../actions/usersActions";
-import { fetchAccount, fetchTaxReturn } from "../../actions/accountsActions";
+import { fetchNotes, markAsDone, createNote } from "../../actions/notesActions";
 
 @connect((store) => {
     return {
         loginuser: store.loginuser.loginuser,
         user: store.users.user,
-        taxReturns:store.accounts.taxReturns,
-        taxReturn:store.accounts.taxReturn
+        notes: store.notes.notes,
+        noteSent: store.notes.noteSent,
+        error: store.notes.error
     };
 })
 
@@ -23,73 +24,47 @@ export default class Notes extends React.Component {
     constructor() {
         super();
         this.sendNote = this.handleSendNote.bind(this);
+        this.clickDone = this.handleClickDone.bind(this);         
     }
 
     componentWillMount() {
-        this.props.dispatch(fetchUser(this.props.params.userId));
+        const userId = this.props.params.userId;
+        this.props.dispatch(fetchNotes(userId));      
     };
 
     componentWillReceiveProps(nextProps) {
-        //todo, stuck in infinite loop getting account
-        // if(nextProps.user && nextProps.user.account_id && (!nextProps.account || nextProps.account.accountId!=nextProps.user.account_id)) {
-        //     this.props.dispatch(fetchAccount(nextProps.user.account_id));
-        // }
-        //
-        // if(nextProps.taxReturns && !nextProps.taxReturn && nextProps.taxReturns.length>0) {
-        //     this.props.dispatch(fetchTaxReturn(nextProps.taxReturns[0].id));
-        // }
-        //
-        // if (nextProps.taxReturn && this.props.taxReturn) {
-        //     // Update the form with Props if a previous user was loaded
-        //     // this.updateLocalProps(nextProps.taxReturn);
-        // } else {
-        //     // If no previous user was loaded, then default Values will handle loading the form
-        // }
+       this.clearNoteFieldsOnNoteSent(nextProps.noteSent,this.props.noteSent);
+
+     };
+
+       /// update all the form with the values from the user (prop)
+    clearNoteFieldsOnNoteSent(noteSentStatus,noteSentPreviousStatus) {
+        if (noteSentStatus===true && noteSentPreviousStatus===false) {
+            this.note_text.value= '';
+        }
     };
 
-    getDummyData(){
-        return [
-            {
-                id: 1,
-                date: '1/5/17 4:11 PM',
-                user: 'TAXplan Canada',
-                notes: 'Frank test',
-                done: false
-            },
-            {
-                id: 2,
-                date: '1/6/17 4:12 PM',
-                user: 'TAXplan Canada',
-                notes: 'Frank test2',
-                done: true
-            },
-            {
-                id: 3,
-                date: '1/7/17 4:13 PM',
-                user: 'TAXplan Canada',
-                notes: 'Frank test3',
-                done: false
-            }
-        ]
-    }
 
     handleSendNote(e) {
-        const updatedValues = {
-            body: this.note_text.value
-        };
-
-        let { id } = e.target;
-
+        const message = this.note_text.value;
+        let {  userId } = e.currentTarget.dataset;
+        
         e.preventDefault();
-//todo, send note to api
-        // this.props.dispatch(sendMessage(id, updatedValues));
+         this.props.dispatch(createNote(userId, message));
     };
+
+    handleClickDone(e) {
+      let { noteId, userId, done } = e.currentTarget.dataset;
+      done = parseInt(done)===0 ? true : false;
+
+      this.props.dispatch(markAsDone(userId, noteId, done));
+    }
 
     renderSendNote(userId) {
         return (
             <form class="standard-form">
                 <textarea rows="5" ref={(input) => {this.note_text = input;}} type="text" placeholder="Compose Note"/>
-                <button id={userId} onClick={this.sendNote}>Add Note</button>
+                <button id={userId} data-user-id={userId} onClick={this.sendNote}>Add Note</button>
             </form>
         );
     }
@@ -103,22 +78,23 @@ export default class Notes extends React.Component {
                     {data.id}
                 </td>
                 <td>
-                    {data.date}
+                    {moment(data.create_at).format('YYYY-MM-DD HH:mm')}
                 </td>
                 <td>
-                    {data.user}
-                </td>
-                <td>
-                    {data.notes}
+                    {data.note}
                 </td>
                 <td class="text-center">
-                    <input type="checkbox" />
+                    <input name="isDone" data-user-id={data.user_id} data-note-id={data.id} checked={data.done} data-done={data.done} onChange={this.clickDone} type="checkbox" />
                 </td>
             </tr>
         );
     }
 
     renderNotesTable(data){
+        if(!data || data.length===0) {
+          return <div> No Notes.</div>
+        }
+
         const tableRows = data.map(row =>this.renderNotesRow(row));
         return (
             <table class="standard-table">
@@ -131,10 +107,7 @@ export default class Notes extends React.Component {
                         Date/Time
                     </th>
                     <th>
-                        User
-                    </th>
-                    <th>
-                        Notes
+                        Note
                     </th>
                     <th>
                         Done
@@ -149,18 +122,20 @@ export default class Notes extends React.Component {
     }
 
     render() {
-        //todo, pass in data to table
-        const { taxReturns, taxReturn} = this.props;
-        const userId = this.props.params.userId;
-        return (
-            <main class="grid-container row">
-                <Sidebar activeScreen="notes" userId={userId}/>
-                <section class="col-sm-8 col-lg-9">
-                    <h1>Notes</h1>
-                    {this.renderSendNote(userId)}
-                    {this.renderNotesTable(this.getDummyData())}
-                </section>
-            </main>
-        )
+      //todo, pass in data to table
+      const { notes } = this.props;
+      const userId = this.props.params.userId;
+
+      const orderedNotes = _.orderBy(notes,['create_at','id'],['desc','desc'])
+      return (
+          <main class="grid-container row">
+              <Sidebar activeScreen="notes" userId={userId}/>
+              <section class="col-sm-8 col-lg-9">
+                  <h1>Notes</h1>
+                  {this.renderSendNote(userId)}
+                  {this.renderNotesTable(orderedNotes)}
+              </section>
+          </main>
+      )
     }
 }
