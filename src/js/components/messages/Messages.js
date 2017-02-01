@@ -22,6 +22,7 @@ import { renderErrors } from "../helpers/RenderErrors";
         messageSent: store.messages.messageSent,
         taxReturns:store.accounts.taxReturns,
         taxReturn:store.accounts.taxReturn,
+        error:store.message.error,
         sendError: store.messages.sendError,
         messagesError: store.messages.messagesError
     };
@@ -107,7 +108,6 @@ export default class Messages extends React.Component {
         return (
             <form class="standard-form">
                 <textarea rows="5" ref={(input) => {this.message_text = input;}} type="text" placeholder="Compose Messages"/>
-                {renderErrors(sendError)}                
                 <button id={userId} onClick={this.sendMessage}>Send</button>
             </form>
         );
@@ -121,17 +121,17 @@ export default class Messages extends React.Component {
     }
 
     render() {
-        const { messages, taxReturns, taxReturn, sendError, messagesError } = this.props;
+        const { messages, taxReturns, taxReturn, sendError, messagesError,error } = this.props;
         const userId = this.props.params.userId;
         return (
             <main class="grid-container row">
                 <Sidebar activeScreen="messages" userId={userId}/>
                 <section class="col-sm-8 col-lg-9">
                     <h1>Messages</h1>
-                    {this.renderSendMessage(userId, sendError)}
+                    {this.renderSendMessage(userId)}
                     
                     <div class="grid-container">
-                        {renderErrors(messagesError)}                
+                        {renderErrors(error)}                
                         {this.renderMessages(messages)}
                     </div>
                 </section>

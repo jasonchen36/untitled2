@@ -8,6 +8,8 @@ import UserOptionsHeader from "../layout/UserOptionsHeader";
 
 import { fetchUser } from "../../actions/usersActions";
 import { fetchNotes, markAsDone, createNote } from "../../actions/notesActions";
+import { renderErrors } from "../helpers/RenderErrors";
+
 
 @connect((store) => {
     return {
@@ -123,7 +125,7 @@ export default class Notes extends React.Component {
 
     render() {
       //todo, pass in data to table
-      const { notes } = this.props;
+      const { notes, error } = this.props;
       const userId = this.props.params.userId;
 
       const orderedNotes = _.orderBy(notes,['create_at','id'],['desc','desc'])
@@ -133,6 +135,8 @@ export default class Notes extends React.Component {
               <section class="col-sm-8 col-lg-9">
                   <h1>Notes</h1>
                   {this.renderSendNote(userId)}
+                  {renderErrors(error)}                
+                  
                   {this.renderNotesTable(orderedNotes)}
               </section>
           </main>
