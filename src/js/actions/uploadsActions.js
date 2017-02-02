@@ -28,7 +28,7 @@ export function deleteDocument(quoteId, documentId) {
       .then((response) => {
         dispatch({type:"DELETE_DOCUMENT_FULFILLED",payload:{quoteId:parseInt(quoteId), documentId: parseInt(documentId)}});
       }).catch((err) => {
-        dispatch({type:"DELETE_DOCUMENT_REJECTED",payload:base.cleanErrorObject(err)});
+        dispatch({type:"DELETE_DOCUMENT_REJECTED",payload:err});
       });
   };
 };
