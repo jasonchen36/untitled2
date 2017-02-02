@@ -26,7 +26,12 @@ const renderErrorsArray = function(errors) {
   // now handle errors
   return _.map(errors,(error,key) => {
     console.log('e',error);
-    return <li key={key}> {error.message} </li>
+    if(error && error.message) {
+
+      return <li key={key}> {error.message} </li>
+    } else if(error) {
+      return <li key={key}> There was an error. If it persists, please contact support.</li>
+    }
   });
 };
 
