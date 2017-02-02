@@ -4,22 +4,22 @@ import _ from "lodash";
 /// Fetch a list of users, optionally with search Terms
 export function fetchAccount(accountId) {
   return function(dispatch) {
-      getAccount(dispatch, accountId);
+    getAccount(accountId)
+      .then((response) => {
+        let result = response;
+        dispatch({type: "FETCH_ACCOUNT_FULFILLED", payload:  result});
+      })
+      .catch((err) => {
+        dispatch({type: "FETCH_ACCOUNT_REJECTED", payload: err});
+      });
   };
 }
 
-const  getAccount = (dispatch, accountId) => {
+const  getAccount = (accountId) => {
   let searchUrl = "/account/"+accountId;
   
-  base.get(searchUrl)
-    .then((response) => {
-      let result = response;
-      dispatch({type: "FETCH_ACCOUNT_FULFILLED", payload:  result});
-    })
-    .catch((err) => {
-      dispatch({type: "FETCH_ACCOUNT_REJECTED", payload: err});
-    });
-}
+  return base.get(searchUrl)
+};
 
 export function clearAccount() {
   return function(dispatch) {
@@ -29,7 +29,13 @@ export function clearAccount() {
 
 export function fetchTaxReturn(taxReturnId) {
   return function(dispatch) {
-    getTaxReturn(dispatch, taxReturnId);
+    return getTaxReturn(taxReturnId)
+      .then((response) => {
+        dispatch({type: "FETCH_TAX_RETURN_FULFILLED", payload: response});
+      })
+      .catch((err) => {
+        return dispatch({type: "FETCH_TAX_RETURN_REJECTED", payload: err}); 
+      });
   };
 }
 
@@ -39,7 +45,7 @@ export function clearTaxReturnUpdate() {
   }
 }
 
-const getTaxReturn = (dispatch, taxReturnId) => {
+const getTaxReturn = (taxReturnId) => {
   const searchUrl = "/tax_return/"+taxReturnId;
   const addressSearchUrl = "/tax_return/"+taxReturnId+"/addresses";
 
@@ -51,11 +57,7 @@ const getTaxReturn = (dispatch, taxReturnId) => {
       taxResponse.data.address = responses[1].data && responses[1].data.length>0 ? responses[1].data[0] : null ;
 
       taxResponse.addressResponse = responses[1];
-      return dispatch({type: "FETCH_TAX_RETURN_FULFILLED", payload: taxResponse});
-      
-    })
-    .catch((err) => {
-      return dispatch({type: "FETCH_TAX_RETURN_REJECTED", payload: err});
+      return taxResponse;
     });
 };
 
@@ -77,15 +79,30 @@ export function updateTaxProfile(id, updateValues, addressId, updateAddressValue
   return function(dispatch) {
       dispatch({type:"UPDATING_TAX_RETURN", payload:null});
 
-    const updateTaxProfilePromise = callUpdateTaxProfile(dispatch, id, updateValues);
-    const updateAddressPromise = callUpdateAddress(dispatch, id, addressId, updateAddressValues);
+    const updateTaxProfilePromise = callUpdateTaxProfile(id, updateValues)
+      .then((result) => {   
+        dispatch({type: "UPDATE_TAX_RETURN_PROFILE_FULFILLED", payload: response});
+      })
+      .catch((err) => {
+        dispatch({type: "UPDATE_TAX_RETURN_PROFILE_REJECTED", payload: err});
+        return Promise.reject(err);
+      });
 
+    const updateAddressPromise = callUpdateAddress(id, addressId, updateAddressValues)
+      .then((result) => {
+        dispatch({type: "UPDATE_ADDRESS_FULFILLED", payload: response});
+      })
+      .catch((err) => {
+        dispatch({type: "UPDATE_ADDRESS_REJECTED", payload: err});
+        return Promise.reject(err);
+      });
+      
     return Promise.all([updateTaxProfilePromise, updateAddressPromise])
       .then(function(responses) {
-        return getTaxReturn(dispatch, id);
+        return getTaxReturn(id);
       })
-      .then(function(responses) {
-        dispatch({type:"UPDATE_TAX_RETURN_COMPLETE",payload:responses});
+      .then(function(response) {
+        dispatch({type:"UPDATE_TAX_RETURN_FULFILLED",payload:response});
       }).catch(function(err) {
         dispatch({type:"UPDATE_TAX_RETURN_REJECTED", payload:err});
       });
@@ -119,18 +136,85 @@ export function clearChecklist() {
   }
 }
 
-const callUpdateTaxProfile = (dispatch,id,updateValues) => {
+export function loadAccountIfNeeded(user, account, taxReturns, taxReturn, taxReturnDetailsFetched) {
+    let results = {
+        user, 
+        account,
+        taxReturn,
+        taxReturns,
+        taxReturnDetailsFetched
+    };
+
+    // current user
+    // current account
+    // current taxReturns
+    // current taxReturn
+    // taxReturnDetailsFetched
+
+
+    // If no user loaded, get account Id
+
+    // if account Id is not same as account or no account, get account.
+
+
+    // once got account, get tax returns
+      // if current tax return is still in tax returns, keep it selected.
+      // otherwise, take first tax return
+
+    // if tax Return exists, but don't have details, fetch tax return details
+};
+
+/// REQUIRES PROPS: taxReturns, taxReturn, account, taxReturnDetailsFetched
+//const loadAccountIfNeeded =(nextProps, currentProps) => {
+//  if(nextProps.user && !nextProps.user.account_id) {
+//  // no accountId, clear account
+//  // TODO: should be in middleware for all accounts
+//    if(nextProps.account
+//      || nextProps.taxReturns
+//      || nextProps.taxReturn) {
+//      currentProps.dispatch(clearAccount());
+//    }
+// 
+//    return;
+//  } else {  
+//    if(nextProps.user && nextProps.user.account_id 
+//      && (!nextProps.account 
+//        || nextProps.account.accountId!=nextProps.user.account_id)) {
+//      // if has user and account id but no account loaded or different account loaded
+//      currentProps.dispatch(fetchAccount(nextProps.user.account_id));
+//    }
+// 
+//    if(nextProps.taxReturns && nextProps.taxReturns.length>0 && 
+//      (!nextProps.taxReturn || !nextProps.taxReturnDetailsFetched )) {
+//      //new tax return loaded, reload tax return
+//      currentProps.dispatch(fetchTaxReturn(nextProps.taxReturns[0].id));
+//    }
+//  }
+//};
+
+
+// REQUIRES PROPS: quoteChecklistFetched, quoteChecklistFetching, account, quoteChecklist
+//const loadChecklistIfNeeded =(nextProps, currentProps) => {
+//  let quoteId = nextProps.account && nextProps.account.quotes && nextProps.account.quotes.length>0 ? nextProps.account.quotes[0].id : -1;
+//
+//    if(quoteId>0 && (
+//      (!nextProps.quoteChecklistFetched && !nextProps.quoteChecklistFetching) ||
+//      (nextProps.quoteChecklistFetched && nextProps.quoteChecklist && nextProps.quoteChecklist.quoteId!==quoteId))) {
+//        currentProps.dispatch(fetchChecklist(quoteId));
+//    } else {
+//    }
+//};
+
+const callUpdateTaxProfile = (id,updateValues) => {
   const url = "/tax_return/"+id;
 
   return base.put(url,updateValues)
     .then((response) => {
-      dispatch({type: "UPDATE_TAX_RETURN_FULFILLED", payload: response});
-
       return response;
     });
 };
 
-const callUpdateAddress = (dispatch, id, addressId, updateValues) => {
+const callUpdateAddress = (id, addressId, updateValues) => {
   let url = "/tax_return/"+id+"/address";
 
   // if country is blank, set it as null
@@ -158,8 +242,6 @@ const callUpdateAddress = (dispatch, id, addressId, updateValues) => {
   
   return upsertPromise
     .then((response) => {
-      dispatch({type: "UPDATE_ADDRESS_FULFILLED", payload: response});
-
       return response;
     });
 };

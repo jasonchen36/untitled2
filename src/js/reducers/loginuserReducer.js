@@ -1,6 +1,5 @@
 // The Reducer for the current loginuser (the user of admin currently logged in).
 // Responsible for logging, logging out, etc.
-
 export default function reducer(state={
     loginuser: {
       id: null,
