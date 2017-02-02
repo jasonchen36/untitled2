@@ -1,17 +1,16 @@
 import React from "react"
 import { connect } from "react-redux"
 import { Link } from "react-router";
-
-
-
+import { renderErrors } from "../helpers/RenderErrors";
 import { baseWEBUrl } from "../../config.js"
+
 
 import { createLoginuser,loginLoginuser, fetchLoginuser, logoutLoginuser } from "../../actions/loginuserActions"
 
 @connect((store) => {
     return {
         loginuser: store.loginuser.loginuser,
-        error: store.loginuser.error
+        error: store.loginuser.loginError
     };
 })
 
@@ -76,7 +75,7 @@ export default class Layout extends React.Component {
                         <input id="login-password" ref={(input) => {this.password = input;}} type="password"  placeholder="Password" />
                         <button id="login-submit" onClick={this.loginLoginuser.bind(this)} class="button" type="submit">Sign In</button>
                     </form>
-                    {this.getErrorBlock(error)}
+                    {renderErrors(error)}                                                        
                     <div class="text-center">
                         <p>Don't have an account? <Link to={"/register"}>Sign up here »</Link></p>
                         <p>Forgot password? <a href={baseWEBUrl+"/forgot-password"}>Reset password here »</a></p>

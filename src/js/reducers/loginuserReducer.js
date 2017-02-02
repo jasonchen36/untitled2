@@ -11,6 +11,7 @@ export default function reducer(state={
     fetched: false,
     authenticated: localStorage.getItem('auth_token') ? true : false,
     error: null,
+    loginError: null
   }, action) {
     // The events that will change state for login
     switch (action.type) {
@@ -22,6 +23,8 @@ export default function reducer(state={
             type:null
           },
           fetching:false,
+           error: null,
+           loginError:null,
           authenticated:action.authenticated
         }
       }
@@ -32,21 +35,24 @@ export default function reducer(state={
         return {...state, fetching: true}
       }
       case "LOGIN_LOGINUSER_REJECTED":
+        return {...state, fetching: false, loginuser:{id:null, name:null, type:null}, error: action.payload, loginError:action.payload}
       case "FETCH_LOGINUSER_REJECTED": {
         return {...state, fetching: false, loginuser:{id:null, name:null, type:null}, error: action.payload}
       }
       case "LOGIN_LOGINUSER_FULFILLED": {
         return {...state,
-          authenticated:action.authenticated};
+          authenticated:action.authenticated,
+          loginError:null,
+           error: null};
       }
       case "CREATE_LOGINUSER": {
         return { ...state, fetching:true};
       }
       case "CREATE_LOGINUSER_FULFILLED": {
-        return { ...state, fetching:true, loginuser: action.payload };
+        return { ...state, fetching:true, loginuser: action.payload,  error: null, loginError:null };
       }
       case "CREATE_LOGINUSER_REJECTED": {
-        return { ...state, fetching:true, loginuser:{id:null, name:null, type:null}, error: action.payload };
+        return { ...state, fetching:true, loginuser:{id:null, name:null, type:null}, error: action.payload , loginError: action.payload};
       }
       case "FETCH_LOGINUSER_FULFILLED": {
         return {
