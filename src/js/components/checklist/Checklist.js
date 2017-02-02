@@ -10,7 +10,7 @@ import UserOptionsHeader from "../layout/UserOptionsHeader";
 import { currentYearProductId } from "../../config";
 
 import { fetchUser } from "../../actions/usersActions";
-import { fetchChecklistPdf, directDownloadChecklistPdf } from "../../actions/checklistActions";
+import { directDownloadChecklistPdf } from "../../actions/checklistActions";
 import { fetchAccount, fetchTaxReturn } from "../../actions/accountsActions";
 import { saveBlob } from "../../lib/saveBlob";
 

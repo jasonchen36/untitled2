@@ -24,15 +24,16 @@ import { renderPagination } from "../helpers/RenderPagination";
     usersPerPage: store.users.usersPerPage,
     userSearchTerms: store.users.userSearchTerms,
     taxPros: store.users.taxPros,
-    taxReturnStatuses: store.accounts.taxReturnStatuses
+    taxReturnStatuses: store.accounts.taxReturnStatuses,
   };
 })
 
 export default class Users extends React.Component {
   constructor(props) {
     super(props);
-    this.sortByLastName = this.handleSortByLastName.bind(this);
+    this.sortByName = this.handleSortByName.bind(this);
     this.sortByLastUpdated = this.handleSortByLastUpdated.bind(this);
+    this.sortById = this.handleSortById.bind(this);
     this.fetchUsers = this.handleFetchUsers.bind(this);
     this.clickPage = this.handleClickPage.bind(this);
   }
@@ -110,19 +111,24 @@ export default class Users extends React.Component {
     }
   }
 
-  handleSortByLastName(e) {
+  handleSortByName(e) {
     e.preventDefault();
     const oldSearchTerms = this.props.userSearchTerms;
-    const newQueryParam = {key:"orderBy",val:"lastName"}
-    this.props.dispatch(updateSearchTerms(oldSearchTerms,[{key:"orderBy",val:"lastName"}]));
+    this.props.dispatch(updateSearchTerms(oldSearchTerms,[{key:"orderBy",val:"name"}]));
   };
 
   handleSortByLastUpdated(e) {
     e.preventDefault();
-
     const oldSearchTerms = this.props.userSearchTerms;
 
     this.props.dispatch(updateSearchTerms(oldSearchTerms,[{key:"orderBy",val:"lastUpdated"}]));
+  };
+
+  handleSortById(e) {
+    e.preventDefault();
+    const oldSearchTerms = this.props.userSearchTerms;
+
+    this.props.dispatch(updateSearchTerms(oldSearchTerms,[{key:"orderBy",val:"id"}]));
   };
 
   renderUsersRow(user, taxPros) {
@@ -287,8 +293,8 @@ export default class Users extends React.Component {
         <table class="standard-table">
           <thead>
           <tr>
-            <th>#</th>
-            <th><a onClick={this.sortByLastName} >Name</a></th>
+            <th><a onClick={this.sortById} >#</a></th>
+            <th><a onClick={this.sortByName} >Name</a></th>
             <th>Status</th>
             <th>Role</th>
             <th>Actions</th>

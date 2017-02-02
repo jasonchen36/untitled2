@@ -17,7 +17,7 @@ const  getAccount = (dispatch, accountId) => {
       dispatch({type: "FETCH_ACCOUNT_FULFILLED", payload:  result});
     })
     .catch((err) => {
-      dispatch({type: "FETCH_ACCOUNT_REJECTED", payload: err});
+      dispatch({type: "FETCH_ACCOUNT_REJECTED", payload: base.cleanErrorObject(err)});
     });
 }
 
@@ -33,11 +33,17 @@ export function fetchTaxReturn(taxReturnId) {
   };
 }
 
+export function clearTaxReturnUpdate() {
+  return function(dispatch) {
+      dispatch({type:"NEED_TO_UPDATE_TAX_RETURN",payload:null});
+  }
+}
+
 const getTaxReturn = (dispatch, taxReturnId) => {
   const searchUrl = "/tax_return/"+taxReturnId;
   const addressSearchUrl = "/tax_return/"+taxReturnId+"/addresses";
 
-  Promise.all([base.get(searchUrl), base.get(addressSearchUrl)])
+  return Promise.all([base.get(searchUrl), base.get(addressSearchUrl)])
     .then((responses) => {
       const taxResponse = responses[0];
 
@@ -45,10 +51,11 @@ const getTaxReturn = (dispatch, taxReturnId) => {
       taxResponse.data.address = responses[1].data && responses[1].data.length>0 ? responses[1].data[0] : null ;
 
       taxResponse.addressResponse = responses[1];
-      dispatch({type: "FETCH_TAX_RETURN_FULFILLED", payload: taxResponse});
+      return dispatch({type: "FETCH_TAX_RETURN_FULFILLED", payload: taxResponse});
+      
     })
     .catch((err) => {
-      dispatch({type: "FETCH_TAX_RETURN_REJECTED", payload: err});
+      return dispatch({type: "FETCH_TAX_RETURN_REJECTED", payload: base.cleanErrorObject(err)});
     });
 };
 
@@ -61,19 +68,26 @@ export function fetchAllTaxReturnStatuses() {
         dispatch({type: "FETCH_ALL_TAX_RETURN_STATUSES_FULFILLED",payload:response});
       })
       .catch((err) => {
-        dispatch({type: "FETCH_ALL_TAX_RETURN_STATUSES_REJECTED",payload:err});
+        dispatch({type: "FETCH_ALL_TAX_RETURN_STATUSES_REJECTED",payload: base.cleanErrorObject(err)});
       });
   };
 }
 
 export function updateTaxProfile(id, updateValues, addressId, updateAddressValues) {
   return function(dispatch) {
+      dispatch({type:"UPDATING_TAX_RETURN", payload:null});
+
     const updateTaxProfilePromise = callUpdateTaxProfile(dispatch, id, updateValues);
     const updateAddressPromise = callUpdateAddress(dispatch, id, addressId, updateAddressValues);
 
-    Promise.all([updateTaxProfilePromise, updateAddressPromise])
+    return Promise.all([updateTaxProfilePromise, updateAddressPromise])
       .then(function(responses) {
         return getTaxReturn(dispatch, id);
+      })
+      .then(function(responses) {
+        dispatch({type:"UPDATE_TAX_RETURN_COMPLETE",payload:responses});
+      }).catch(function(err) {
+        dispatch({type:"UPDATE_TAX_RETURN_REJECTED", payload:base.cleanErrorObject(err)});
       });
   };
 }
@@ -94,7 +108,7 @@ export function fetchChecklist(id) {
         dispatch({type: "FETCH_CHECKLIST_FULFILLED",payload:response});
       })
       .catch((err) => {
-        dispatch({type: "FETCH_CHECKLIST_REJECTED",payload:err});
+        dispatch({type: "FETCH_CHECKLIST_REJECTED",payload:base.cleanErrorObject(err)});
       });
   };
 }
@@ -144,9 +158,10 @@ const callUpdateAddress = (dispatch, id, addressId, updateValues) => {
   
   return upsertPromise
     .then((response) => {
-      dispatch({type: "UPDATE_TAX_RETURN_FULFILLED", payload: response});
+      dispatch({type: "UPDATE_ADDRESS_FULFILLED", payload: response});
 
       return response;
     });
 };
+
 

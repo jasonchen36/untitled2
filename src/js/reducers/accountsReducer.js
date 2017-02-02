@@ -5,6 +5,7 @@ export default function reducer(state={
     account:null,
     taxReturns: null,
     taxReturn: null,
+    taxReturnUpdated: false,
     taxReturnStatuses:null,
     quoteChecklist: null,
     searchChanged:false,
@@ -12,6 +13,7 @@ export default function reducer(state={
     fetching: false,
     fetched: false,
     updating: false,
+    updated: false,
     taxReturnDetailsFetched:false,
     quoteChecklistFetched:false,
     quoteChecklistFetching:false,
@@ -45,7 +47,8 @@ export default function reducer(state={
           fetched: true,
           taxReturn: taxReturn,
           taxReturns: newTaxReturns,
-          taxReturnDetailsFetched: true
+          taxReturnDetailsFetched: true,
+          taxReturnUpdated: false
         };
       }
       case "FETCH_ACCOUNT_REJECTED": {
@@ -81,6 +84,7 @@ export default function reducer(state={
           taxReturns:taxReturns,
           taxReturn:taxReturn,
           taxReturnDetailsFetched: taxReturnDetailsFetched,
+          taxReturnUpdated: false,
           quoteChecklistFetching:false
         };
       }
@@ -98,10 +102,34 @@ export default function reducer(state={
           error:action.payload
         };
       }
-      case "UPDATE_TAX_RETURN_FULFILLED": {
+      case "UPDATING_TAX_RETURN": {
         return {
           ...state,
-          updating:false
+          updating:true
+        }
+      }
+      case "UPDATE_TAX_RETURN_FULFILLED": {
+        return {
+          ...state
+        };
+      }
+      case "UPDATE_ADDRESS_FULFILLED": {
+        return {
+          ...state
+        };
+      }
+      case "UPDATE_TAX_RETURN_REJECTED": {
+        return {
+          ...state,
+          error:action.payload
+        };
+      }
+      case "UPDATE_TAX_RETURN_COMPLETE": {
+        return {
+          ...state,
+          error:null,   
+          updating:false,
+        taxReturnUpdated:true
         };
       }
       case "FETCH_CHECKLIST": {
@@ -142,6 +170,12 @@ export default function reducer(state={
         };
 
       }
+      case "DELETE_DOCUMENT_REJECTED": {
+        return {
+          ...state,
+          error: action.payload
+        };
+      }
       case "DOCUMENT_VIEWED" : {
         let result = action.payload;
         let checklist = _.cloneDeep(state.quoteChecklist);
@@ -158,7 +192,6 @@ export default function reducer(state={
                 ad.viewedByTaxPro = result.viewed;
               }
           });
-
         }
 
         return {

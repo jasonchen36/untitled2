@@ -10,6 +10,9 @@ import { fetchUserMessages, sendMessage } from "../../actions/messagesActions";
 import { fetchUser } from "../../actions/usersActions";
 import { fetchAccount, fetchTaxReturn } from "../../actions/accountsActions";
 
+import { renderErrors } from "../helpers/RenderErrors";
+
+
 @connect((store) => {
     return {
         loginuser: store.loginuser.loginuser,
@@ -18,7 +21,10 @@ import { fetchAccount, fetchTaxReturn } from "../../actions/accountsActions";
         messages: store.messages.messages,
         messageSent: store.messages.messageSent,
         taxReturns:store.accounts.taxReturns,
-        taxReturn:store.accounts.taxReturn
+        taxReturn:store.accounts.taxReturn,
+        error:store.message.error,
+        sendError: store.messages.sendError,
+        messagesError: store.messages.messagesError
     };
 })
 
@@ -98,7 +104,7 @@ export default class Messages extends React.Component {
         );
     }
 
-    renderSendMessage(userId) {
+    renderSendMessage(userId, sendError) {
         return (
             <form class="standard-form">
                 <textarea rows="5" ref={(input) => {this.message_text = input;}} type="text" placeholder="Compose Messages"/>
@@ -115,7 +121,7 @@ export default class Messages extends React.Component {
     }
 
     render() {
-        const { messages, taxReturns, taxReturn } = this.props;
+        const { messages, taxReturns, taxReturn, sendError, messagesError,error } = this.props;
         const userId = this.props.params.userId;
         return (
             <main class="grid-container row">
@@ -123,7 +129,9 @@ export default class Messages extends React.Component {
                 <section class="col-sm-8 col-lg-9">
                     <h1>Messages</h1>
                     {this.renderSendMessage(userId)}
+                    
                     <div class="grid-container">
+                        {renderErrors(error)}                
                         {this.renderMessages(messages)}
                     </div>
                 </section>
