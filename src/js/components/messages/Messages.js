@@ -22,7 +22,7 @@ import { renderErrors } from "../helpers/RenderErrors";
         messageSent: store.messages.messageSent,
         taxReturns:store.accounts.taxReturns,
         taxReturn:store.accounts.taxReturn,
-        error:store.message.error,
+        error:store.messages.error,
         sendError: store.messages.sendError,
         messagesError: store.messages.messagesError
     };
