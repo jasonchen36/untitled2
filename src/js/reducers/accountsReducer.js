@@ -62,10 +62,11 @@ export default function reducer(state={
       }
       case "FETCH_ACCOUNT_FULFILLED": {
           //todo, account variable is not getting saved to state by taxreturns and taxreturn are
-        const account = action.payload.data;
+        const account = action.payload;
         let taxReturns = account.taxReturns;
         let taxReturn = null;
         let taxReturnDetailsFetched = state.taxReturnDetailsFetched;
+
         if(taxReturns && taxReturns.length>0) {
           taxReturn = state.taxReturn ?  _.find(taxReturns,(tr) => { return tr.id===state.taxReturn.id;}) : taxReturns[0];
           taxReturnDetailsFetched=false;

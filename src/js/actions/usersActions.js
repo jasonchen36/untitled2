@@ -6,7 +6,7 @@ import _ from "lodash";
 /// Fetch a list of users, optionally with search Terms
 export function fetchUsers(searchTerms) {
   return function(dispatch) {
-      getUsers(dispatch,searchTerms);
+      return getUsers(dispatch,searchTerms);
   };
 }
 
@@ -14,14 +14,17 @@ export function fetchTaxPros() {
   let searchUrl = "/users?role=TaxPro&perPage=all";
   
   return function(dispatch) {
-  base.get(searchUrl)
-    .then((response) => {
-      let result = { data: response.data };
-      dispatch({type: "FETCH_TAXPROS_FULFILLED", payload:  result});
-    })
-    .catch((err) => {
-      dispatch({type: "FETCH_TAXPROS_REJECTED", payload: err});
-    });
+    return base.get(searchUrl)
+      .then((response) => {
+        let result = { data: response.data };
+        dispatch({type: "FETCH_TAXPROS_FULFILLED", payload:  result});
+
+        return result;
+      })
+      .catch((err) => {
+        dispatch({type: "FETCH_TAXPROS_REJECTED", payload: err});
+
+      });
   };
 }
 
@@ -32,11 +35,13 @@ const getUsers = (dispatch, searchTerms) => {
     searchUrl+=searchTermsToString(searchTerms);
   }
 
-  base.get(searchUrl)
+  return base.get(searchUrl)
     .then((response) => {
       let result = { searchTerms: searchTerms, data: response.data };
 
       dispatch({type: "FETCH_USERS_FULFILLED", payload:  result});
+
+      return result;
     })
     .catch((err) => {
       dispatch({type: "FETCH_USERS_REJECTED", payload: err});
@@ -98,6 +103,8 @@ export function fetchUser(id) {
     return getUser(id)
       .then((response) => {
         dispatch( { type: "FETCH_USER_FULFILLED", payload: response.data});
+
+        return response;
       });
   };
 };

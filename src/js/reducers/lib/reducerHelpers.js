@@ -9,7 +9,7 @@ const updateListWithObjectById = (list, newObject, compareFunction) => {
 
   const listIndexToReplace = _.findIndex(newList, compareFunction);
 
-  if(listToReplace>=0) {
+  if(listIndexToReplace>=0) {
     newList[listIndexToReplace] = newObject;
   }
 

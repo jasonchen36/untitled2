@@ -5,10 +5,9 @@ import Sidebar from "../layout/Sidebar";
 import UserOptionsHeader from "../layout/UserOptionsHeader";
 import { fetchUser } from "../../actions/usersActions";
 import { fetchAccount, fetchTaxReturn, updateTaxProfile, clearAccount } from "../../actions/accountsActions";
-
+import { loadUserIfNeeded } from "../../actions/loaderActions";
 import { renderErrors } from "../helpers/RenderErrors";
 import { renderSelectionOptions } from "../helpers/LayoutHelpers";
-import { loadAccountIfNeeded } from "../loaders/loadUser";
 
 const updateState = { initialized:0, updating:1, updated:2};
 
@@ -49,26 +48,12 @@ export default class PersonalProfile extends React.Component {
     }
 
     const userId = this.props.params.userId;
+    const { user, account, taxReturns, taxReturn, taxReturnDetailsFetched } = this.props;
 
-    this.props.dispatch(fetchUser(userId));
-
-    const taxReturnId = this.props.params.taxReturnId;
-
-    if(taxReturnId) {
-      this.props.dispatch(fetchTaxReturn(taxReturnId));
-    }
-
-    if(this.props.user && this.props.user.account_id) {
-        this.props.dispatch(fetchAccount(this.props.user.account_id));
-    } else {
-      // no accountId, clear account
-      this.props.dispatch(clearAccount());
-    }
+    this.props.dispatch(loadUserIfNeeded(userId,account,taxReturns,taxReturn, taxReturnDetailsFetched));
   };
 
   componentWillReceiveProps(nextProps) {
-    loadAccountIfNeeded(nextProps, this.props);
-
     if (nextProps.user && nextProps.user.account_id && nextProps.account &&
       nextProps.taxReturn && this.props.taxReturn) {
         // Update the form with Props if a previous user was loaded
@@ -151,7 +136,7 @@ export default class PersonalProfile extends React.Component {
 
 
     this.props.dispatch(updateTaxProfile(id,updateTaxProfileParams, addressId, updateAddressParams))
-  };
+  }
 
   handleFilerTypeSelected(e) {
     var selected =  e.target.value;
@@ -200,8 +185,7 @@ export default class PersonalProfile extends React.Component {
       </div>
   }
 
-  renderPersonalProfile(taxReturn){
-    
+  renderPersonalProfile(taxReturn){ 
     return (
       <form class="standard-form">
         <label for="user-prefix">Prefix</label>
