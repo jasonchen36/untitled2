@@ -9,6 +9,7 @@ const fetchAccount = (accountId) => {
       .then((response) => {
         let result = response.data;
         dispatch({type: "FETCH_ACCOUNT_FULFILLED", payload:  result});
+        return result;
       })
       .catch((err) => {
         dispatch({type: "FETCH_ACCOUNT_REJECTED", payload: err});
@@ -27,6 +28,8 @@ const fetchTaxReturn = (taxReturnId) => {
     return getTaxReturn(taxReturnId)
       .then((response) => {
         dispatch({type: "FETCH_TAX_RETURN_FULFILLED", payload: response});
+
+        return response;
       })
       .catch((err) => {
         return dispatch({type: "FETCH_TAX_RETURN_REJECTED", payload: err}); 
@@ -115,54 +118,6 @@ const clearChecklist = () => {
   }
 };
 
-const loadAccountIfNeeded = (user, account, taxReturns, taxReturn, taxReturnDetailsFetched) => {
-  return function(dispatch) {
-    // If no user loaded, get account Id
-    if(!user || 
-        (user && !user.account_id)) {
-      // no account, clear account.
-      dispatch({type:"CLEAR_ACCOUNT",payload:null});
-      return ;
-    } else if(user && user.account_id &&
-      (!account ||
-        user.account_id !== account.id)
-      ) {
-        // need to get account
-        return getAccount(user.account_id)
-          .then(function(response) {
-            const result = response.data;
-            dispatch({type: "FETCH_ACCOUNT_FULFILLED", payload:  result});
-            return result;
-          })
-          .catch((err) => {
-            dispatch({type: "FETCH_ACCOUNT_REJECTED", payload: err});
-          }).then(function(result) {
-            // get Tax Profile
-            const firstTaxReturn = result.taxReturns && result.taxReturns.length>0 ? result.taxReturns[0] : null;
-            
-            if(firstTaxReturn) {
-              return fetchTaxReturn(firstTaxReturn.id)(dispatch)
-            } else {
-              return Promise.resolve();
-            }
-          });
-    } else if(taxReturns && taxReturns.length>0 && 
-      (!(_.some(taxReturns,(tr) => {return tr.id === taxReturn.id})) || !taxReturnDetailsFetch)) {
-      // account exists, but taxReturn not in taxReturns
-      return fetchTaxReturn(firstTaxReturn.id)(dispatch);
-    }
-  };
-};
-
-const loadChecklistIfNeeded = (account, quoteChecklistFetched, quoteChecklistFetching, quoteChecklist) => {
-  return function(dispatch) {
-    let quoteId = account && account.quotes && account.quotes.length>0 ? account.quotes[0].id : -1;
-    if(quoteId>0) {
-      return fetchChecklist(quoteId)(dispatch);
-    }
-  };
-};
-
 /// UPDATE FUNCTIONS
 
 const  getAccount = (accountId) => {
@@ -238,8 +193,6 @@ export {
   fetchAllTaxReturnStatuses, 
   updateTaxProfile, 
   fetchChecklist, 
-  clearChecklist, 
-  loadAccountIfNeeded, 
-  loadChecklistIfNeeded 
+  clearChecklist 
 };
 

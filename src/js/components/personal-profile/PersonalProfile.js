@@ -5,7 +5,7 @@ import Sidebar from "../layout/Sidebar";
 import UserOptionsHeader from "../layout/UserOptionsHeader";
 import { fetchUser } from "../../actions/usersActions";
 import { fetchAccount, fetchTaxReturn, updateTaxProfile, clearAccount } from "../../actions/accountsActions";
-import { loadUserIfNeeded } from "../../actions/loaderActions";
+import { loadUser } from "../../actions/loaderActions";
 import { renderErrors } from "../helpers/RenderErrors";
 import { renderSelectionOptions } from "../helpers/LayoutHelpers";
 
@@ -42,15 +42,14 @@ export default class PersonalProfile extends React.Component {
     const props = this.props;
     //todo, redirects on page reload
     const { loginuser } = props;
+
     if(!loginuser || !loginuser.id) {
         props.router.push('/');
     } else {
     }
 
     const userId = this.props.params.userId;
-    const { user, account, taxReturns, taxReturn, taxReturnDetailsFetched } = this.props;
-
-    this.props.dispatch(loadUserIfNeeded(userId, account, taxReturns, taxReturn, taxReturnDetailsFetched));
+    this.props.dispatch(loadUser(userId));
   };
 
   componentWillReceiveProps(nextProps) {

@@ -13,7 +13,7 @@ import { fetchUser } from "../../actions/usersActions";
 import { directDownloadChecklistPdf } from "../../actions/checklistActions";
 import { fetchAccount, fetchTaxReturn } from "../../actions/accountsActions";
 import { saveBlob } from "../../lib/saveBlob";
-import { loadUserIfNeeded } from "../../actions/loaderActions";
+import { loadUser } from "../../actions/loaderActions";
 
 @connect((store) => {
   return {
@@ -36,12 +36,10 @@ export default class Checklist extends React.Component {
 
     componentWillMount() {
       const userId = this.props.params.userId;
-      const { user, account, taxReturns, taxReturn, taxReturnDetailsFetched } = this.props;
-
-      this.props.dispatch(loadUserIfNeeded(userId, account, taxReturns, taxReturn, taxReturnDetailsFetched));
+      this.props.dispatch(loadUser(userId));
     };
 
-      componentWillReceiveProps(nextProps) {
+    componentWillReceiveProps(nextProps) {
     };
 
     handleClickDownloadChecklist(e) {

@@ -9,19 +9,19 @@ import { fetchUser } from "../../actions/usersActions";
 import { fetchAccount, fetchTaxReturn, fetchChecklist, clearChecklist } from "../../actions/accountsActions";
 import { directDownloadChecklistItems, deleteDocument, viewedDocument } from "../../actions/uploadsActions";
 import { saveBlob } from "../../lib/saveBlob";
-import { loadAccountIfNeeded, loadChecklistIfNeeded } from "../loaders/loadUser";
 
 import { renderErrors } from "../helpers/RenderErrors";
+import { loadUser } from "../../actions/loaderActions";
 
 
 @connect((store) => {
     return {
         loginuser: store.loginuser.loginuser,
         user: store.users.user,
+        account: store.accounts.account,
         taxReturns:store.accounts.taxReturns,
         taxReturn:store.accounts.taxReturn,
         taxReturnDetailsFetched: store.accounts.taxReturnDetailsFetched,
-        account: store.accounts.account,
         quoteChecklist: store.accounts.quoteChecklist,
         quoteChecklistFetched: store.accounts.quoteChecklistFetched,
         quoteChecklistFetching: store.accounts.quoteChecklistFetching,
@@ -39,12 +39,11 @@ export default class Uploads extends React.Component {
     }
 
     componentWillMount() {
-        this.props.dispatch(fetchUser(this.props.params.userId));
+      const userId = this.props.params.userId;
+      this.props.dispatch(loadUser(userId));
     };
 
     componentWillReceiveProps(nextProps) {
-      loadAccountIfNeeded(nextProps, this.props);
-      loadChecklistIfNeeded(nextProps, this.props);
     };
 
     handleClickDownloadItem(e) {

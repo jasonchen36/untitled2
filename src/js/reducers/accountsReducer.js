@@ -63,7 +63,7 @@ export default function reducer(state={
       case "FETCH_ACCOUNT_FULFILLED": {
           //todo, account variable is not getting saved to state by taxreturns and taxreturn are
         const account = action.payload;
-        let taxReturns = account.taxReturns;
+        const taxReturns = account.taxReturns;
         let taxReturn = null;
         let taxReturnDetailsFetched = state.taxReturnDetailsFetched;
 
@@ -71,6 +71,8 @@ export default function reducer(state={
           taxReturn = state.taxReturn ?  _.find(taxReturns,(tr) => { return tr.id===state.taxReturn.id;}) : taxReturns[0];
           taxReturnDetailsFetched=false;
         }
+
+        const quoteChecklist = state.quoteChecklist && _.some(account.quotes,(quote) => { return quote.id === state.quoteChecklist.quoteId; }) ? state.quoteChecklist : null;
 
         return {
           ...state,
@@ -81,6 +83,7 @@ export default function reducer(state={
           taxReturn:taxReturn,
           taxReturnDetailsFetched: taxReturnDetailsFetched,
           taxReturnUpdated: false,
+          quoteChecklist: quoteChecklist,
           quoteChecklistFetching:false
         };
       }
@@ -160,6 +163,12 @@ export default function reducer(state={
           quoteChecklist:action.payload.data,
           quoteChecklistFetched:true,
           quoteChecklistFetching:false
+        };
+      }
+      case "CLEAR_CHECKLIST": {
+        return {
+          ...state,
+          quoteChecklist: null
         };
       }
       case "DELETE_DOCUMENT_FULFILLED": {
