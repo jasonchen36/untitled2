@@ -50,7 +50,7 @@ export default class PersonalProfile extends React.Component {
     const userId = this.props.params.userId;
     const { user, account, taxReturns, taxReturn, taxReturnDetailsFetched } = this.props;
 
-    this.props.dispatch(loadUserIfNeeded(userId,account,taxReturns,taxReturn, taxReturnDetailsFetched));
+    this.props.dispatch(loadUserIfNeeded(userId, account, taxReturns, taxReturn, taxReturnDetailsFetched));
   };
 
   componentWillReceiveProps(nextProps) {
