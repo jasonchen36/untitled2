@@ -7,13 +7,11 @@ export function renderPagination(currentPage, perPage, usersCount, handleClickPa
     minPagesOnEachSide= minPagesOnEachSide? minPagesOnEachSide : 2;
     minPagesAtStartAndEnd = minPagesAtStartAndEnd ? minPagesAtStartAndEnd : 3;
 
-     let totalPages = _.ceil(usersCount/perPage);
-
+    let totalPages = _.ceil(usersCount/perPage);
     let paginationPageNumbers = getPageNumbers(currentPage, totalPages, maxPages, minPagesAtStartAndEnd, minPagesOnEachSide);
     let renderedPageNumbers = renderPageNumbers(paginationPageNumbers, currentPage,totalPages);
     let prevPage = renderPrevPage(currentPage);
     let nextPage = renderNextPage(currentPage,totalPages);
-
 
     return (
       <div className="user pagination">
