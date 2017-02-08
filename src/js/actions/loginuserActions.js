@@ -36,6 +36,9 @@ export function loginLoginuser(data) {
 
       })
       .catch((err) => {
+        if(err.status===400) {
+          err.message = "Incorrect Email or Password.";
+        }
         dispatch({type: "LOGIN_LOGINUSER_REJECTED", payload: err});
       })
   };

@@ -8,8 +8,8 @@ import UserOptionsHeader from "../layout/UserOptionsHeader";
 
 import { fetchUser } from "../../actions/usersActions";
 import { fetchAccount, fetchTaxReturn } from "../../actions/accountsActions";
-import { loadAccountIfNeeded } from "../loaders/loadUser";
 import { saveBlob } from "../../lib/saveBlob";
+import { loadUser } from "../../actions/loaderActions";
 
 import { directDownloadTaxProfiles } from "../../actions/taxProfilesActions";
 
@@ -34,11 +34,12 @@ export default class TaxProfile extends React.Component {
     }
 
     componentWillMount() {
-        this.props.dispatch(fetchUser(this.props.params.userId));
+      const userId = this.props.params.userId;
+
+      this.props.dispatch(loadUser(userId));
     };
 
     componentWillReceiveProps(nextProps) {
-      loadAccountIfNeeded(nextProps, this.props);
     };
 
     renderTaxProfile(taxReturn){

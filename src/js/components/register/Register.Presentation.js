@@ -2,6 +2,8 @@ import React from "react"
 import { IndexLink, Link } from "react-router";
 
 import { createLoginuser } from "../../actions/loginuserActions"
+import { renderErrors } from "../helpers/RenderErrors";
+
 
 export default class Layout extends React.Component {
     constructor(props) {
@@ -23,7 +25,7 @@ export default class Layout extends React.Component {
     }
 
     getErrorBlock(props) {
-        if(props && props.hasOwnProperty('error')) {
+        if(props && prop) {
             let message='';
 
             if(props.error.status===400) {
@@ -51,7 +53,7 @@ export default class Layout extends React.Component {
                         <input id="register-password" ref={(input) => {this.password = input;}} type="password"  placeholder="Password" />
                         <button id="register-submit" onClick={this.createUser} class="button" type="submit">Register</button>
                     </form>
-                    {this.getErrorBlock(error)}
+                    {renderErrors(error)}                                    
                     <div class="text-center">
                         <p>Already Have an account? <IndexLink to={"/"}>Login here »</IndexLink></p>
                     </div>

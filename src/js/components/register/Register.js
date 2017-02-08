@@ -8,7 +8,7 @@ import RegisterPresentation from "./Register.Presentation"
 @connect((store) => {
     return {
         loginuser: store.loginuser.loginuser,
-        error: store.loginuser.error
+        error: store.loginuser.loginError
     };
 })
 

@@ -1,10 +1,12 @@
 // The reducer for state involving handling taxreturns (viewing all users in the app, or details for an individual user)
 import _ from "lodash";
+import { updateListWithObjectById } from "./lib/reducerHelpers";
 
 export default function reducer(state={
     account:null,
     taxReturns: null,
     taxReturn: null,
+    taxReturnUpdated: false,
     taxReturnStatuses:null,
     quoteChecklist: null,
     searchChanged:false,
@@ -12,6 +14,7 @@ export default function reducer(state={
     fetching: false,
     fetched: false,
     updating: false,
+    updated: false,
     taxReturnDetailsFetched:false,
     quoteChecklistFetched:false,
     quoteChecklistFetching:false,
@@ -31,21 +34,16 @@ export default function reducer(state={
       }
       case "FETCH_TAX_RETURN_FULFILLED": {
         const taxReturn = action.payload.data;
-        const newTaxReturns = _.map(state.taxReturns, (tr) => { 
-          if(tr.id === taxReturn.id) {
-            return taxReturn;
-          } else {
-            return tr;
-          }
-        });
-
+        const newTaxReturns =updateListWithObjectById(state.taxReturns,taxReturn);
+        
         return {
           ...state,
           fetching: false,
           fetched: true,
           taxReturn: taxReturn,
           taxReturns: newTaxReturns,
-          taxReturnDetailsFetched: true
+          taxReturnDetailsFetched: true,
+          taxReturnUpdated: false
         };
       }
       case "FETCH_ACCOUNT_REJECTED": {
@@ -64,14 +62,17 @@ export default function reducer(state={
       }
       case "FETCH_ACCOUNT_FULFILLED": {
           //todo, account variable is not getting saved to state by taxreturns and taxreturn are
-        const account = action.payload.data;
-        let taxReturns = account.taxReturns;
+        const account = action.payload;
+        const taxReturns = account.taxReturns;
         let taxReturn = null;
         let taxReturnDetailsFetched = state.taxReturnDetailsFetched;
+
         if(taxReturns && taxReturns.length>0) {
           taxReturn = state.taxReturn ?  _.find(taxReturns,(tr) => { return tr.id===state.taxReturn.id;}) : taxReturns[0];
           taxReturnDetailsFetched=false;
         }
+
+        const quoteChecklist = state.quoteChecklist && _.some(account.quotes,(quote) => { return quote.id === state.quoteChecklist.quoteId; }) ? state.quoteChecklist : null;
 
         return {
           ...state,
@@ -81,6 +82,8 @@ export default function reducer(state={
           taxReturns:taxReturns,
           taxReturn:taxReturn,
           taxReturnDetailsFetched: taxReturnDetailsFetched,
+          taxReturnUpdated: false,
+          quoteChecklist: quoteChecklist,
           quoteChecklistFetching:false
         };
       }
@@ -98,10 +101,53 @@ export default function reducer(state={
           error:action.payload
         };
       }
-      case "UPDATE_TAX_RETURN_FULFILLED": {
+      case "UPDATING_TAX_RETURN": {
         return {
           ...state,
-          updating:false
+          updating:true
+        }
+      }
+      case "UPDATE_TAX_RETURN_PROFILE_FULFILLED": {
+        // update tax return portion
+        return {
+          ...state
+        };
+      }
+      case "UPDATE_TAX_RETURN_PROFILE_REJECTED": {
+        return {
+          ...state,
+          error:action.payload
+        };
+      }
+      case "UPDATE_ADDRESS_FULFILLED": {
+        return {
+          ...state,
+
+        };
+      }
+      case "UPDATE_ADDRESS_REJECTED": {
+        return {
+          ...state,
+          error:action.payload
+        };
+      }
+      case "UPDATE_TAX_RETURN_REJECTED": {
+        return {
+          ...state,
+          error:action.payload
+        };
+      }
+      case "UPDATE_TAX_RETURN_FULFILLED": {
+        const taxReturn = action.payload.data;
+        const newTaxReturns =updateListWithObjectById(state.taxReturns,taxReturn); 
+
+        return {
+          ...state,
+          error:null,   
+          updating:false,
+          taxReturn: taxReturn,
+          taxReturns:newTaxReturns,
+          taxReturnUpdated:true
         };
       }
       case "FETCH_CHECKLIST": {
@@ -117,6 +163,12 @@ export default function reducer(state={
           quoteChecklist:action.payload.data,
           quoteChecklistFetched:true,
           quoteChecklistFetching:false
+        };
+      }
+      case "CLEAR_CHECKLIST": {
+        return {
+          ...state,
+          quoteChecklist: null
         };
       }
       case "DELETE_DOCUMENT_FULFILLED": {
@@ -142,6 +194,12 @@ export default function reducer(state={
         };
 
       }
+      case "DELETE_DOCUMENT_REJECTED": {
+        return {
+          ...state,
+          error: action.payload
+        };
+      }
       case "DOCUMENT_VIEWED" : {
         let result = action.payload;
         let checklist = _.cloneDeep(state.quoteChecklist);
@@ -158,7 +216,6 @@ export default function reducer(state={
                 ad.viewedByTaxPro = result.viewed;
               }
           });
-
         }
 
         return {
@@ -193,3 +250,4 @@ export default function reducer(state={
 
     return state;
 };
+

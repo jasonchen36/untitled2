@@ -10,22 +10,21 @@ import UserOptionsHeader from "../layout/UserOptionsHeader";
 import { currentYearProductId } from "../../config";
 
 import { fetchUser } from "../../actions/usersActions";
-import { fetchChecklistPdf, directDownloadChecklistPdf } from "../../actions/checklistActions";
+import { directDownloadChecklistPdf } from "../../actions/checklistActions";
 import { fetchAccount, fetchTaxReturn } from "../../actions/accountsActions";
 import { saveBlob } from "../../lib/saveBlob";
-
-import { loadAccountIfNeeded } from "../loaders/loadUser";
+import { loadUser } from "../../actions/loaderActions";
 
 @connect((store) => {
-    return {
-        loginuser: store.loginuser.loginuser,
-        user: store.users.user,
-        taxReturns:store.accounts.taxReturns,
-        taxReturn:store.accounts.taxReturn,
-        quoteChecklistPdf: store.accounts.quoteChecklistPdf,
-        account: store.accounts.account,
-        taxReturnDetailsFetched: store.accounts.taxReturnDetailsFetched
-        };
+  return {
+    loginuser: store.loginuser.loginuser,
+    quoteChecklistPdf: store.accounts.quoteChecklistPdf,
+    user: store.users.user,
+    account: store.accounts.account,
+    taxReturns:store.accounts.taxReturns,
+    taxReturn:store.accounts.taxReturn,
+    taxReturnDetailsFetched: store.accounts.taxReturnDetailsFetched,
+  };
 })
 
 export default class Checklist extends React.Component {
@@ -36,11 +35,11 @@ export default class Checklist extends React.Component {
     }
 
     componentWillMount() {
-        this.props.dispatch(fetchUser(this.props.params.userId));
+      const userId = this.props.params.userId;
+      this.props.dispatch(loadUser(userId));
     };
 
     componentWillReceiveProps(nextProps) {
-      loadAccountIfNeeded(nextProps, this.props);
     };
 
     handleClickDownloadChecklist(e) {

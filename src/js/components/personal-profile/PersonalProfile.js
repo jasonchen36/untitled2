@@ -5,11 +5,11 @@ import Sidebar from "../layout/Sidebar";
 import UserOptionsHeader from "../layout/UserOptionsHeader";
 import { fetchUser } from "../../actions/usersActions";
 import { fetchAccount, fetchTaxReturn, updateTaxProfile, clearAccount } from "../../actions/accountsActions";
-
+import { loadUser } from "../../actions/loaderActions";
+import { renderErrors } from "../helpers/RenderErrors";
 import { renderSelectionOptions } from "../helpers/LayoutHelpers";
 
-import { loadAccountIfNeeded } from "../loaders/loadUser";
-
+const updateState = { initialized:0, updating:1, updated:2};
 
 @connect((store) => {
   return {
@@ -19,7 +19,10 @@ import { loadAccountIfNeeded } from "../loaders/loadUser";
     account:store.accounts.account,
     taxReturns:store.accounts.taxReturns,
     taxReturn:store.accounts.taxReturn,
-    taxReturnDetailsFetched: store.accounts.taxReturnDetailsFetched
+    taxReturnDetailsFetched: store.accounts.taxReturnDetailsFetched,
+    taxReturnUpdated: store.accounts.taxReturnUpdated,
+    updating: store.accounts.updating,
+    accountError: store.accounts.error
   };
 })
 
@@ -32,38 +35,24 @@ export default class PersonalProfile extends React.Component {
     this.selectedFilerType = { value:"other"};
     this.authorizeCra = {value:0};
     this.canadianCitizen = {value:0};
+    this.taxReturnUpdateState = {value:updateState.initialized};
   }
 
   componentWillMount() {
     const props = this.props;
     //todo, redirects on page reload
     const { loginuser } = props;
+
     if(!loginuser || !loginuser.id) {
         props.router.push('/');
     } else {
     }
 
     const userId = this.props.params.userId;
-
-    this.props.dispatch(fetchUser(userId));
-
-    const taxReturnId = this.props.params.taxReturnId;
-
-    if(taxReturnId) {
-      this.props.dispatch(fetchTaxReturn(taxReturnId));
-    }
-
-    if(this.props.user && this.props.user.account_id) {
-        this.props.dispatch(fetchAccount(this.props.user.account_id));
-    } else {
-      // no accountId, clear account
-      this.props.dispatch(clearAccount());
-    }
+    this.props.dispatch(loadUser(userId));
   };
 
   componentWillReceiveProps(nextProps) {
-    loadAccountIfNeeded(nextProps, this.props);
-
     if (nextProps.user && nextProps.user.account_id && nextProps.account &&
       nextProps.taxReturn && this.props.taxReturn) {
         // Update the form with Props if a previous user was loaded
@@ -71,7 +60,24 @@ export default class PersonalProfile extends React.Component {
     } else {
       // If no previous user was loaded, then default Values will handle loading the form
     }
+
+    this.taxReturnUpdateState.value = this.getUpdatedState(nextProps.updating, nextProps.taxReturnUpdated);
   };
+
+  // Local updated state, to set the form button text
+  getUpdatedState(updating, updated) {
+    let taxReturnUpdateState = updateState.initialised;
+
+    if (updating) {
+      taxReturnUpdateState = updateState.updating;
+    } else if(!updating && updated) {
+        taxReturnUpdateState = updateState.updated;
+    } else {
+      taxReturnUpdateState = updateState.initialised;
+    }
+
+    return taxReturnUpdateState;
+  }
 
   /// update all the form with the values from the user (prop)
   updateLocalProps(taxReturn) {
@@ -128,12 +134,14 @@ export default class PersonalProfile extends React.Component {
     };
 
 
-    this.props.dispatch(updateTaxProfile(id,updateTaxProfileParams, addressId, updateAddressParams));
-  };
+    this.props.dispatch(updateTaxProfile(id,updateTaxProfileParams, addressId, updateAddressParams))
+  }
 
   handleFilerTypeSelected(e) {
     var selected =  e.target.value;
     this.selectedFilerType.value = selected;
+
+    this.taxReturnUpdated.value = false;
     this.setState({value:this.selectedFilerType.value});
   }
 
@@ -176,7 +184,7 @@ export default class PersonalProfile extends React.Component {
       </div>
   }
 
-  renderPersonalProfile(taxReturn){
+  renderPersonalProfile(taxReturn){ 
     return (
       <form class="standard-form">
         <label for="user-prefix">Prefix</label>
@@ -201,9 +209,21 @@ export default class PersonalProfile extends React.Component {
         {this.renderFilerType(taxReturn.filer_type)}
         <hr/>
         {this.renderAddress(taxReturn.address)}
-        <button id={taxReturn.id} data-id={taxReturn.id} data-address-id={taxReturn.address ? taxReturn.address.id:-1} onClick={this.updateTaxReturn}>update profile</button>
+        {this.renderFormButton(taxReturn,this.taxReturnUpdateState)}
       </form>
     );
+  }
+
+  renderFormButton(taxReturn,taxReturnUpdateState) {
+    let buttonText = "update profile";
+
+    if(taxReturnUpdateState.value===updateState.updating) {
+      buttonText="updating";
+    } else if(taxReturnUpdateState.value===updateState.updated) {
+      buttonText="updated";
+    }
+
+    return <button id={taxReturn.id} data-id={taxReturn.id} data-address-id={taxReturn.address ? taxReturn.address.id:-1} onClick={this.updateTaxReturn} className={taxReturnUpdateState.value===updateState.updated ? "flash" : ""} >{buttonText}</button>
   }
 
   handleClickTaxReturnProfile(e) {
@@ -213,7 +233,7 @@ export default class PersonalProfile extends React.Component {
   }
 
   render() {
-      const { user, taxReturns, taxReturn } = this.props;
+      const { user, taxReturns, taxReturn, taxReturnUpdated, accountError } = this.props;
       let userOutput='';
 
       if (!taxReturn) {
@@ -221,8 +241,9 @@ export default class PersonalProfile extends React.Component {
       } else if (!user.id) {
           userOutput=<div>No User Id</div>
       } else {
-          userOutput= this.renderPersonalProfile(taxReturn);
+        userOutput= this.renderPersonalProfile(taxReturn, taxReturnUpdated);
       }
+
       return (
           <main class="grid-container row">
               <Sidebar activeScreen="personalProfile" userId={this.props.params.userId}/>
@@ -230,6 +251,7 @@ export default class PersonalProfile extends React.Component {
                   <UserOptionsHeader taxReturns={taxReturns} activeTaxReturn={taxReturn} handleClickTaxReturnProfile={this.clickTaxReturnProfile} />
                   <h1>Personal Profile</h1>
                   {userOutput}
+                  {renderErrors(accountError)}
               </section>
           </main>
       );

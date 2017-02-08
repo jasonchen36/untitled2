@@ -31,26 +31,59 @@ const getConfig = (overrideParams) => {
 /// Functions for getting info from API 
 
 export function get(endpoint) {
-  return axios.get(endpoint,getConfig());
+  return axios.get(endpoint,getConfig())
+    .catch((err) => {
+      return Promise.reject(cleanErrorObject(err));
+    });
 }
 
 export function getBlob(endpoint) {
-  return axios.get(endpoint,getConfig({responseType:'blob'}));
+  return axios.get(endpoint,getConfig({responseType:'blob'}))
+    .catch((err) => {
+      return Promise.reject(cleanErrorObject(err));
+    });
+
 }
 
 export function post(endpoint,data) {
-  return axios.post(endpoint,data,getConfig());
+  return axios.post(endpoint,data,getConfig())
+    .catch((err) => {
+      return Promise.reject(cleanErrorObject(err));
+    });
+
 }
 
 export function put(endpoint,data) {
-  return axios.put(endpoint,data,getConfig());
+  return axios.put(endpoint,data,getConfig())
+    .catch((err) => {
+      return Promise.reject(cleanErrorObject(err));
+    });
+
 } 
 
 export function del(endpoint) {
-  return axios.delete(endpoint,getConfig());
+  return axios.delete(endpoint,getConfig())
+    .catch((err) => {
+      return Promise.reject(cleanErrorObject(err));
+    });
+
 }
 
 export function request(config) {
   let newConfig = _.merge(getConfig(),config);
-  return axios.request(newConfig);
+  return axios.request(newConfig)
+    .catch((err) => {
+      return Promise.reject(cleanErrorObject(err));
+    });
+}
+
+const cleanErrorObject =(error) => {
+  const errorObject = {data:error.data,
+    status: error.status,
+    statusText: error.statusText,
+    message: error.data && error.data.msg ? error.data.msg: error.statusText,
+    original: error
+  };
+
+  return errorObject;
 }

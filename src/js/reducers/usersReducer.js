@@ -12,6 +12,8 @@ export default function reducer(state={
     user: null,
     fetching: false,
     fetched: false,
+    updating:false,
+    userUpdated: false, 
     error: null,
   }, action) {
 
@@ -81,7 +83,8 @@ export default function reducer(state={
           ...state,
           fetching: false,
           fetched: true,
-          user: action.payload
+          user: action.payload,
+          userUpdated: false
         };
       }
       case "ADD_USER": {
@@ -91,14 +94,24 @@ export default function reducer(state={
         }
       }
       case "UPDATE_USER": {
+        return {
+          ...state,
+          updating:true
+        }
+      }
+      case "UPDATE_USER_FULFILLED": {
         const { id, text } = action.payload
         const newUsers = [...state.users]
         const userToUpdate = newUsers.findIndex(user => user.id === id)
         newUsers[userToUpdate] = action.payload;
+        const user = action.payload;
 
         return {
           ...state,
           users: newUsers,
+          user:user,
+          updating:false,
+          userUpdated:true
         }
       }
       case "DELETE_USER_FULFILLED": {

@@ -6,7 +6,7 @@ import _ from "lodash";
 /// Fetch a list of users, optionally with search Terms
 export function fetchUsers(searchTerms) {
   return function(dispatch) {
-      getUsers(dispatch,searchTerms);
+      return getUsers(dispatch,searchTerms);
   };
 }
 
@@ -14,14 +14,17 @@ export function fetchTaxPros() {
   let searchUrl = "/users?role=TaxPro&perPage=all";
   
   return function(dispatch) {
-  base.get(searchUrl)
-    .then((response) => {
-      let result = { data: response.data };
-      dispatch({type: "FETCH_TAXPROS_FULFILLED", payload:  result});
-    })
-    .catch((err) => {
-      dispatch({type: "FETCH_TAXPROS_REJECTED", payload: err});
-    });
+    return base.get(searchUrl)
+      .then((response) => {
+        let result = { data: response.data };
+        dispatch({type: "FETCH_TAXPROS_FULFILLED", payload:  result});
+
+        return result;
+      })
+      .catch((err) => {
+        dispatch({type: "FETCH_TAXPROS_REJECTED", payload: err});
+
+      });
   };
 }
 
@@ -32,11 +35,13 @@ const getUsers = (dispatch, searchTerms) => {
     searchUrl+=searchTermsToString(searchTerms);
   }
 
-  base.get(searchUrl)
+  return base.get(searchUrl)
     .then((response) => {
       let result = { searchTerms: searchTerms, data: response.data };
 
       dispatch({type: "FETCH_USERS_FULFILLED", payload:  result});
+
+      return result;
     })
     .catch((err) => {
       dispatch({type: "FETCH_USERS_REJECTED", payload: err});
@@ -95,9 +100,11 @@ const searchTermsToString = (searchTerms) => {
 /// Fetch user details by id
 export function fetchUser(id) {
   return function(dispatch) {
-    base.get("/users/"+id)
+    return getUser(id)
       .then((response) => {
         dispatch( { type: "FETCH_USER_FULFILLED", payload: response.data});
+
+        return response;
       });
   };
 };
@@ -114,13 +121,22 @@ export function addUser(id, text) {
   };
 };
 
+const getUser = (id) => {
+  return  base.get("/users/"+id)
+};
+
 /// update a user
 /// id: the user's id
 /// updateValues : { email:"email",first_name:"new firstname", last_name:"last_name", "phone:"phone", role: "Admin"/"Customer"/"Taxpro" } Only include fields that are to be changed (overwritten)
 export function updateUser(id, updatedValues) {
   // update the user 
   return function(dispatch) {
-    base.put("/users/"+id,updatedValues)
+    dispatch({type: "UPDATE_USER", payload: null });
+
+    return base.put("/users/"+id,updatedValues)
+      .then((response) => {
+        return getUser(id);
+      })
       .then((response) => {
         dispatch( { type: "UPDATE_USER_FULFILLED", payload: response.data });     
       });

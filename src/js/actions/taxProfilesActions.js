@@ -16,9 +16,7 @@ export function fetchUploads(quoteId, documentId) {
 };
 
 export function directDownloadTaxProfiles(taxReturnId) {
-  let url = '/tax_return/'+taxReturnId+'/tax_profile';   
-  // TODO: change this to the correct URL
-  url ='/quote/21/checklist/PDF';
+  let url = '/tax_return/'+taxReturnId+'/answerscsv';   
 
   return downloadFile(url);
 };
