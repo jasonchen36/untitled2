@@ -53,6 +53,39 @@ export function post(endpoint,data) {
 
 }
 
+/// uploadFile
+export function postFile(endpoint,data) {
+      let formData = new FormData();
+
+      let keys = _.keys(data);
+
+      
+        _.each(keys,(k) => {
+          formData.append(k,data[k]);
+        });
+
+      //        formData.append('name', data.name)
+//        const config = {
+//            headers: { 'content-type': 'multipart/form-data' }
+//        }
+//        const url = 'http://example.com/fileupload/';
+//        post(url, formData, config)
+//            .then(function(response) {
+//                console.log(response);
+//            })
+//            .catch(function(error) {
+//                console.log(error);
+//            });
+
+  let config = getConfig({'content-type':'multipart/form-data'});
+
+  return axios.post(endpoint,formData,config)
+    .catch((err) => {
+      return Promise.reject(cleanErrorObject(err));
+    });
+
+}
+
 export function put(endpoint,data) {
   return axios.put(endpoint,data,getConfig())
     .catch((err) => {
@@ -78,12 +111,23 @@ export function request(config) {
 }
 
 const cleanErrorObject =(error) => {
-  const errorObject = {data:error.data,
+  const errorObject = {
+    data:error.data,
     status: error.status,
     statusText: error.statusText,
-    message: error.data && error.data.msg ? error.data.msg: error.statusText,
+    message: getErrorMessage(error),
     original: error
   };
 
   return errorObject;
+};
+
+const getErrorMessage = (error) => {
+  if(error.data && error.data.msg) {
+    return error.data.msg;
+  } else if (error.data && error.data.message) {
+    return error.data.message;
+  } else {
+    return error.statusText;
+  }
 }

@@ -51,6 +51,9 @@ export default class Sidebar extends React.Component {
                     <li>
                         <Link to={this.getButtonUrl('/users/'+userId+'/billing-status',userId)} class={this.getButtonClass('billingStatus')}>Billing Status</Link>
                     </li>
+                    <li>
+                        <Link to={this.getButtonUrl('/users/'+userId+'/invoice',userId)} class={this.getButtonClass('invoice')}>Invoice</Link>
+                    </li>
                 </ul>
             </aside>
         );

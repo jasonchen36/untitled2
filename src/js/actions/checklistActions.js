@@ -2,20 +2,29 @@ import * as base from "./lib/baseActions";
 import { downloadFile } from "./lib/directDownloadActions";
 import _ from "lodash";
 
-/// These actions may be outside of redux, as we don't want to save the PDF in memory?
-export function fetchChecklistPdf(quoteId) {
+/// Dispatch Functions
+const fetchAdminChecklist = (quoteId) => {
   return function(dispatch) {
-    return callDownloadListPdf(quoteId)
+    let url = '/quote/'+quoteId+'/adminChecklist';    
+    return base.get(url)
       .then((response) => {
-        dispatch({type:"FETCH_CHECKLIST_PDF_FULFILLED",payload: response});
+        const payloadData = _.merge(response.data,{quoteId:quoteId});
+        dispatch({type:"FETCH_ADMIN_CHECKLIST_FULFILLED",payload: payloadData});
       }).catch((err) => {
-        dispatch({type:"FETCH_CHECKLIST_PDF_REJECTED",payload: err});
+        dispatch({type:"FETCH_ADMIN_CHECKLIST_REJECTED",payload: err});
       });
   };
 };
 
-export function directDownloadChecklistPdf(quoteId) {
+const directDownloadChecklistPdf = (quoteId) => {
   let url = '/quote/'+quoteId+'/checklist/PDF';
   
   return downloadFile(url);
 };
+
+/// EXPORTS
+export { 
+  fetchAdminChecklist, 
+  directDownloadChecklistPdf 
+};
+

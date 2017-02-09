@@ -22,6 +22,7 @@ import Checklist from "./components/checklist/Checklist";
 import Messages from "./components/messages/Messages";
 import Notes from "./components/notes/Notes";
 import BillingStatus from "./components/billing-status/BillingStatus";
+import Invoice from "./components/invoice/Invoice";
 
 // The Redux store file
 import store from "./store";
@@ -47,6 +48,7 @@ ReactDOM.render(<Provider store={store}>
             <Route path="users/:userId/messages" name="messages" component={Messages}></Route>
             <Route path="users/:userId/notes" name="notes" component={Notes}></Route>
             <Route path="users/:userId/billing-status" name="billing-status" component={BillingStatus}></Route>
+            <Route path="users/:userId/invoice" name="invoice" component={Invoice}></Route>            
         </Route>
     </Router>
 </Provider>, app);
