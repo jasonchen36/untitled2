@@ -21,6 +21,7 @@ export default function reducer(state={
           quoteChecklist:null,
           quoteChecklistFetched:false,
           adminChecklist:null,
+          updated:false,
           adminChecklistFetched:false,
         };
       }
@@ -55,6 +56,23 @@ export default function reducer(state={
           quoteChecklistFetching:false
         };
       }
+      case "UPLOAD_DOCUMENT_FULFILLED": {
+        return {
+          ...state,
+        };
+      }
+      case "UPLOAD_DOCUMENT_REJECTED": {
+        return {
+          ...state,
+          updated:false
+        };
+      }
+      case "UPLOAD_DOCUMENT_AND_REFRESH_FULFILLED": {
+        return {
+          ...state,
+          updated:true
+        };
+      }
       case "CLEAR_CHECKLIST": {
         return {
           ...state,
@@ -70,6 +88,7 @@ export default function reducer(state={
         return {
           ...state,
           fetching:false,
+          updated:false,
           quoteChecklist:quoteChecklist,
           adminChecklist:adminChecklist
         };
@@ -117,6 +136,7 @@ export default function reducer(state={
         return {
           ...state,
           fetching:false,
+          updated:false,
           adminChecklist: action.payload
         };
       }
@@ -124,6 +144,7 @@ export default function reducer(state={
         return {
           ...state,
           fetching:false,
+          updated:false,
           error:action.payload
         };
       }

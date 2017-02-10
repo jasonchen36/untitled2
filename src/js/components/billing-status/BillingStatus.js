@@ -7,13 +7,15 @@ import { Link  } from "react-router"
 import Sidebar from "../layout/Sidebar";
 import UserOptionsHeader from "../layout/UserOptionsHeader";
 
-import { fetchAllTaxReturnStatuses, updateTaxReturnStatus } from "../../actions/taxReturnActions";
+import { fetchAllTaxReturnStatuses, updateTaxReturn } from "../../actions/taxReturnActions";
 
 import { loadUser, loadUserQuote } from "../../actions/loaderActions";
 import { renderTaxReturnStatusSelectionOptions } from "../helpers/RenderTaxReturnStatusSelection";
 import QuoteDetails from "./QuoteDetails"
 import BillingStatusRow from "./BillingStatusRow"
 import { directDownloadChecklistItems, deleteDocument, uploadDocument } from "../../actions/uploadsActions";
+import { uploadAdminDocument } from "../../actions/checklistActions";
+import { saveBlob } from "../../lib/saveBlob";
 
 @connect((store) => {
   return {
@@ -50,14 +52,19 @@ export default class BillingStatus extends React.Component {
   componentWillReceiveProps(nextProps) {
   };
 
-  handleUploadItem(quoteId, taxReturnId, checklistId, uploadFile) {
-      this.props.dispatch(uploadDocument(quoteId, taxReturnId, checklistId, uploadFile));
+  handleUploadItem(quoteId, taxReturnId, checklistId, uploadFile, documents) {
+      if(documents && documents.length>0) {
+        // delete all the old documents
+        _.each(documents, (doc) => {
+          let documentId = doc.documentId;
+          this.props.dispatch(deleteDocument(quoteId,documentId));
+        });
+      }
+
+      this.props.dispatch(uploadAdminDocument(quoteId, taxReturnId, checklistId, uploadFile));
   }
 
   handleDownloadItem(quoteId, documentId,documentName) {
-    // TODO: fix to real one
-    quoteId = 14;
-    documentId=408;
 
     directDownloadChecklistItems(quoteId,documentId)
         .then((response) => {
@@ -68,21 +75,25 @@ export default class BillingStatus extends React.Component {
         });
   }
 
-  handleDeleteItem(quoteId,documentId,documentName) {
+  handleDeleteItem(quoteId,docs,documentName) {
      if(confirm("are you sure you want to delete document '"+documentName+"'?")) {
-      // TODO: enable
-//      this.props.dispatch(deleteDocument(quoteId,documentId));
+      _.each(docs,(doc) => {
+        let documentId = doc.documentId;
+
+        this.props.dispatch(deleteDocument(quoteId,documentId));
+      });
     } else {
+      console.log('not deleted');
     }
   }
 
 
   /// pass to children
   handleUpdateTaxReturnStatus(taxReturnId,results) {
-    this.props.dispatch(updateTaxReturnStatus(taxReturnId,results));
+    this.props.dispatch(updateTaxReturn(taxReturnId,results));
   }
 
-  renderBillingStatusTable(taxReturns, quotes, statuses) {
+  renderBillingStatusTable(taxReturns, quotes, adminChecklist, statuses) {
     if(!taxReturns || taxReturns.length===0) {
       return <div>
         No Tax returns
@@ -90,17 +101,13 @@ export default class BillingStatus extends React.Component {
     }
 
     const tableRows = taxReturns.map((taxReturn) => {
-      let quote = quotes?  _.find(quotes.quoteLineItems, (q) => {
-          return q.tax_return_id === taxReturn.id; 
-        }) : {}; 
+      let quote = quotes? quotes : {};
 
-  // TODO get from a call.
-    const adminDownloads = [ {id:1, name:'Tax Summary', checklist_id:4},
-      { id:2, name:'Signed Document', checklist_id:5},
-      {id:3, name:'Tax Return', checklist_id:6}
-    ];
+      let taxReturnChecklist =  adminChecklist && adminChecklist.checklistitems ?  _.filter(adminChecklist.checklistitems,(ac) => {
+        return ac.tax_return_id === taxReturn.id;
+      }) : [];
 
-      return <BillingStatusRow taxReturn={taxReturn} quote={quote} statuses={statuses} taxReturnAdminDownloads={adminDownloads} submitFunction={this.updateTaxReturnStatus} uploadItemFunction={this.uploadItem} downloadItemFunction={this.downloadItem} deleteItemFunction={this.deleteItem}  ></BillingStatusRow>
+      return <BillingStatusRow taxReturn={taxReturn} quote={quote} statuses={statuses} taxReturnAdminChecklist={taxReturnChecklist} submitFunction={this.updateTaxReturnStatus} uploadItemFunction={this.uploadItem} downloadItemFunction={this.downloadItem} deleteItemFunction={this.deleteItem}  ></BillingStatusRow>
     });
       
     return (<div >{tableRows}</div>);
@@ -109,14 +116,14 @@ export default class BillingStatus extends React.Component {
   render() {
     //todo, figure out what "No documents added to this package" means
     //todo, pass in data to table
-    const { taxReturns, taxReturn, quotes, taxReturnStatuses} = this.props;
+    const { taxReturns, taxReturn, quotes, adminChecklist, taxReturnStatuses} = this.props;
     return (
       <main class="grid-container row">
         <Sidebar activeScreen="billingStatus" userId={this.props.params.userId}/>
         <section class="col-sm-8 col-lg-9">
           <h1></h1>
           <h2></h2>
-          {this.renderBillingStatusTable(taxReturns, quotes, taxReturnStatuses)}
+          {this.renderBillingStatusTable(taxReturns, quotes, adminChecklist, taxReturnStatuses)}
         </section>
       </main>
     )

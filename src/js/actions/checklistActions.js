@@ -16,6 +16,37 @@ const fetchAdminChecklist = (quoteId) => {
   };
 };
 
+const uploadAdminDocument = (quoteId, taxReturnId, checklistId, file) => {
+  return function(dispatch) {
+    let url = '/quote/'+quoteId+'/document';
+
+    let postFormData = {
+      uploadFileName: file
+    };
+    let documentId = null;
+    // TODO: allow these when they work
+    if(typeof taxReturnId !== 'undefined') {
+      postFormData.taxReturnId = taxReturnId;
+    }
+
+    if(typeof checklistId !== 'undefined') {
+      postFormData.checklistItemId = checklistId;
+    }
+
+    return base.postFile(url,postFormData)
+      .then((response) => {
+        let documentId = response.data.documentId;
+        dispatch({type:"UPLOAD_DOCUMENT_FULFILLED",payload:{quoteId:parseInt(quoteId), documentId: parseInt(documentId)}});
+
+        return fetchAdminChecklist(quoteId)(dispatch);
+      }).then(function(result) {
+        dispatch({type:"UPLOAD_DOCUMENT_AND_REFRESH_FULFILLED",payload:{quoteId:parseInt(quoteId), documentId: parseInt(documentId)}});        
+      }).catch((err) => {
+        dispatch({type:"UPLOAD_DOCUMENT_REJECTED",payload:err});
+      });
+  };
+};
+
 const directDownloadChecklistPdf = (quoteId) => {
   let url = '/quote/'+quoteId+'/checklist/PDF';
   
@@ -24,7 +55,8 @@ const directDownloadChecklistPdf = (quoteId) => {
 
 /// EXPORTS
 export { 
-  fetchAdminChecklist, 
+  fetchAdminChecklist,
+  uploadAdminDocument,
   directDownloadChecklistPdf 
 };
 

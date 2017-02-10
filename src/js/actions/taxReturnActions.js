@@ -37,6 +37,8 @@ const fetchAllTaxReturnStatuses = () => {
   };
 };
 
+
+/// update tax return & addresses
 const updateTaxProfile = (id, updateValues, addressId, updateAddressValues) => {
   return function(dispatch) {
     dispatch({type:"UPDATING_TAX_RETURN", payload:null});
@@ -71,14 +73,33 @@ const updateTaxProfile = (id, updateValues, addressId, updateAddressValues) => {
   };
 };
 
+/// update tax return
+const updateTaxReturn = (id, updateValues) => {
+  return function(dispatch) {
+    dispatch({type:"UPDATING_TAX_RETURN", payload:null});
+
+    return callUpdateTaxProfile(id, updateValues)
+      .then(function(responses) {
+        dispatch({type: "UPDATE_TAX_RETURN_PROFILE_FULFILLED", payload: result});
+        return getTaxReturn(id);
+      })
+      .catch((err) => {
+        dispatch({type: "UPDATE_TAX_RETURN_PROFILE_REJECTED", payload: err});
+        return Promise.reject(err);
+      })
+      .then(function(result) {
+        dispatch({type:"UPDATE_TAX_RETURN_FULFILLED",payload:result});
+      }).catch(function(err) {
+        dispatch({type:"UPDATE_TAX_RETURN_REJECTED", payload:err});
+      });
+  };
+};
+
 /// Tax Return status
 /// { status_id: 3, return_value: 50, details: 'text'  }
 const updateTaxReturnStatus = (taxReturnId, body) => {
   return function(dispatch) {
     
-// TODO: make this the right URL
-//    const url = "/taxReturn/"+taxReturnId+'/status';
-//    return base.put(url, body)
       return Promise.resolve({})
        .catch((err) => {
         dispatch({type: "UPDATE_TAX_RETURN_STATUS_REJECTED", payload: err});
@@ -97,8 +118,6 @@ const updateTaxReturnStatus = (taxReturnId, body) => {
 };
 
 /// UPDATE FUNCTIONS
-
-
 
 const getTaxReturn = (taxReturnId) => {
   const searchUrl = "/tax_return/"+taxReturnId;
@@ -163,6 +182,7 @@ export {
   clearTaxReturnUpdate, 
   fetchAllTaxReturnStatuses, 
   updateTaxProfile,
+  updateTaxReturn,
   updateTaxReturnStatus
 };
 

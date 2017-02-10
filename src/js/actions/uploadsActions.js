@@ -28,7 +28,6 @@ export function uploadDocument(quoteId, taxReturnId, checklistId, file) {
       uploadFileName: file
     };
 
-    // TODO: allow these when they work
     if(typeof taxReturnId !== 'undefined') {
       postFormData.taxReturnId = taxReturnId;
     }
@@ -37,12 +36,11 @@ export function uploadDocument(quoteId, taxReturnId, checklistId, file) {
       postFormData.checklistItemId = checklistId;
     }
 
-    postFormData.checklistItemId =0;
-
     return base.postFile(url,postFormData)
       .then((response) => {
         let documentId = response.data.documentId;
         dispatch({type:"UPLOAD_DOCUMENT_FULFILLED",payload:{quoteId:parseInt(quoteId), documentId: parseInt(documentId)}});
+
       }).catch((err) => {
         dispatch({type:"UPLOAD_DOCUMENT_REJECTED",payload:err});
       });

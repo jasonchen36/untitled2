@@ -17,8 +17,8 @@ export default class Layout extends React.Component {
     this.clickInputChange = this.handleClickInputChange.bind(this);
 
     this.selectedStatus = {value:5};
-    this.quoteValue = {value:0};
-    this.quoteDetails = {value:''};
+    this.taxReturnRefund = {value:0};
+    this.taxReturnDetails = {value:''};
   }
 
   componentWillReceiveProps(nextProps) {
@@ -27,10 +27,11 @@ export default class Layout extends React.Component {
     if(taxReturn && taxReturn.status) {
       this.selectedStatus.value = taxReturn.status.id;
     } else {
-      this.selectedStatus.value = quote.value;
+      this.selectedStatus.value = 0;
     }
 
-    this.quoteValue.value = quote.value; 
+    this.taxReturnRefund.value = taxReturn.refund; 
+    this.taxReturnDetails.value = taxReturn.details;
   };
   
 
@@ -56,9 +57,9 @@ export default class Layout extends React.Component {
 
     //TODO: submit correctly
     let data = {
-      status_id: this.selectedStatus.value,
-      value: this.quoteValue.value,
-      details: this.quoteDetails.value
+      statusId: this.selectedStatus.value,
+      refund: this.taxReturnRefund.value,
+      details: this.taxReturnDetails.value
     };
 
     let { taxReturnId } = e.target.dataset;
@@ -109,10 +110,10 @@ export default class Layout extends React.Component {
           </select>
 
           <label for={inputId("return",id)}>Return: </label>
-          $<input id={inputId("return",id)} type="number" name="quoteValue" placeholder="return" value={this.quoteValue.value} onChange={this.clickInputChange} />
+          $<input id={inputId("return",id)} type="number" name="taxReturnRefund" placeholder="return" value={this.taxReturnRefund.value} onChange={this.clickInputChange} />
 
           <label for={inputId("details",id)}>Details:</label>
-          <textarea rows="3" id={inputId("details",id)} name="quoteDetails" placeholder="details" value={this.quoteDetails.value} onChange={this.clickInputChange}  />
+          <textarea rows="3" id={inputId("details",id)} name="taxReturnDetails" placeholder="details" value={this.taxReturnDetails.value} onChange={this.clickInputChange}  />
 
           <button id={inputId("submit",id)} data-tax-return-id={taxReturn.id} class="button" type="submit" onClick={this.submitChanges}>Save</button>
         </form>
