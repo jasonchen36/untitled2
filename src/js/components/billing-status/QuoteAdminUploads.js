@@ -4,6 +4,7 @@ import { IndexLink, Link } from "react-router";
 import { createLoginuser } from "../../actions/loginuserActions"
 import { renderErrors } from "../helpers/RenderErrors";
 import { renderTaxReturnStatusSelectionOptions } from "../helpers/RenderTaxReturnStatusSelection";
+import { initUpdateState, renderUpdateButton, updateState } from "../helpers/RenderUpdateButton";
 
 export default class Layout extends React.Component {
   constructor(props) {
@@ -17,7 +18,7 @@ export default class Layout extends React.Component {
     this.documents = {value:[]};
     this.checklistName = {value:null};
     this.quoteId = {value:null};
-    
+    this.updateState = {value:null};
   }
 
   componentWillReceiveProps(nextProps) {
@@ -28,6 +29,7 @@ export default class Layout extends React.Component {
     this.documents.value = docs;
     this.quoteId.value = nextProps.quote ? nextProps.quote.id: null;
     this.checklistName.value = nextProps.checklist ? nextProps.checklist.name: null;
+    this.updateState.value = updateState(nextProps.updating, nextProps.updated);
   };
 
 
@@ -75,7 +77,7 @@ export default class Layout extends React.Component {
 
     return   <form data-quote-id={quote.id} data-tax-return-id={checklist.tax_return_id}  data-checklist-name={checklist.name} data-checklist-id={checklist.checklist_item_id}  onSubmit={this.uploadItem}>
       <input type="file" name="fileUpload" data-quote-id={quote.id} data-tax-return-id={checklist.tax_return_id} data-checklist-id={checklist.checklist_item_id} data-checklist-name={checklist.name}  onChange={this.uploadItemSelected} />
-      <button data-tax-return-id={checklist.tax_return_id} className={"button"} type="submit">Upload</button>
+      { renderUpdateButton(this.updateState,"Upload", "Uploading", "Uploaded") }
     </form>
   }
 

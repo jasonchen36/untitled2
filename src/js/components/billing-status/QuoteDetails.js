@@ -4,6 +4,8 @@ import { IndexLink, Link } from "react-router";
 import { createLoginuser } from "../../actions/loginuserActions"
 import { renderErrors } from "../helpers/RenderErrors";
 import { renderTaxReturnStatusSelectionOptions } from "../helpers/RenderTaxReturnStatusSelection";
+import { initUpdateState, renderUpdateButton, updateState } from "../helpers/RenderUpdateButton";
+
 
 export default class Layout extends React.Component {
   constructor(props) {
@@ -19,6 +21,7 @@ export default class Layout extends React.Component {
     this.selectedStatus = {value:5};
     this.taxReturnRefund = {value:0};
     this.taxReturnDetails = {value:''};
+    this.updateState = {value:null};    
   }
 
   componentWillReceiveProps(nextProps) {
@@ -32,6 +35,8 @@ export default class Layout extends React.Component {
 
     this.taxReturnRefund.value = taxReturn.refund; 
     this.taxReturnDetails.value = taxReturn.details;
+    this.updateState.value = updateState(nextProps.updating, nextProps.updated);
+    
   };
   
 
@@ -103,7 +108,7 @@ export default class Layout extends React.Component {
 
     return (
       <div data-id={quote.id}> 
-        <form>
+        <form id={inputId("form",id)} data-tax-return-id={taxReturn.id} onSubmit={this.submitChanges}>
           <label for={inputId("status",id)}>Status:</label>
           <select class="col" name="selectedStatus" onChange={this.clickInputChange} value={this.selectedStatus.value}>
             {renderTaxReturnStatusSelectionOptions(statuses)}        
@@ -115,7 +120,8 @@ export default class Layout extends React.Component {
           <label for={inputId("details",id)}>Details:</label>
           <textarea rows="3" id={inputId("details",id)} name="taxReturnDetails" placeholder="details" value={this.taxReturnDetails.value} onChange={this.clickInputChange}  />
 
-          <button id={inputId("submit",id)} data-tax-return-id={taxReturn.id} class="button" type="submit" onClick={this.submitChanges}>Save</button>
+        { renderUpdateButton(this.updateState,"Save", "Saving", "Saved") }
+          
         </form>
         {renderErrors(errors)}
       </div>

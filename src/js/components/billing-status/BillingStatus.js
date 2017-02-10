@@ -9,7 +9,7 @@ import UserOptionsHeader from "../layout/UserOptionsHeader";
 
 import { fetchAllTaxReturnStatuses, updateTaxReturn } from "../../actions/taxReturnActions";
 
-import { loadUser, loadUserQuote } from "../../actions/loaderActions";
+import { loadUser, loadUserQuote, refreshUpdateState } from "../../actions/loaderActions";
 import { renderTaxReturnStatusSelectionOptions } from "../helpers/RenderTaxReturnStatusSelection";
 import QuoteDetails from "./QuoteDetails"
 import BillingStatusRow from "./BillingStatusRow"
@@ -27,7 +27,11 @@ import { saveBlob } from "../../lib/saveBlob";
     taxReturnStatuses : store.accounts.taxReturnStatuses,
     adminChecklist: store.checklists.adminChecklist,
     adminChecklistFetched: store.checklists.adminChecklistFetched,
-    adminChecklistFetching: store.checklists.adminChecklistFetching
+    adminChecklistFetching: store.checklists.adminChecklistFetching,
+    checklistUpdated:store.checklists.updated,
+    checklistUpdating:store.checklists.updating,
+    taxReturnsUpdated:store.accounts.taxReturnsUpdated,
+    taxReturnsUpdating:store.accounts.taxReturnsUpdating,
   };
 })
 
@@ -44,8 +48,9 @@ export default class BillingStatus extends React.Component {
   componentWillMount() {
     const userId = this.props.params.userId;
 
+    this.props.dispatch(refreshUpdateState());
     this.props.dispatch(loadUserQuote(userId));
-    this.props.dispatch(fetchAllTaxReturnStatuses());  
+    this.props.dispatch(fetchAllTaxReturnStatuses()); 
     
   };
 
@@ -93,7 +98,7 @@ export default class BillingStatus extends React.Component {
     this.props.dispatch(updateTaxReturn(taxReturnId,results));
   }
 
-  renderBillingStatusTable(taxReturns, quotes, adminChecklist, statuses) {
+  renderBillingStatusTable(taxReturns, quotes, adminChecklist, statuses, checklistUpdated, checklistUpdating, taxReturnsUpdated, taxReturnsUpdating) {
     if(!taxReturns || taxReturns.length===0) {
       return <div>
         No Tax returns
@@ -101,13 +106,16 @@ export default class BillingStatus extends React.Component {
     }
 
     const tableRows = taxReturns.map((taxReturn) => {
-      let quote = quotes? quotes : {};
+      const quote = quotes? quotes : {};
 
-      let taxReturnChecklist =  adminChecklist && adminChecklist.checklistitems ?  _.filter(adminChecklist.checklistitems,(ac) => {
+      const taxReturnChecklist =  adminChecklist && adminChecklist.checklistitems ?  _.filter(adminChecklist.checklistitems,(ac) => {
         return ac.tax_return_id === taxReturn.id;
       }) : [];
 
-      return <BillingStatusRow taxReturn={taxReturn} quote={quote} statuses={statuses} taxReturnAdminChecklist={taxReturnChecklist} submitFunction={this.updateTaxReturnStatus} uploadItemFunction={this.uploadItem} downloadItemFunction={this.downloadItem} deleteItemFunction={this.deleteItem}  ></BillingStatusRow>
+      const taxReturnUpdated = _.some(taxReturnsUpdated,(u) => { return u===taxReturn.id; });
+      const taxReturnUpdating = _.some(taxReturnsUpdating,(u) => { return u===taxReturn.id; });
+
+      return <BillingStatusRow taxReturn={taxReturn} quote={quote} statuses={statuses} taxReturnAdminChecklist={taxReturnChecklist} submitFunction={this.updateTaxReturnStatus} uploadItemFunction={this.uploadItem} downloadItemFunction={this.downloadItem} deleteItemFunction={this.deleteItem} checklistUpdating={checklistUpdating} checklistUpdated={checklistUpdated} taxReturnUpdated={taxReturnUpdated} taxReturnUpdating={taxReturnUpdating} ></BillingStatusRow>
     });
       
     return (<div >{tableRows}</div>);
@@ -116,14 +124,14 @@ export default class BillingStatus extends React.Component {
   render() {
     //todo, figure out what "No documents added to this package" means
     //todo, pass in data to table
-    const { taxReturns, taxReturn, quotes, adminChecklist, taxReturnStatuses} = this.props;
+    const { taxReturns, taxReturn, quotes, adminChecklist, taxReturnStatuses, checklistUpdated, checklistUpdating, taxReturnsUpdated, taxReturnsUpdating} = this.props;
     return (
       <main class="grid-container row">
         <Sidebar activeScreen="billingStatus" userId={this.props.params.userId}/>
         <section class="col-sm-8 col-lg-9">
           <h1></h1>
           <h2></h2>
-          {this.renderBillingStatusTable(taxReturns, quotes, adminChecklist, taxReturnStatuses)}
+          {this.renderBillingStatusTable(taxReturns, quotes, adminChecklist, taxReturnStatuses, checklistUpdated, checklistUpdating,taxReturnsUpdated, taxReturnsUpdating)}
         </section>
       </main>
     )

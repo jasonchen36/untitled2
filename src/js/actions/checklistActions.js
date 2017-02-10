@@ -8,7 +8,7 @@ const fetchAdminChecklist = (quoteId) => {
     let url = '/quote/'+quoteId+'/adminChecklist';    
     return base.get(url)
       .then((response) => {
-        const payloadData = _.merge(response.data,{quoteId:quoteId});
+        const payloadData = _.merge(response.data,{quoteId:parseInt(quoteId)});
         dispatch({type:"FETCH_ADMIN_CHECKLIST_FULFILLED",payload: payloadData});
       }).catch((err) => {
         dispatch({type:"FETCH_ADMIN_CHECKLIST_REJECTED",payload: err});
@@ -33,6 +33,8 @@ const uploadAdminDocument = (quoteId, taxReturnId, checklistId, file) => {
       postFormData.checklistItemId = checklistId;
     }
 
+    dispatch({type:"UPLOAD_ADMIN_DOCUMENT_UPLOADING",payload:{quoteId:parseInt(quoteId), checklistId: parseInt(checklistId), taxReturnId: parseInt(taxReturnId)}});        
+
     return base.postFile(url,postFormData)
       .then((response) => {
         let documentId = response.data.documentId;
@@ -40,9 +42,9 @@ const uploadAdminDocument = (quoteId, taxReturnId, checklistId, file) => {
 
         return fetchAdminChecklist(quoteId)(dispatch);
       }).then(function(result) {
-        dispatch({type:"UPLOAD_DOCUMENT_AND_REFRESH_FULFILLED",payload:{quoteId:parseInt(quoteId), documentId: parseInt(documentId)}});        
+        dispatch({type:"UPLOAD_DOCUMENT_AND_REFRESH_FULFILLED",payload:{quoteId:parseInt(quoteId), checklistId: parseInt(checklistId), taxReturnId: parseInt(taxReturnId),  documentId: parseInt(documentId)}});        
       }).catch((err) => {
-        dispatch({type:"UPLOAD_DOCUMENT_REJECTED",payload:err});
+        dispatch({type:"UPLOAD_ADMIN_DOCUMENT_REJECTED",payload:{checklistId:checklistId, taxReturnId: taxReturnId,  error:err}});
       });
   };
 };

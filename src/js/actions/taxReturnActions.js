@@ -40,8 +40,10 @@ const fetchAllTaxReturnStatuses = () => {
 
 /// update tax return & addresses
 const updateTaxProfile = (id, updateValues, addressId, updateAddressValues) => {
+  id = parseInt(id);
+  addressId = parseInt(addressId);
   return function(dispatch) {
-    dispatch({type:"UPDATING_TAX_RETURN", payload:null});
+    dispatch({type:"UPDATING_TAX_RETURN", payload:{id:id}});
 
     const updateTaxProfilePromise = callUpdateTaxProfile(id, updateValues)
       .then((result) => {   
@@ -68,19 +70,20 @@ const updateTaxProfile = (id, updateValues, addressId, updateAddressValues) => {
       .then(function(result) {
         dispatch({type:"UPDATE_TAX_RETURN_FULFILLED",payload:result});
       }).catch(function(err) {
-        dispatch({type:"UPDATE_TAX_RETURN_REJECTED", payload:err});
+        dispatch({type:"UPDATE_TAX_RETURN_REJECTED", payload:{id:id, error:err}});
       });
   };
 };
 
 /// update tax return
 const updateTaxReturn = (id, updateValues) => {
+  id = parseInt(id);
   return function(dispatch) {
-    dispatch({type:"UPDATING_TAX_RETURN", payload:null});
+    dispatch({type:"UPDATING_TAX_RETURN", payload:{id:id}});
 
     return callUpdateTaxProfile(id, updateValues)
       .then(function(responses) {
-        dispatch({type: "UPDATE_TAX_RETURN_PROFILE_FULFILLED", payload: result});
+        dispatch({type: "UPDATE_TAX_RETURN_PROFILE_FULFILLED", payload: responses});
         return getTaxReturn(id);
       })
       .catch((err) => {
@@ -90,7 +93,7 @@ const updateTaxReturn = (id, updateValues) => {
       .then(function(result) {
         dispatch({type:"UPDATE_TAX_RETURN_FULFILLED",payload:result});
       }).catch(function(err) {
-        dispatch({type:"UPDATE_TAX_RETURN_REJECTED", payload:err});
+        dispatch({type:"UPDATE_TAX_RETURN_REJECTED", payload:{id:id,error:err}});
       });
   };
 };

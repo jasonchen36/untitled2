@@ -35,7 +35,7 @@ export default class Layout extends React.Component {
   }
 
 
-  renderBillingStatusRow(taxReturn, quote, statuses, taxReturnAdminChecklist, submitFunction, uploadItemFunction, downloadItemFunction, deleteItemFunction) {
+  renderBillingStatusRow(taxReturn, quote, statuses, taxReturnAdminChecklist, submitFunction, uploadItemFunction, downloadItemFunction, deleteItemFunction, checklistUpdating, checklistUpdated, taxReturnUpdated, taxReturnUpdating) {
     const quoteId = quote.id;
 
     const showDetails = (sd, detailId) => {
@@ -43,7 +43,11 @@ export default class Layout extends React.Component {
     };
 
     const adminUploads = _.map(taxReturnAdminChecklist, (checklist) => {
-      return <QuoteAdminUploads key={checklist.id} quote={quote} taxReturn={taxReturn} checklist={checklist} uploadItemFunction={uploadItemFunction} downloadItemFunction={downloadItemFunction} deleteItemFunction={deleteItemFunction} />
+      let updating = _.some(checklistUpdating, (u) => {
+        return u.checklistId === checklist.checklist_item_id && u.taxReturnId === taxReturn.id });
+      let updated = _.some(checklistUpdated,(u) => { return u.checklistId === checklist.checklist_item_id && u.taxReturnId === taxReturn.id });
+
+      return <QuoteAdminUploads key={checklist.checklist_item_id} quote={quote} taxReturn={taxReturn} checklist={checklist} uploadItemFunction={uploadItemFunction} downloadItemFunction={downloadItemFunction} deleteItemFunction={deleteItemFunction} updating={updating} updated={updated} />
     });
 
     return (
@@ -62,7 +66,7 @@ export default class Layout extends React.Component {
         </div>
         <hr />
         <div class={this.showDetails.value ? "show" : "hide" } >
-          <QuoteDetails quote={quote} taxReturn={taxReturn} statuses={statuses} submitFunction={submitFunction} />
+          <QuoteDetails quote={quote} taxReturn={taxReturn} statuses={statuses} submitFunction={submitFunction} updated={taxReturnUpdated} updating={taxReturnUpdating} />
           { adminUploads }
           <hr/>    
         </div>
@@ -73,10 +77,10 @@ export default class Layout extends React.Component {
   render() {
     //todo, figure out what "No documents added to this package" means
     //todo, pass in data to table
-    const { taxReturn, quote, statuses, submitFunction, uploadItemFunction, downloadItemFunction, deleteItemFunction, taxReturnAdminChecklist } = this.props;
+    const { taxReturn, quote, statuses, submitFunction, uploadItemFunction, downloadItemFunction, deleteItemFunction, taxReturnAdminChecklist, checklistUpdating, checklistUpdated, taxReturnUpdated, taxReturnUpdating } = this.props;
    
     return <div>
-      {this.renderBillingStatusRow(taxReturn,quote, statuses, taxReturnAdminChecklist, submitFunction, uploadItemFunction, downloadItemFunction, deleteItemFunction)}
+      {this.renderBillingStatusRow(taxReturn,quote, statuses, taxReturnAdminChecklist, submitFunction, uploadItemFunction, downloadItemFunction, deleteItemFunction, checklistUpdating, checklistUpdated, taxReturnUpdated, taxReturnUpdating)}
     </div>
   }
 }

@@ -5,6 +5,12 @@ import { fetchAccount, fetchTaxReturn, clearAccount, fetchChecklist, clearCheckl
 import { fetchQuote } from "./quoteActions";
 import {fetchAdminChecklist } from "./checklistActions";
 
+const refreshUpdateState = () => {
+  return function(dispatch) {
+    dispatch({type:"REFRESH_UPDATE_STATE",payload:{}});
+  };
+};
+
 /// Loader for A User all the way up to the Quote
 const loadUserQuote = (userId,defaults) => {
   let results = {};
@@ -89,6 +95,7 @@ const loadAccount = (accountId,defaults) => {
         return Promise.all(accountDetailPromises);
       }).then(function(results) {
         // first is taxreturn, second is checklist 
+
         return { account:account,
           quoteId: quoteId,
           taxReturn:results[0],
@@ -131,6 +138,7 @@ const getAccountQuoteId = (account, quoteId) => {
 export { 
   loadUser, 
   loadAccount,
-  loadUserQuote
+  loadUserQuote,
+  refreshUpdateState
 };
 

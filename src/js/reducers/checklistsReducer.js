@@ -6,8 +6,8 @@ export default function reducer(state={
     quoteChecklist: null,
     fetching: false,
     fetched: false,
-    updating: false,
-    updated: false,
+    updating: [],
+    updated: [],
     quoteChecklistFetched:false,
     quoteChecklistFetching:false,
     adminChecklist: null,
@@ -16,6 +16,12 @@ export default function reducer(state={
     error: null,
   }, action) {
     switch (action.type) {
+      case "REFRESH_UPDATE_STATE": {
+        return { ...state,
+          updating: [],
+          updated:[]
+        };
+      }
       case "CLEAR_ACCOUNT": {
         return {...state, 
           quoteChecklist:null,
@@ -38,16 +44,17 @@ export default function reducer(state={
           quoteChecklist: quoteChecklist,
           adminChecklist: adminChecklist,
           quoteChecklistFetching:false,
-          adminChecklistFetching:false
+          adminChecklistFetching:false,
         };
       }
       case "FETCH_CHECKLIST": {
         return {
           ...state,
           quoteChecklistFetching:true
-        }
+        };
       }
       case "FETCH_CHECKLIST_FULFILLED": {
+        
         return {
           ...state,
           fetching:false,
@@ -64,13 +71,40 @@ export default function reducer(state={
       case "UPLOAD_DOCUMENT_REJECTED": {
         return {
           ...state,
-          updated:false
+        };
+      }
+      case "UPLOAD_ADMIN_DOCUMENT_UPLOADING": {
+        const { taxReturnId, checklistId } = action.payload;
+        let updated = _.filter(state.updated,(u) => { return u.checklistId !== checklistId || u.taxReturnId !== taxReturnId  });
+        let updating = _.cloneDeep(state.updating);
+        updating.push({checklistId:checklistId, taxReturnId:taxReturnId});
+
+        return {
+          ...state,
+          updated: updated,
+          updating: updating
         };
       }
       case "UPLOAD_DOCUMENT_AND_REFRESH_FULFILLED": {
+        const { taxReturnId, checklistId } = action.payload;
+        let updating = _.filter(state.updating,(u) => { return u.checklistId !==checklistId || u.taxReturnId !== taxReturnId });
+        let updated = _.cloneDeep(state.updated);
+        updated.push({checklistId:checklistId, taxReturnId:taxReturnId});
+        
         return {
           ...state,
-          updated:true
+          updating: updating,
+          updated: updated
+        };
+      }
+      case "UPLOAD_ADMIN_DOCUMENT_REJECTED": {
+        const { taxReturnId, checklistId } = action.payload;
+        
+        let updating = _.filter(state.updating,(u) => { return u.checklistId !== checklistId || u.taxReturnId !== taxReturnId});
+        return {
+          ...state,
+          error: payload.err,
+          updating: updating
         };
       }
       case "CLEAR_CHECKLIST": {
@@ -80,15 +114,24 @@ export default function reducer(state={
         };
       }
       case "DELETE_DOCUMENT_FULFILLED": {
+        
         let result = action.payload;
         let checklist = state.quoteChecklist;
-        const quoteChecklist = removeChecklistDocument(result, state.quoteChecklist);
-        const adminChecklist = removeChecklistDocument(result, state.adminChecklist);
+        let updated = state.updated;
+
+        const quoteId = result.quoteId;
+        const documentId = result.documentId;
+
+        updated = onDeleteRemoveChecklistItemFromUpdated(quoteId, documentId, state.quoteChecklist,updated);
+        updated = onDeleteRemoveChecklistItemFromUpdated(quoteId, documentId, state.adminChecklist,updated);
+
+        const quoteChecklist = removeChecklistDocument(quoteId, documentId, state.quoteChecklist);
+        const adminChecklist = removeChecklistDocument(quoteId, documentId, state.adminChecklist);
 
         return {
           ...state,
           fetching:false,
-          updated:false,
+          updated:updated,
           quoteChecklist:quoteChecklist,
           adminChecklist:adminChecklist
         };
@@ -136,7 +179,6 @@ export default function reducer(state={
         return {
           ...state,
           fetching:false,
-          updated:false,
           adminChecklist: action.payload
         };
       }
@@ -144,7 +186,6 @@ export default function reducer(state={
         return {
           ...state,
           fetching:false,
-          updated:false,
           error:action.payload
         };
       }
@@ -153,25 +194,53 @@ export default function reducer(state={
     return state;
 };
 
-const removeChecklistDocument = (result, checklist) => {
+/// remove checklistItem from updated with quoteid and doc with docid
+const onDeleteRemoveChecklistItemFromUpdated = (quoteId,documentId,checklist,updated) => {
+  let checklistItem = getRemovedChecklistItem(quoteId,documentId,checklist);
+
+  if(checklistItem) {
+    let taxReturnId = checklistItem.tax_return_id;
+    let checklistId = checklistItem.checklist_item_id;
+
+    updated = _.filter(updated,(u) => { return u.checklistId !== checklistId || u.taxReturnId !== taxReturnId });
+  }
+
+  return updated;
+};
+
+/// find checklistItem from updated with quoteid and doc with docid
+const getRemovedChecklistItem = (quoteId, documentId,checklist) => {
+  let checklistItem = null;
+  if(checklist.quoteId === quoteId) {
+     checklistItem =  _.find(checklist.checklistitems,(cli) => {
+        return _.some(cli.documents,(doc) => {
+          return doc.documentId !== documentId;
+        });
+    });
+  }
+
+  return checklistItem;
+};
+
+const removeChecklistDocument = (quoteId, documentId, checklist) => {
     checklist = _.cloneDeep(checklist);
-  
-  if(checklist.quoteId === result.quoteId) {
+
+  if(checklist.quoteId === quoteId) {
     _.each(checklist.checklistitems,(cli) => {
         cli.documents = _.filter(cli.documents,(doc) => {
-            return doc.documentId!==result.documentId;
+            return doc.documentId!==documentId;
         });
     });
 
     if(checklist.additionalDocuments) {
       checklist.additionalDocuments = _.filter(checklist.additionalDocuments, (ad) => {
-          return ad.documentId !== result.documentId;
+          return ad.documentId !== documentId;
       });
     }
   
     if(checklist.documents) {
       checklist.documents = _.filter(checklist.documents, (ad) => {
-          return ad.documentId !== result.documentId;
+          return ad.documentId !== documentId;
       });
     }
   }

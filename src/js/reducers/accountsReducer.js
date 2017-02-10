@@ -7,6 +7,8 @@ export default function reducer(state={
     taxReturns: null,
     taxReturn: null,
     taxReturnUpdated: false,
+    taxReturnsUpdated:[],
+    taxReturnsUpdating:[],
     taxReturnStatuses:null,
     quoteChecklist: null,
     searchChanged:false,
@@ -23,8 +25,14 @@ export default function reducer(state={
   }, action) {
     switch (action.type) {
       // Users events
+      case "REFRESH_UPDATE_STATE": {
+        return {...state,
+          taxReturnsUpdated:[],
+          taxReturnsUpdating:[]
+        };
+      }
       case "CLEAR_TAXRETURNS": {
-        return {...state, taxReturns:null};
+        return {...state, taxReturns:null,};
       }
       case "FETCH_TAXRETURNS": {
         return {...state, fetching: true};
@@ -102,8 +110,16 @@ export default function reducer(state={
         };
       }
       case "UPDATING_TAX_RETURN": {
+        let { id } = action.payload;
+        let taxReturnsUpdating = _.union(state.taxReturnsUpdating,[id]);
+//        taxReturnsUpdating.push(action.payload.id);
+
+        let taxReturnsUpdated = _.filter(state.taxReturnsUpdated, (u) => { return u !== id});
+
         return {
           ...state,
+          taxReturnsUpdating: taxReturnsUpdating,
+          taxReturnsUpdated: taxReturnsUpdated,
           updating:true
         }
       }
@@ -132,14 +148,23 @@ export default function reducer(state={
         };
       }
       case "UPDATE_TAX_RETURN_REJECTED": {
+        let { id,error } = action.payload;
+
+        let taxReturnsUpdating = _.filter(state.taxReturnsUpdating,(u) => { return u !== id});
+
         return {
           ...state,
-          error:action.payload
+          taxReturnsUpdating: taxReturnsUpdating,
+          error:error
         };
       }
       case "UPDATE_TAX_RETURN_FULFILLED": {
         const taxReturn = action.payload.data;
         const newTaxReturns =updateListWithObjectById(state.taxReturns,taxReturn); 
+
+        let id  = taxReturn.id;
+        let taxReturnsUpdated = _.union(state.taxReturnsUpdated,[id]);
+        let taxReturnsUpdating = _.filter(state.taxReturnsUpdating,(u) => { return u !== id});
 
         return {
           ...state,
@@ -147,6 +172,8 @@ export default function reducer(state={
           updating:false,
           taxReturn: taxReturn,
           taxReturns:newTaxReturns,
+          taxReturnsUpdated:taxReturnsUpdated,
+          taxReturnsUpdating: taxReturnsUpdating,
           taxReturnUpdated:true
         };
       }
