@@ -57,7 +57,6 @@ export default class Layout extends React.Component {
   }
 
    renderDownloadItemHeader(quote,checklist,docs, taxReturn) {
-    console.log(taxReturn);
     if(docs && docs.length>0) {
       return <div class="tax-item-header border-bottom-dark-grey">
         {taxReturn.first_name} - {checklist.name}
@@ -127,7 +126,6 @@ export default class Layout extends React.Component {
   renderItem(quote,checklist,taxReturn) {
    
     let docs = checklist && checklist.documents ? checklist.documents : [];
-  console.log('lsdijfljfsdfs', taxReturn);
     return <div>
       { this.renderDownloadItemHeader(quote,checklist,docs,taxReturn) }
       { this.renderDownloadItems(quote,checklist,docs) }
