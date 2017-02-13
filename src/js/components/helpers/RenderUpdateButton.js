@@ -5,7 +5,7 @@ const updateStates = { initialized:0, updating:1, updated:2};
 
 const initUpdateState = () => { return updateStates.initialized; };
 /// Render pagination
-const renderUpdateButton = (updatedState, baseText, changingText, doneText) => {
+const renderUpdateButton = (updatedState, baseText, changingText, doneText, isUpload) => {
   let buttonText = baseText;
   let updatedStateValue = updatedState ? updatedState.value : updateStates.initialized;
 
@@ -15,8 +15,12 @@ const renderUpdateButton = (updatedState, baseText, changingText, doneText) => {
     buttonText=doneText;
   }
 
-  return <button className={updatedStateValue===updateStates.updated ? "flash" : "button"} >{buttonText}</button>
-  
+  if(isUpload){
+      return <button className={updatedStateValue===updateStates.updated ? "flash" : "button button-upload"}>{buttonText}</button>
+  } else{
+      return <button className={updatedStateValue===updateStates.updated ? "flash" : "button button-save"}>{buttonText}</button>
+  }
+
 };
 
 /// Local updated state, to set the form button text
