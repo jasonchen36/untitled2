@@ -92,8 +92,10 @@ export default class Layout extends React.Component {
       <a class="tax-summary" data-quote-id={data.id} data-document-name={data.name} onClick={this.uploadItem}>           
         Upload
       </a>
-      <a class="tax-summary" data-quote-id={data.id} data-document-name={data.name} onClick={this.deleteItem}>          
-         <i class="fa fa-trash-o"></i>
+      <a class="tax-summary" data-quote-id={data.id} data-document-name={data.name} onClick={this.deleteItem}>
+        <div class="tax-item-trash">
+          <i class="fa fa-trash-o"></i>
+        </div>
       </a>
     </div>
   };
@@ -119,9 +121,6 @@ export default class Layout extends React.Component {
             <label for={inputId("details",id)}>DETAILS:</label>
             <textarea rows="3" id={inputId("details",id)} name="taxReturnDetails" placeholder="Details" value={this.taxReturnDetails.value} onChange={this.clickInputChange}  />
           </div>
-
-        { renderUpdateButton(this.updateState,"Save", "Saving", "Saved", false) }
-          
         </form>
         {renderErrors(errors)}
       </div>
@@ -132,7 +131,7 @@ export default class Layout extends React.Component {
     const { quote, taxReturn, statuses, errors } = this.props;
 
     return (
-      <main class="grid-container row">
+      <main class="grid-container row  no-padding">
         { this.renderQuoteDetails(quote, taxReturn, statuses,errors) }
       </main>
     );
