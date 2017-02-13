@@ -57,16 +57,9 @@ export default class BillingStatus extends React.Component {
   componentWillReceiveProps(nextProps) {
   };
 
-  handleUploadItem(quoteId, taxReturnId, checklistId, uploadFile, documents) {
-      if(documents && documents.length>0) {
-        // delete all the old documents
-        _.each(documents, (doc) => {
-          let documentId = doc.documentId;
-          this.props.dispatch(deleteDocument(quoteId,documentId));
-        });
-      }
+  handleUploadItem(quoteId, taxReturnId, checklistId, uploadFile) {
 
-      this.props.dispatch(uploadAdminDocument(quoteId, taxReturnId, checklistId, uploadFile));
+    this.props.dispatch(uploadAdminDocument(quoteId, taxReturnId, checklistId, uploadFile));
   }
 
   handleDownloadItem(quoteId, documentId,documentName) {
@@ -80,13 +73,9 @@ export default class BillingStatus extends React.Component {
         });
   }
 
-  handleDeleteItem(quoteId,docs,documentName) {
-     if(confirm("are you sure you want to delete document '"+documentName+"'?")) {
-      _.each(docs,(doc) => {
-        let documentId = doc.documentId;
-
-        this.props.dispatch(deleteDocument(quoteId,documentId));
-      });
+  handleDeleteItem(quoteId,documentId,documentName) {
+    if(confirm("are you sure you want to delete document '"+documentName+"'?")) {
+      this.props.dispatch(deleteDocument(quoteId,documentId));
     } else {
       console.log('not deleted');
     }
