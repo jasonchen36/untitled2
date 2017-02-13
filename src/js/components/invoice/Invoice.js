@@ -35,76 +35,120 @@ export default class BillingStatus extends React.Component {
     componentWillReceiveProps(nextProps) {
     };
 
-    getTotalBillingAmount(totals){
-      if(!totals) {
+    getTotalBillingAmount(quote){
+      if(!quote) {
         return <tr><td>
           Loading Totals
         </td></tr>
 
       }
       
-      return _.map(totals, (total,key) => {
-        return <div key={key}>
-            <tr>
-              <td>{ total.name }
-              </td>
-              <td> ${ total.cost }
-              </td>
-              </tr>
-        </div>
-      });
-    }
-
-    renderBillingStatusRow(taxReturn){
-        return (
-            <tr key={taxReturn.id}>
-                <td>
-                    {taxReturn.first_name}{taxReturn.last_name ? ' ' : ''}{taxReturn.last_name}
-                </td>
-                <td>
-                    { taxReturn && taxReturn.status ? taxReturn.status.display_text : 'no status'}
-                </td>
-                <td>
-                    {"?"}
-                </td>
-                <td>
-                    ${"?"}
-                </td>
+      return <div key={quote.id}>
+          <tr>
+            <td>Subtotal
+            </td>
+            <td> ${ quote.subtotal }
+            </td>
             </tr>
-        );
+          <tr>
+            <td>Tax
+            </td>
+            <td> ${ quote.tax }
+            </td>
+            </tr>
+          <tr>
+            <td>Total
+            </td>
+            <td> ${ quote.total }
+            </td>
+            </tr>
+
+      </div>
     }
 
-    renderBillingStatusTable(taxReturns,totals) {
+    renderQuoteList(quote,taxReturns) {
+      if(!quote) {
+        return <div>
+          Loading quote
+        </div>
+      } 
+
+      const getCheckbox = (qli) => {
+        if (!qli.original_quote) {
+          //TODO: should be opposite
+        //if (qli.original_quote) {
+          return <td> original check : <input type="checkbox" checked={qli.checkbox} /> </td>;
+        } else {
+          return <td></td>
+        }
+      };
+
+      const quoteLineItems = _.map(quote.quoteLineItems, (li) => {
+        const taxReturn = _.find(taxReturns,(tr) => {
+            return tr.id === li.tax_return_id;
+        });
+
+        let tRName = taxReturn && taxReturn.first_name ? taxReturn.first_name : "";
+        tRName +=  taxReturn && taxReturn.first_name && taxReturn.last_name ? " ": "";
+        tRName += taxReturn && taxReturn.last_name ? taxReturn.last_name : "";
+        tRName += li && li.text && tRName.length>0 ? " - " : "";
+        tRName += li && li.text ? li.text : "";
+
+        return <tr key={li.id}>
+          <td>
+          {getCheckbox(li)}
+          </td><td> {tRName}
+          </td><td> {li.value}
+          </td><td> {!li.original_quote}
+          </td>
+          </tr>
+      });
+
+      const otherLineItems = _.map(quote.otherLineItems, (li) => {
+        return <tr key={li.id}>
+          <td>
+          {getCheckbox(li)}
+          </td><td> {li.text}
+          </td><td> {li.value}
+          </td><td> {li.original_quote}
+          </td>
+          </tr>
+      });
+
+      return <thead>
+        {quoteLineItems}
+        {otherLineItems}
+      </thead>
+    }
+
+    renderBillingStatusTable(taxReturns,quotes) {
       if(!taxReturns || taxReturns.length===0) {
         return <div>
           No Tax returns
           </div>
       }
 
-        const tableRows = taxReturns.map(taxReturn =>this.renderBillingStatusRow(taxReturn));
         return (
             <table class="standard-table">
                 <thead>
                 <tr>
                     <th>
-                        My TAXreturn Status
+                        Hide
                     </th>
                     <th>
-                        File Electronically?
+                        Text
                     </th>
                     <th>
-                        Result
+                        Amount
                     </th>
                     <th>
-                        Fee
+                        Remove
                     </th>
                 </tr>
                 </thead>
-                <tbody>
-                {tableRows}
-                </tbody>
+                {this.renderQuoteList(quotes, taxReturns)}
                 <tfoot>
-                  {this.getTotalBillingAmount(totals)}
+                  {this.getTotalBillingAmount(quotes)}
                 </tfoot>
             </table>
         );
@@ -113,7 +157,7 @@ export default class BillingStatus extends React.Component {
     render() {
         //todo, figure out what "No documents added to this package" means
         //todo, pass in data to table
-        const { taxReturns, taxReturn} = this.props;
+        const { taxReturns, taxReturn, quotes} = this.props;
         return (
             <main class="grid-container row">
                 <Sidebar activeScreen="invoice" userId={this.props.params.userId}/>
@@ -121,7 +165,7 @@ export default class BillingStatus extends React.Component {
                     <h1></h1>
                     <h2></h2>
                     <p>No documents added to this package</p>
-                    {this.renderBillingStatusTable(taxReturns)}
+                    {this.renderBillingStatusTable(taxReturns, quotes)}
                 </section>
             </main>
         )
