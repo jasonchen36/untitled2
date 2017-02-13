@@ -22,7 +22,7 @@ export default class Layout extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    let {checklist} = nextProps;
+    let {checklist,taxReturn} = nextProps;
     let {oldChecklist} = this.props;
     let docs = checklist && checklist.documents ? checklist.documents : [];
 
@@ -56,14 +56,15 @@ export default class Layout extends React.Component {
     this.props.deleteItemFunction(this.quoteId.value, documentId, documentName);
   }
 
-   renderDownloadItemHeader(quote,checklist,docs) {
+   renderDownloadItemHeader(quote,checklist,docs, taxReturn) {
+    console.log(taxReturn);
     if(docs && docs.length>0) {
       return <div class="tax-item-header border-bottom-dark-grey">
-        {checklist.filers[0].first_name} - {checklist.name}
+        {taxReturn.first_name} - {checklist.name}
       </div>
     } else {
       return <div class="tax-item-header greyed-out border-bottom-dark-grey">
-          {checklist.filers[0].first_name} - {checklist.name}
+          {taxReturn.first_name} - {checklist.name}
       </div>
     }
   }
@@ -76,7 +77,7 @@ export default class Layout extends React.Component {
         return this.renderDownloadItem(quote,checklist,doc);
       });
     } else {
-      return <div class="tax-item greyed-out">
+      return <div class="tax-item-no-items greyed-out">
        No Items 
       </div>
     }
@@ -126,9 +127,9 @@ export default class Layout extends React.Component {
   renderItem(quote,checklist,taxReturn) {
    
     let docs = checklist && checklist.documents ? checklist.documents : [];
-
+  console.log('lsdijfljfsdfs', taxReturn);
     return <div>
-      { this.renderDownloadItemHeader(quote,checklist) }
+      { this.renderDownloadItemHeader(quote,checklist,docs,taxReturn) }
       { this.renderDownloadItems(quote,checklist,docs) }
       { this.renderUpdateItem(quote,checklist,docs) }
       { renderUpdateButton(this.updateState,"Save", "Saving", "Saved", false) }
