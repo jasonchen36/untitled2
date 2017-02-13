@@ -68,14 +68,9 @@ export default function reducer(state={
           ...state,
         };
       }
-      case "UPLOAD_DOCUMENT_REJECTED": {
-        return {
-          ...state,
-        };
-      }
-      case "UPLOAD_ADMIN_DOCUMENT_UPLOADING": {
+      case "UPLOAD_DOCUMENT_UPLOADING": {
         const { taxReturnId, checklistId } = action.payload;
-        let updated = _.filter(state.updated,(u) => { return u.checklistId !== checklistId || u.taxReturnId !== taxReturnId  });
+        let updated = _.filter(state.updated,(u) => { return u.checklistId !== checklistId || ( u.taxReturnId !== taxReturnId && u.taxReturnId && taxReturnId)  });
         let updating = _.cloneDeep(state.updating);
         updating.push({checklistId:checklistId, taxReturnId:taxReturnId});
 
@@ -87,7 +82,7 @@ export default function reducer(state={
       }
       case "UPLOAD_DOCUMENT_AND_REFRESH_FULFILLED": {
         const { taxReturnId, checklistId } = action.payload;
-        let updating = _.filter(state.updating,(u) => { return u.checklistId !==checklistId || u.taxReturnId !== taxReturnId });
+        let updating = _.filter(state.updating,(u) => { return u.checklistId !==checklistId || ( u.taxReturnId !== taxReturnId && u.taxReturnId && taxReturnId)});
         let updated = _.cloneDeep(state.updated);
         updated.push({checklistId:checklistId, taxReturnId:taxReturnId});
         
@@ -97,7 +92,7 @@ export default function reducer(state={
           updated: updated
         };
       }
-      case "UPLOAD_ADMIN_DOCUMENT_REJECTED": {
+      case "UPLOAD_DOCUMENT_REJECTED": {
         const { taxReturnId, checklistId } = action.payload;
         
         let updating = _.filter(state.updating,(u) => { return u.checklistId !== checklistId || u.taxReturnId !== taxReturnId});

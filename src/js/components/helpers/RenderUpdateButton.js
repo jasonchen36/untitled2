@@ -1,7 +1,7 @@
 import _ from "lodash";
 import React from "react";
 
-const updateStates = { initialized:0, updating:1, updated:2};
+const updateStates = { initialised:0, updating:1, updated:2};
 
 const initUpdateState = () => { return updateStates.initialized; };
 /// Render pagination
