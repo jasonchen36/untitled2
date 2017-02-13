@@ -1,0 +1,78 @@
+.status-direct-deposit{
+  margin-left:5px;
+  color: $color-secondary-green;
+  display:inline-block;
+}
+
+.status-container{
+  width:30%;
+  display:inline-block;
+}
+
+.status-name{
+  font-size: 1.55rem;
+  display:inline-block;
+}
+
+.status-dollar{
+  font-size: 1.35rem;
+  display: inline-block;
+  float:right;
+  &.owing{
+    color: red;
+  }
+}
+
+.status-value{
+  text-transform: uppercase;
+  color: red;
+}
+
+.fa-check-circle{
+  color: $color-secondary-green;
+}
+
+.textfield-tax-refund{
+  display:inline-block;
+  width:200px;
+  float:right;
+}
+
+.picker-details-status{
+  width: 45%;
+  margin-left: 15px;
+}
+
+.quote-details-container{
+  margin-top: 20px;
+}
+
+.tax-item{
+  display:table;
+  .tax-item-trash{
+    width: 55px;
+    height: 35px;
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    background: $color-global-button-grey-background;
+    border-radius: 5px;
+  }
+}
+
+.button-upload{
+  font-size: 1.1rem;
+  margin:0 0 0 5px;
+  padding:0;
+  background: transparent;
+  color:$color-global-text-grey;
+  display:inline-block;
+}
+
+.button-upload-container{
+  display: inline-block;
+  padding: 12px 40px;
+  margin: 10px 0px;
+  background: $color-global-button-grey-background;
+  border-radius: 5px;
+}
