@@ -1,0 +1,115 @@
+.status-direct-deposit{
+  margin-left:5px;
+  color: $color-secondary-green;
+  display:inline-block;
+}
+
+.status-container{
+  width:40%;
+  display:inline-block;
+}
+
+.status-name{
+  font-size: 1.55rem;
+  display:inline-block;
+}
+
+.status-dollar{
+  font-size: 1.35rem;
+  display: inline-block;
+  float:right;
+  &.owing{
+    color: red;
+  }
+}
+
+.status-value{
+  text-transform: uppercase;
+  color: red;
+}
+
+.fa-check-circle{
+  color: $color-secondary-green;
+}
+
+.textfield-tax-refund{
+  display:inline-block;
+  width:200px;
+  float:right;
+}
+
+.picker-details-status{
+  width: 45%;
+  margin-left: 15px;
+}
+
+.quote-details-container{
+  margin-top: 20px;
+}
+
+.tax-item-header{
+  margin-top:30px;
+  text-transform: uppercase;
+  padding-bottom:10px;
+}
+
+.tax-item-trash-container{
+  float:right;
+  display:inline-block;
+  text-transform: uppercase;
+  padding: 10px 0px 10px 0px;
+  .tax-item-trash{
+    width: 55px;
+    height: 35px;
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    background: $color-global-button-grey-background;
+    border-radius: 5px;
+  }
+}
+
+.tax-item{
+  margin: 18px 0;
+  vertical-align: middle;
+  display: inline-block;
+  text-transform: uppercase;
+  position: absolute;
+}
+
+.tax-item-no-items{
+  margin: 18px 0;
+  vertical-align: middle;
+  display: inline-block;
+  text-transform: uppercase;
+}
+
+.download-item-row-container{
+  height:55px;
+}
+
+.button-save{
+  background: $color-secondary-green;
+  border-radius: 25px;
+  width: 120px;
+  font-size: 0.9rem;
+  max-width: 120px;
+  margin: 20px 0;
+}
+
+.button-upload{
+  font-size: 1.1rem;
+  margin:0 0 0 5px;
+  padding:0;
+  background: transparent;
+  color:$color-global-text-grey;
+  display:inline-block;
+}
+
+.button-upload-container{
+  display: inline-block;
+  padding: 12px 40px;
+  margin: 10px 0px;
+  background: $color-global-button-grey-background;
+  border-radius: 5px;
+}

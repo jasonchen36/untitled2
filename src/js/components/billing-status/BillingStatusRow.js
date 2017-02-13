@@ -16,9 +16,12 @@ export default class Layout extends React.Component {
 
   renderDirectDeposit(hasDirectDeposit) {
     if(!hasDirectDeposit) {
-      return <div></div>
+      return <div class="status-container"></div>
     } else {
-      return <div class="status-direct-deposit">Direct Deposit</div>
+      return <div class="status-container">
+              <i class="fa fa-check-circle" aria-hidden="true"></i>
+              <div class="status-direct-deposit">Direct Deposit</div>
+            </div>;
     }
   }
 
@@ -53,16 +56,20 @@ export default class Layout extends React.Component {
     return (
       <div data-quote-id={quoteId} >
         <div data-quote-id={quoteId} onClick={this.toggleDetails}>
-          <div class="status-name">
-            {taxReturn.first_name}{taxReturn.last_name ? ' ' : ''}{taxReturn.last_name} - { quote.text }
-          </div>
-          <div class="status-dollar">
-            ${taxReturn.refund}
-          </div>
-          <div class="status">
-            Status: { taxReturn && taxReturn.status ? taxReturn.status.name : 'no status'}
+          <div class="status-container">
+            <div class="status-name">
+              {taxReturn.first_name}{taxReturn.last_name ? ' ' : ''}{taxReturn.last_name}
+            </div>
+            <div class="status">
+              STATUS: <span class="status-value">{ taxReturn && taxReturn.status ? taxReturn.status.name : 'no status'}</span>
+            </div>
           </div>
           { this.renderDirectDeposit(false) }
+          <div class="status-dollar">
+            <div>
+              ${taxReturn.refund}
+            </div>
+          </div>
         </div>
         <hr />
         <div class={this.showDetails.value ? "show" : "hide" } >

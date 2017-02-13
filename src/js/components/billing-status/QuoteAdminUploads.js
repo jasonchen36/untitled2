@@ -22,7 +22,7 @@ export default class Layout extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    let {checklist} = nextProps;
+    let {checklist,taxReturn} = nextProps;
     let {oldChecklist} = this.props;
     let docs = checklist && checklist.documents ? checklist.documents : [];
 
@@ -56,14 +56,14 @@ export default class Layout extends React.Component {
     this.props.deleteItemFunction(this.quoteId.value, documentId, documentName);
   }
 
-   renderDownloadItemHeader(quote,checklist,docs) {
+   renderDownloadItemHeader(quote,checklist,docs, taxReturn) {
     if(docs && docs.length>0) {
-      return <div class="tax-item">
-       [{checklist.name}]  
+      return <div class="tax-item-header border-bottom-dark-grey">
+        {taxReturn.first_name} - {checklist.name}
       </div>
     } else {
-      return <div class="tax-item greyed-out">
-       [{checklist.name}]  
+      return <div class="tax-item-header greyed-out border-bottom-dark-grey">
+          {taxReturn.first_name} - {checklist.name}
       </div>
     }
   }
@@ -76,19 +76,21 @@ export default class Layout extends React.Component {
         return this.renderDownloadItem(quote,checklist,doc);
       });
     } else {
-      return <div class="tax-item greyed-out">
+      return <div class="tax-item-no-items greyed-out">
        No Items 
       </div>
     }
   }
 
   renderDownloadItem(quote,checklist,doc) {
-      return <div>
-        <a class="tax-item" data-quote-id={quote.id} data-document-id={doc.documentId} data-checklist-id={checklist.checklist_item_id} data-document-name={doc.name} data-checklist-name={checklist.name} onClick={this.downloadItem}>  
-         [{doc.name}]  
+      return <div class="download-item-row-container border-bottom-dark-grey">
+        <a class="tax-item f--futura-book" data-quote-id={quote.id} data-document-id={doc.documentId} data-checklist-id={checklist.checklist_item_id} data-document-name={doc.name} data-checklist-name={checklist.name} onClick={this.downloadItem}>
+         {doc.name}
         </a>
-        <a class="tax-item" data-quote-id={quote.id} data-document-id={doc.documentId} data-checklist-name={checklist.name} data-document-name={doc.name} onClick={this.deleteItem}>          
-           <i class="fa fa-trash-o"></i>D
+        <a class="tax-item-trash-container" data-quote-id={quote.id} data-document-id={doc.documentId} data-checklist-name={checklist.name} data-document-name={doc.name} onClick={this.deleteItem}>
+          <div class="tax-item-trash">
+            <i class="fa fa-trash-o"></i>
+          </div>
         </a>
       </div>
   }
@@ -97,19 +99,25 @@ export default class Layout extends React.Component {
 
     return   <form data-quote-id={quote.id} data-tax-return-id={checklist.tax_return_id}  data-checklist-name={checklist.name} data-checklist-id={checklist.checklist_item_id}  onSubmit={this.uploadItem}>
       <input type="file" name="fileUpload" data-quote-id={quote.id} data-tax-return-id={checklist.tax_return_id} data-checklist-id={checklist.checklist_item_id} data-checklist-name={checklist.name}  onChange={this.uploadItemSelected} />
-      { renderUpdateButton(this.updateState,"Upload", "Uploading", "Uploaded") }
+      <div class="button-upload-container">
+        <i class="fa fa-paperclip" aria-hidden="true"></i>{ renderUpdateButton(this.updateState,"Upload File", "Uploading", "Uploaded", true) }
+      </div>
     </form>
   }
 
  
   renderDeleteItem(quote,checklist,docs) {
     if(docs && docs.length>0) {
-      return <a class="tax-item" data-quote-id={quote.id} data-checklist-name={checklist.name} onClick={this.deleteItem} data-document-id={doc.documentId}>          
-         <i class="fa fa-trash-o"></i>D
+      return <a class="tax-item" data-quote-id={quote.id} data-checklist-name={checklist.name} onClick={this.deleteItem} data-document-id={doc.documentId}>
+        <div class="tax-item-trash">
+          <i class="fa fa-trash-o"></i>
+        </div>
       </a>
     } else {
       return <div class="tax-item">
-         <i class="fa greyed-out fa-trash-o"></i>nD
+        <div class="tax-item-trash">
+          <i class="fa fa-trash-o"></i>
+        </div>
       </div>
 
     }
@@ -118,11 +126,11 @@ export default class Layout extends React.Component {
   renderItem(quote,checklist,taxReturn) {
    
     let docs = checklist && checklist.documents ? checklist.documents : [];
-
     return <div>
-      { this.renderDownloadItemHeader(quote,checklist) }
+      { this.renderDownloadItemHeader(quote,checklist,docs,taxReturn) }
       { this.renderDownloadItems(quote,checklist,docs) }
       { this.renderUpdateItem(quote,checklist,docs) }
+      { renderUpdateButton(this.updateState,"Save", "Saving", "Saved", false) }
          </div>
   };
 

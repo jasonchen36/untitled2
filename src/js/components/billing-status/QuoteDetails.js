@@ -92,8 +92,10 @@ export default class Layout extends React.Component {
       <a class="tax-summary" data-quote-id={data.id} data-document-name={data.name} onClick={this.uploadItem}>           
         Upload
       </a>
-      <a class="tax-summary" data-quote-id={data.id} data-document-name={data.name} onClick={this.deleteItem}>          
-         <i class="fa fa-trash-o"></i>
+      <a class="tax-summary" data-quote-id={data.id} data-document-name={data.name} onClick={this.deleteItem}>
+        <div class="tax-item-trash">
+          <i class="fa fa-trash-o"></i>
+        </div>
       </a>
     </div>
   };
@@ -107,21 +109,18 @@ export default class Layout extends React.Component {
     const id = quote.id;
 
     return (
-      <div data-id={quote.id}> 
+      <div data-id={quote.id} class="full-width">
         <form id={inputId("form",id)} data-tax-return-id={taxReturn.id} onSubmit={this.submitChanges}>
-          <label for={inputId("status",id)}>Status:</label>
-          <select class="col" name="selectedStatus" onChange={this.clickInputChange} value={this.selectedStatus.value}>
+          <label for={inputId("status",id)}>STATUS:</label>
+          <select class="col picker-details-status" name="selectedStatus" onChange={this.clickInputChange} value={this.selectedStatus.value}>
             {renderTaxReturnStatusSelectionOptions(statuses)}        
           </select>
 
-          <label for={inputId("return",id)}>Return: </label>
-          $<input id={inputId("return",id)} type="number" name="taxReturnRefund" placeholder="return" value={this.taxReturnRefund.value} onChange={this.clickInputChange} />
-
-          <label for={inputId("details",id)}>Details:</label>
-          <textarea rows="3" id={inputId("details",id)} name="taxReturnDetails" placeholder="details" value={this.taxReturnDetails.value} onChange={this.clickInputChange}  />
-
-        { renderUpdateButton(this.updateState,"Save", "Saving", "Saved") }
-          
+          <input id={inputId("return",id)} class="textfield-tax-refund" type="number" name="taxReturnRefund" placeholder="return" value={this.taxReturnRefund.value} onChange={this.clickInputChange} />
+          <div class="quote-details-container">
+            <label for={inputId("details",id)}>DETAILS:</label>
+            <textarea rows="3" id={inputId("details",id)} name="taxReturnDetails" placeholder="Details" value={this.taxReturnDetails.value} onChange={this.clickInputChange}  />
+          </div>
         </form>
         {renderErrors(errors)}
       </div>
@@ -132,7 +131,7 @@ export default class Layout extends React.Component {
     const { quote, taxReturn, statuses, errors } = this.props;
 
     return (
-      <main class="grid-container row">
+      <main class="grid-container row  no-padding">
         { this.renderQuoteDetails(quote, taxReturn, statuses,errors) }
       </main>
     );
