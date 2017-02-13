@@ -37,10 +37,8 @@ export default class Layout extends React.Component {
     e.preventDefault();    
     let { quoteId,  taxReturnId, checklistId, checklistName } = e.target.dataset;
 
-    let docs = _.cloneDeep(this.documents.value);
-
     //quoteId, taxReturnId, checklistId,uploadFile
-    this.props.uploadItemFunction(quoteId, taxReturnId, checklistId, this.uploadedFile, docs);
+    this.props.uploadItemFunction(quoteId, taxReturnId, checklistId, this.uploadedFile);
   }
 
   handleUploadItemSelected(e) {
@@ -48,29 +46,51 @@ export default class Layout extends React.Component {
   }
 
   handleDownloadItem(e) {
-    let { quoteId, documentId, checklistName } = e.target.dataset;
-    this.props.downloadItemFunction(quoteId, documentId, checklistName);
+    let { quoteId, documentId, checklistName,documentName } = e.target.dataset;
+
+    this.props.downloadItemFunction(quoteId, documentId, documentName);
   }
 
   handleDeleteItem(e) {
-    let docs = _.cloneDeep(this.documents.value);
-    this.props.deleteItemFunction(this.quoteId.value, docs, this.checklistName.value);
+    let {documentId, documentName} = e.target.dataset;
+    this.props.deleteItemFunction(this.quoteId.value, documentId, documentName);
   }
 
-  renderDownloadItem(quote,checklist,docs) {
+   renderDownloadItemHeader(quote,checklist,docs) {
     if(docs && docs.length>0) {
-      let doc = docs[0];
- 
-
-      return  <a class="tax-item" data-quote-id={quote.id} data-document-id={doc.documentId} data-checklist-id={checklist.checklist_item_id} data-checklist-name={checklist.name} onClick={this.downloadItem}>  
+      return <div class="tax-item">
        [{checklist.name}]  
-      </a>
+      </div>
     } else {
       return <div class="tax-item greyed-out">
        [{checklist.name}]  
       </div>
     }
+  }
 
+  renderDownloadItems(quote,checklist,docs) {
+    if(docs && docs.length>0) {
+      let doc = docs[0];
+ 
+      return _.map(docs, (doc) => {
+        return this.renderDownloadItem(quote,checklist,doc);
+      });
+    } else {
+      return <div class="tax-item greyed-out">
+       No Items 
+      </div>
+    }
+  }
+
+  renderDownloadItem(quote,checklist,doc) {
+      return <div>
+        <a class="tax-item" data-quote-id={quote.id} data-document-id={doc.documentId} data-checklist-id={checklist.checklist_item_id} data-document-name={doc.name} data-checklist-name={checklist.name} onClick={this.downloadItem}>  
+         [{doc.name}]  
+        </a>
+        <a class="tax-item" data-quote-id={quote.id} data-document-id={doc.documentId} data-checklist-name={checklist.name} data-document-name={doc.name} onClick={this.deleteItem}>          
+           <i class="fa fa-trash-o"></i>D
+        </a>
+      </div>
   }
 
   renderUpdateItem(quote,checklist,docs) {
@@ -86,7 +106,7 @@ export default class Layout extends React.Component {
  
   renderDeleteItem(quote,checklist,docs) {
     if(docs && docs.length>0) {
-      return <a class="tax-item" data-quote-id={quote.id} data-checklist-name={checklist.name} onClick={this.deleteItem}>          
+      return <a class="tax-item" data-quote-id={quote.id} data-checklist-name={checklist.name} onClick={this.deleteItem} data-document-id={doc.documentId}>          
          <i class="fa fa-trash-o"></i>D
       </a>
     } else {
@@ -104,9 +124,9 @@ export default class Layout extends React.Component {
     let docs = checklist && checklist.documents ? checklist.documents : [];
 
     return <div>
-      { this.renderDownloadItem(quote,checklist,docs) }
+      { this.renderDownloadItemHeader(quote,checklist) }
+      { this.renderDownloadItems(quote,checklist,docs) }
       { this.renderUpdateItem(quote,checklist,docs) }
-      {  this.renderDeleteItem(quote,checklist,docs) }
          </div>
   };
 
