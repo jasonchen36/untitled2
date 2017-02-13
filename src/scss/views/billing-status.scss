@@ -5,7 +5,7 @@
 }
 
 .status-container{
-  width:30%;
+  width:40%;
   display:inline-block;
 }
 
@@ -47,8 +47,17 @@
   margin-top: 20px;
 }
 
-.tax-item{
-  display:table;
+.tax-item-header{
+  margin-top:30px;
+  text-transform: uppercase;
+  padding-bottom:10px;
+}
+
+.tax-item-trash-container{
+  float:right;
+  display:inline-block;
+  text-transform: uppercase;
+  padding: 10px 0px 10px 0px;
   .tax-item-trash{
     width: 55px;
     height: 35px;
@@ -58,6 +67,27 @@
     background: $color-global-button-grey-background;
     border-radius: 5px;
   }
+}
+
+.tax-item{
+  margin: 18px 0;
+  vertical-align: middle;
+  display: inline-block;
+  text-transform: uppercase;
+  position: absolute;
+}
+
+.download-item-row-container{
+  height:55px;
+}
+
+.button-save{
+  background: $color-secondary-green;
+  border-radius: 25px;
+  width: 120px;
+  font-size: 0.9rem;
+  max-width: 120px;
+  margin: 20px 0;
 }
 
 .button-upload{
