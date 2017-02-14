@@ -10,6 +10,7 @@ import { fetchUserMessages, sendMessage } from "../../actions/messagesActions";
 import { fetchUser } from "../../actions/usersActions";
 
 import { renderErrors } from "../helpers/RenderErrors";
+import moment from 'moment-timezone';
 
 
 @connect((store) => {
@@ -90,7 +91,7 @@ export default class Messages extends React.Component {
                         From: {message.fromname}
                     </p>
                     <p>
-                        Date: {message.date}
+                        Date: {moment.tz(message.date, "America/Toronto").format('LLL')}
                     </p>
                     <p class="message-body">
                         Message:
@@ -128,9 +129,9 @@ export default class Messages extends React.Component {
                 <section class="col-sm-8 col-lg-9">
                     <h1>Messages</h1>
                     {this.renderSendMessage(userId)}
-                    
+
                     <div class="grid-container">
-                        {renderErrors(error)}                
+                        {renderErrors(error)}
                         {this.renderMessages(messages)}
                     </div>
                 </section>
