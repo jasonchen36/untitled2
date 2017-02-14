@@ -5,9 +5,8 @@ import _ from "lodash";
 /// Fetch a list of users, optionally with search Terms
 const fetchQuote = (quoteId) => {
   return function(dispatch) {
-    console.log('quote id', quoteId);
 
-    const url = "/quote/"+quoteId;
+    const url = "/quote/"+quoteId + "?includeDisabledLineitems=1";
 
     return base.get(url)
       .then((response) => {
@@ -22,11 +21,77 @@ const fetchQuote = (quoteId) => {
 };
 
 
+const disableQuoteLineItem = (quoteId, quoteLineItemId,enable) => {
+  return function(dispatch) {
+
+    const enableUrl = enable === 1 ? "/enabled" : "/disabled";
+
+    const url = "/quote/"+quoteId+"/lineItem/"+quoteLineItemId + enableUrl;
+
+    return base.put(url)
+      .then((response) => {
+        let result = response.data;
+        dispatch({type: "DISABLE_QUOTE_FULFILLED", payload:  result});
+        return result;
+      })
+      .catch((err) => {
+        dispatch({type: "DISABLE_QUOTE_REJECTED", payload: err});
+      })
+      .then((response) => {
+          return fetchQuote(quoteId)(dispatch);
+      });
+  };
+};
+
+const addAdminLineItem= (quoteId, adminLineItem) => {
+  return function(dispatch) {
+    const url = "/quote/"+quoteId+"/adminQuoteLineItem";
+
+    dispatch({type: "ADDING_ADMIN_LINE_ITEM", payload: {}}) 
+
+    return base.post(url, adminLineItem)
+      .then((response) => {
+        let result = response.data;
+        dispatch({type: "ADD_ADMIN_LINE_ITEM_SUCCEEDED", payload:  result}) 
+        return result;
+      })
+      .catch((err) => {
+        dispatch({type: "ADD_ADMIN_LINE_ITEM_REJECTED", payload: err});
+      })
+      .then((response) => {
+          return fetchQuote(quoteId)(dispatch);
+      })
+  };
+};
+
+const deleteAdminLineItem= (quoteId, adminQuoteLineItemId) => {
+  return function(dispatch) {
+    const url = "/quote/"+quoteId+"/adminQuoteLineItem/"+adminQuoteLineItemId;
+
+    return base.del(url)
+      .then((response) => {
+        let result = response.data;
+        dispatch({type: "DELETE_ADMIN_LINE_ITEM_FULFILLED", payload:  result});
+        return result;
+      })
+      .catch((err) => {
+        dispatch({type: "DELETE_ADMIN_LINE_ITEM_REJECTED", payload: err});
+      })
+      .then((response) => {
+          return fetchQuote(quoteId)(dispatch);
+      });
+  };
+};
+
+
 /// Calls
 
 /// EXPORTS
 export { 
   fetchQuote,
+  disableQuoteLineItem,
+  addAdminLineItem,
+  deleteAdminLineItem
  };
 
 

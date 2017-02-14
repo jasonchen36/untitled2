@@ -104,7 +104,7 @@ export default class BillingStatus extends React.Component {
       const taxReturnUpdated = _.some(taxReturnsUpdated,(u) => { return u===taxReturn.id; });
       const taxReturnUpdating = _.some(taxReturnsUpdating,(u) => { return u===taxReturn.id; });
 
-      return <BillingStatusRow taxReturn={taxReturn} quote={quote} statuses={statuses} taxReturnAdminChecklist={taxReturnChecklist} submitFunction={this.updateTaxReturnStatus} uploadItemFunction={this.uploadItem} downloadItemFunction={this.downloadItem} deleteItemFunction={this.deleteItem} checklistUpdating={checklistUpdating} checklistUpdated={checklistUpdated} taxReturnUpdated={taxReturnUpdated} taxReturnUpdating={taxReturnUpdating} ></BillingStatusRow>
+      return <BillingStatusRow key={taxReturn.id} taxReturn={taxReturn} quote={quote} statuses={statuses} taxReturnAdminChecklist={taxReturnChecklist} submitFunction={this.updateTaxReturnStatus} uploadItemFunction={this.uploadItem} downloadItemFunction={this.downloadItem} deleteItemFunction={this.deleteItem} checklistUpdating={checklistUpdating} checklistUpdated={checklistUpdated} taxReturnUpdated={taxReturnUpdated} taxReturnUpdating={taxReturnUpdating} ></BillingStatusRow>
     });
       
     return (<div >{tableRows}</div>);

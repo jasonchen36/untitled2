@@ -12,6 +12,33 @@ export default function reducer(state={
   }, action) {
     switch (action.type) {
       // Users events
+      case "REFRESH_UPDATE_STATE": {
+        return {...state, 
+          updating: false,
+          updated: false,
+          error:null
+        };
+      }
+      case "ADD_ADMIN_LINE_ITEM_REJECTED": {
+        return { ...state,
+          updating: false,
+          updated:false,
+          error:action.payload
+        }
+      }
+      case "ADDING_ADMIN_LINE_ITEM": {
+        return {...state, 
+          updating: true,
+          updated: false,
+          error:null
+        };
+      }
+      case "ADD_ADMIN_LINE_ITEM_SUCCEEDED": {
+        return {...state, 
+          updating: false,
+          updated: true
+        };
+      }
       case "FETCH_QUOTE_FULFILLED": {
         return {...state, fetching: false, error:null, fetch: true, quotes:action.payload};
       }
