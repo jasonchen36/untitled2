@@ -7,8 +7,12 @@ import { Link  } from "react-router"
 import Sidebar from "../layout/Sidebar";
 import UserOptionsHeader from "../layout/UserOptionsHeader";
 
-import { loadUser, loadUserQuote } from "../../actions/loaderActions";
+import { loadUser, loadUserQuote, refreshUpdateState } from "../../actions/loaderActions";
+import InvoiceQuoteLineItem from "./InvoiceQuoteLineItem";
+import InvoiceAdminQuoteLineItem from "./InvoiceAdminQuoteLineItem";
+import InvoiceAddAdminQuoteLineItem from "./InvoiceAddAdminQuoteLineItem";
 
+import { disableQuoteLineItem, addAdminLineItem, deleteAdminLineItem } from "../../actions/quoteActions";
 
 @connect((store) => {
     return {
@@ -16,112 +20,151 @@ import { loadUser, loadUserQuote } from "../../actions/loaderActions";
         user: store.users.user,
         taxReturns:store.accounts.taxReturns,
         taxReturn:store.accounts.taxReturn,
-        quotes:store.quotes.quotes
+        quotes:store.quotes.quotes,
+        quoteUpdating:store.quotes.updating,
+        quoteUpdated: store.quotes.updated
     };
 })
 
-export default class BillingStatus extends React.Component {
+export default class Invoice extends React.Component {
 
     constructor() {
         super();
+        this.hideLineItem = this.handleHideLineItem.bind(this);
+        this.deleteAdminLineItem = this.handleDeleteAdminLineItem.bind(this);
+        this.addAdminLineItem = this.handleAddAdminLineItem.bind(this);
     }
 
     componentWillMount() {
       const userId = this.props.params.userId;
-
+      this.props.dispatch(refreshUpdateState());
       this.props.dispatch(loadUserQuote(userId));
     };
 
     componentWillReceiveProps(nextProps) {
     };
 
-    getTotalBillingAmount(totals){
-      if(!totals) {
-        return <tr><td>
+    getTotalBillingAmount(quote){
+      if(!quote) {
+        return <tbody><tr><td>
           Loading Totals
-        </td></tr>
+        </td></tr></tbody>
 
       }
       
-      return _.map(totals, (total,key) => {
-        return <div key={key}>
-            <tr>
-              <td>{ total.name }
-              </td>
-              <td> ${ total.cost }
-              </td>
-              </tr>
-        </div>
-      });
-    }
-
-    renderBillingStatusRow(taxReturn){
-        return (
-            <tr key={taxReturn.id}>
-                <td>
-                    {taxReturn.first_name}{taxReturn.last_name ? ' ' : ''}{taxReturn.last_name}
-                </td>
-                <td>
-                    { taxReturn && taxReturn.status ? taxReturn.status.display_text : 'no status'}
-                </td>
-                <td>
-                    {"?"}
-                </td>
-                <td>
-                    ${"?"}
-                </td>
+      return <tbody> 
+          <tr>
+            <td>Subtotal
+            </td>
+            <td> ${ quote.subtotal }
+            </td>
             </tr>
-        );
+          <tr>
+            <td>Tax
+            </td>
+            <td> ${ quote.tax }
+            </td>
+            </tr>
+          <tr>
+            <td>Total
+            </td>
+            <td> ${ quote.total }
+            </td>
+            </tr>
+      </tbody>
     }
 
-    renderBillingStatusTable(taxReturns,totals) {
+    handleHideLineItem(quoteId, quoteLineItemId, enable) {
+      this.props.dispatch(disableQuoteLineItem(quoteId, quoteLineItemId, enable));
+    }
+
+    handleDeleteAdminLineItem(quoteId, quoteLineItemId) {
+      this.props.dispatch(deleteAdminLineItem(quoteId, quoteLineItemId));
+    }
+
+    handleAddAdminLineItem(quoteId,newLineItem) {
+      this.props.dispatch(addAdminLineItem(quoteId,newLineItem));
+    }
+
+    renderQuoteList(quote,taxReturns) {
+      if(!quote) {
+        return <div>
+          Loading quote
+        </div>
+      }
+
+      const quoteLineItems = _.map(quote.quoteLineItems, (li) => {
+        const taxReturn = _.find(taxReturns,(tr) => {
+            return tr.id === li.tax_return_id;
+        });
+
+        return <InvoiceQuoteLineItem key={li.id} quoteLineItem={li} taxReturn={taxReturn} hideLineHandler={this.hideLineItem} /> 
+      });
+
+      const adminLineItems = _.map(quote.adminLineitems, (li) => {
+        const taxReturn = _.find(taxReturns,(tr) => {
+            return tr.id === li.tax_return_id;
+        });
+
+        return <InvoiceAdminQuoteLineItem key={li.id} quoteLineItem={li} taxReturn={taxReturn} deleteLineItemHandler={this.deleteAdminLineItem} /> 
+      });
+
+    
+      return <thead>
+        {quoteLineItems}
+        {adminLineItems}
+      </thead>
+    }
+
+    renderBillingStatusTable(taxReturns,quotes, quoteUpdating, quoteUpdated) {
       if(!taxReturns || taxReturns.length===0) {
         return <div>
           No Tax returns
           </div>
       }
 
-        const tableRows = taxReturns.map(taxReturn =>this.renderBillingStatusRow(taxReturn));
-        return (
-            <table class="standard-table">
-                <thead>
-                <tr>
-                    <th>
-                        My TAXreturn Status
-                    </th>
-                    <th>
-                        File Electronically?
-                    </th>
-                    <th>
-                        Result
-                    </th>
-                    <th>
-                        Fee
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                {tableRows}
-                </tbody>
-                <tfoot>
-                  {this.getTotalBillingAmount(totals)}
-                </tfoot>
-            </table>
-        );
+      const addAdminLineItems = <InvoiceAddAdminQuoteLineItem quote={quotes} addLineItemHandler={this.addAdminLineItem} updating={quoteUpdating} updated={quoteUpdated} /> 
+
+
+      return (<div>
+          <table class="standard-table">
+              <thead>
+              <tr>
+                  <th>
+                      Hide
+                  </th>
+                  <th>
+                      Line Item Description
+                  </th>
+                  <th>
+                      Refund/ Owing Amount
+                  </th>
+                  <th>
+                      Remove
+                  </th>
+              </tr>
+              </thead>
+              {this.renderQuoteList(quotes, taxReturns)}
+          </table>
+          { addAdminLineItems }
+          <table class="standard-table">
+                {this.getTotalBillingAmount(quotes)}
+          </table>
+        </div>
+      );
     }
 
     render() {
         //todo, figure out what "No documents added to this package" means
         //todo, pass in data to table
-        const { taxReturns, taxReturn} = this.props;
+        const { taxReturns, taxReturn, quotes, quoteUpdating, quoteUpdated} = this.props;
         return (
             <main class="grid-container row">
                 <Sidebar activeScreen="invoice" userId={this.props.params.userId}/>
                 <section class="col-sm-8 col-lg-9">
-                    <h1></h1>
+                    <h1>Invoice</h1>
                     <h2></h2>
-                    <p>No documents added to this package</p>
-                    {this.renderBillingStatusTable(taxReturns)}
+                    {this.renderBillingStatusTable(taxReturns, quotes, quoteUpdating, quoteUpdated)}
                 </section>
             </main>
         )
