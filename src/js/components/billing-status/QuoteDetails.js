@@ -121,6 +121,7 @@ export default class Layout extends React.Component {
             <label for={inputId("details",id)}>DETAILS:</label>
             <textarea rows="3" id={inputId("details",id)} name="taxReturnDetails" placeholder="Details" value={this.taxReturnDetails.value} onChange={this.clickInputChange}  />
           </div>
+          { renderUpdateButton(this.updateState,"Save", "Saving", "Saved", "button-save") }
         </form>
         {renderErrors(errors)}
       </div>

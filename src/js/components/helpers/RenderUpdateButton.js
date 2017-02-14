@@ -5,7 +5,7 @@ const updateStates = { initialised:0, updating:1, updated:2};
 
 const initUpdateState = () => { return updateStates.initialized; };
 /// Render pagination
-const renderUpdateButton = (updatedState, baseText, changingText, doneText, isUpload) => {
+const renderUpdateButton = (updatedState, baseText, changingText, doneText, classNames) => {
   let buttonText = baseText;
   let updatedStateValue = updatedState ? updatedState.value : updateStates.initialized;
 
@@ -15,10 +15,10 @@ const renderUpdateButton = (updatedState, baseText, changingText, doneText, isUp
     buttonText=doneText;
   }
 
-  if(isUpload){
-      return <button className={updatedStateValue===updateStates.updated ? "flash" : "button button-upload"}>{buttonText}</button>
+  if(classNames){
+      return <button className={updatedStateValue===updateStates.updated ? "flash "+classNames : "button "+classNames}>{buttonText}</button>
   } else{
-      return <button className={updatedStateValue===updateStates.updated ? "flash" : "button button-save"}>{buttonText}</button>
+      return <button className={updatedStateValue===updateStates.updated ? "flash button" : "button "}>{buttonText}</button>
   }
 
 };
