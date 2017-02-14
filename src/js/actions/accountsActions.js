@@ -23,20 +23,6 @@ const clearAccount = () => {
   };
 };
 
-const fetchTaxReturn = (taxReturnId) => {
-  return function(dispatch) {
-    return getTaxReturn(taxReturnId)
-      .then((response) => {
-        dispatch({type: "FETCH_TAX_RETURN_FULFILLED", payload: response});
-
-        return response;
-      })
-      .catch((err) => {
-        return dispatch({type: "FETCH_TAX_RETURN_REJECTED", payload: err}); 
-      });
-  };
-};
-
 const clearTaxReturnUpdate = () => {
   return function(dispatch) {
     dispatch({type:"NEED_TO_UPDATE_TAX_RETURN",payload:null});
@@ -53,40 +39,6 @@ const fetchAllTaxReturnStatuses = () => {
       })
       .catch((err) => {
         dispatch({type: "FETCH_ALL_TAX_RETURN_STATUSES_REJECTED",payload: err});
-      });
-  };
-};
-
-const updateTaxProfile = (id, updateValues, addressId, updateAddressValues) => {
-  return function(dispatch) {
-      dispatch({type:"UPDATING_TAX_RETURN", payload:null});
-
-    const updateTaxProfilePromise = callUpdateTaxProfile(id, updateValues)
-      .then((result) => {   
-        dispatch({type: "UPDATE_TAX_RETURN_PROFILE_FULFILLED", payload: result});
-      })
-      .catch((err) => {
-        dispatch({type: "UPDATE_TAX_RETURN_PROFILE_REJECTED", payload: err});
-        return Promise.reject(err);
-      });
-
-    const updateAddressPromise = callUpdateAddress(id, addressId, updateAddressValues)
-      .then((result) => {
-        dispatch({type: "UPDATE_ADDRESS_FULFILLED", payload: result});
-      })
-      .catch((err) => {
-        dispatch({type: "UPDATE_ADDRESS_REJECTED", payload: err});
-        return Promise.reject(err);
-      });
-      
-    return Promise.all([updateTaxProfilePromise, updateAddressPromise])
-      .then(function(responses) {
-        return getTaxReturn(id);
-      })
-      .then(function(result) {
-        dispatch({type:"UPDATE_TAX_RETURN_FULFILLED",payload:result});
-      }).catch(function(err) {
-        dispatch({type:"UPDATE_TAX_RETURN_REJECTED", payload:err});
       });
   };
 };
@@ -188,10 +140,8 @@ const callUpdateAddress = (id, addressId, updateValues) => {
 export { 
   fetchAccount, 
   clearAccount, 
-  fetchTaxReturn, 
   clearTaxReturnUpdate, 
   fetchAllTaxReturnStatuses, 
-  updateTaxProfile, 
   fetchChecklist, 
   clearChecklist 
 };

@@ -8,7 +8,6 @@ import UserOptionsHeader from "../layout/UserOptionsHeader";
 
 import { fetchUserMessages, sendMessage } from "../../actions/messagesActions";
 import { fetchUser } from "../../actions/usersActions";
-import { fetchAccount, fetchTaxReturn } from "../../actions/accountsActions";
 
 import { renderErrors } from "../helpers/RenderErrors";
 

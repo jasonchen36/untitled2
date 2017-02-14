@@ -5,8 +5,6 @@ import { Link  } from "react-router";
 import moment from "moment";
 import Sidebar from "../layout/Sidebar";
 
-import { fetchUser } from "../../actions/usersActions";
-import { fetchAccount, fetchTaxReturn,  clearChecklist } from "../../actions/accountsActions";
 import { directDownloadChecklistItems, deleteDocument, viewedDocument } from "../../actions/uploadsActions";
 import { saveBlob } from "../../lib/saveBlob";
 

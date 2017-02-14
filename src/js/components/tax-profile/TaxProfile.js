@@ -6,8 +6,7 @@ import { Link  } from "react-router"
 import Sidebar from "../layout/Sidebar";
 import UserOptionsHeader from "../layout/UserOptionsHeader";
 
-import { fetchUser } from "../../actions/usersActions";
-import { fetchAccount, fetchTaxReturn } from "../../actions/accountsActions";
+import { fetchTaxReturn } from "../../actions/taxReturnActions";
 import { saveBlob } from "../../lib/saveBlob";
 import { loadUser } from "../../actions/loaderActions";
 

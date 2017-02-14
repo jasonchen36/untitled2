@@ -4,7 +4,7 @@ import moment from "moment";
 import Sidebar from "../layout/Sidebar";
 import UserOptionsHeader from "../layout/UserOptionsHeader";
 import { fetchUser } from "../../actions/usersActions";
-import { fetchAccount, fetchTaxReturn, updateTaxProfile, clearAccount } from "../../actions/accountsActions";
+import { fetchTaxReturn, updateTaxProfile } from "../../actions/taxReturnActions";
 import { loadUser } from "../../actions/loaderActions";
 import { renderErrors } from "../helpers/RenderErrors";
 import { renderSelectionOptions } from "../helpers/LayoutHelpers";

@@ -1,5 +1,6 @@
 // TODO: Move this to action on loading of a user. (get account and other info)
-import { fetchAccount, fetchTaxReturn, clearAccount,fetchChecklist } from "../../actions/accountsActions";
+import { fetchAccount, clearAccount, fetchChecklist } from "../../actions/accountsActions";
+import { fetchTaxReturn } from "../../actions/taxReturnActions";
 
 /// REQUIRES PROPS: taxReturns, taxReturn, account, taxReturnDetailsFetched
 export function loadAccountIfNeeded(nextProps, currentProps) {
