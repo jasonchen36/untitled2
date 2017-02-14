@@ -1,7 +1,8 @@
 import * as base from "./lib/baseActions";
 import _ from "lodash";
 import { fetchUser } from "./usersActions";
-import { fetchAccount, fetchTaxReturn, clearAccount, fetchChecklist, clearChecklist } from "./accountsActions";
+import { fetchAccount, clearAccount, fetchChecklist, clearChecklist } from "./accountsActions";
+import { fetchTaxReturn } from "./taxReturnActions";
 import { fetchQuote } from "./quoteActions";
 import {fetchAdminChecklist } from "./checklistActions";
 
