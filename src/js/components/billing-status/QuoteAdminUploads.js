@@ -100,7 +100,7 @@ export default class Layout extends React.Component {
     return   <form data-quote-id={quote.id} data-tax-return-id={checklist.tax_return_id}  data-checklist-name={checklist.name} data-checklist-id={checklist.checklist_item_id}  onSubmit={this.uploadItem}>
       <input type="file" name="fileUpload" data-quote-id={quote.id} data-tax-return-id={checklist.tax_return_id} data-checklist-id={checklist.checklist_item_id} data-checklist-name={checklist.name}  onChange={this.uploadItemSelected} />
       <div class="button-upload-container">
-        <i class="fa fa-paperclip" aria-hidden="true"></i>{ renderUpdateButton(this.updateState,"Upload File", "Uploading", "Uploaded", true) }
+        <i class="fa fa-paperclip" aria-hidden="true"></i>{ renderUpdateButton(this.updateState,"Upload File", "Uploading", "Uploaded", "button-upload") }
       </div>
     </form>
   }
@@ -130,7 +130,6 @@ export default class Layout extends React.Component {
       { this.renderDownloadItemHeader(quote,checklist,docs,taxReturn) }
       { this.renderDownloadItems(quote,checklist,docs) }
       { this.renderUpdateItem(quote,checklist,docs) }
-      { renderUpdateButton(this.updateState,"Save", "Saving", "Saved", false) }
          </div>
   };
 

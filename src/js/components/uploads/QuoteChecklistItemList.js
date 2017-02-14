@@ -4,7 +4,6 @@ import { IndexLink, Link } from "react-router";
 import { createLoginuser } from "../../actions/loginuserActions"
 import { renderErrors } from "../helpers/RenderErrors";
 import { renderTaxReturnStatusSelectionOptions } from "../helpers/RenderTaxReturnStatusSelection";
-import { initUpdateState, renderUpdateButton, updateState } from "../helpers/RenderUpdateButton";
 import { renderSelectionOptions } from "../helpers/LayoutHelpers";
 
 export default class Layout extends React.Component {
