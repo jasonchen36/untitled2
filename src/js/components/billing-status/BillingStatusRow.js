@@ -66,8 +66,8 @@ export default class Layout extends React.Component {
           </div>
           { this.renderDirectDeposit(false) }
           <div class="status-dollar">
-            <div>
-              ${taxReturn.refund}
+            <div class={taxReturn.refund < 0 ? "font-red" : ""}>
+              {taxReturn.refund < 0 ? "-" + "$" + Math.abs(taxReturn.refund) : "" + "$" + Math.abs(taxReturn.refund)}
             </div>
           </div>
         </div>

@@ -11,6 +11,9 @@ Use helper classes to style elements that otherwise wouldn't need to have a full
 h1,h2,h3,h4,h5,p,a,blockquote,span,div,input,textarea,select,option {
   @extend .f--futura-heavy;
   color: $color-global-text-grey;
+  .font-red{
+    color: red;
+  }
 }
 
 img {
