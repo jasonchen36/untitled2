@@ -21,6 +21,7 @@ img {
 }
 
 input, textarea {
+  font-family: FuturaBook, Arial, sans-serif !important;
   $width:  calc(100% - 1rem - 2px);//100% - padding*2 - border width*2
   max-width: $width;
   width: $width;
