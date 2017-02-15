@@ -17,6 +17,8 @@ import InvoiceSendBillToClient from "./InvoiceSendBillToClient";
 
 import { disableQuoteLineItem, addAdminLineItem, deleteAdminLineItem, sendBillToClient } from "../../actions/quoteActions";
 
+import { taxReturnsInPaidState } from "../ui-logic/UILogic";
+
 @connect((store) => {
     return {
         loginuser: store.loginuser.loginuser,
@@ -82,20 +84,43 @@ export default class Invoice extends React.Component {
       </tbody>
     }
 
+    askIfAlreadyPaid() {
+      const taxReturns = this.props.taxReturns;
+      if(taxReturnsInPaidState(taxReturns)) {
+        if(confirm("Are you sure? The quote has already been paid.")) {
+          return true;
+        } else {
+             console.log('canceled action');
+             return false;
+        }
+      } else {
+        return true;
+      }
+    }
+
+
     handleHideLineItem(quoteId, quoteLineItemId, enable) {
-      this.props.dispatch(disableQuoteLineItem(quoteId, quoteLineItemId, enable));
+      if(this.askIfAlreadyPaid()) {
+        this.props.dispatch(disableQuoteLineItem(quoteId, quoteLineItemId, enable));
+      }
     }
 
     handleDeleteAdminLineItem(quoteId, quoteLineItemId) {
-      this.props.dispatch(deleteAdminLineItem(quoteId, quoteLineItemId));
+      if(this.askIfAlreadyPaid()) {
+        this.props.dispatch(deleteAdminLineItem(quoteId, quoteLineItemId));
+      }
     }
 
     handleAddAdminLineItem(quoteId,newLineItem) {
-      this.props.dispatch(addAdminLineItem(quoteId,newLineItem));
+      if(this.askIfAlreadyPaid()) {
+        this.props.dispatch(addAdminLineItem(quoteId,newLineItem));
+      }
     }
 
     handleSendBillToClient(quoteId) {
-      this.props.dispatch(sendBillToClient(quoteId));
+      if(this.askIfAlreadyPaid()) {
+           this.props.dispatch(sendBillToClient(quoteId));
+      }
     }
 
     renderQuoteList(quote,taxReturns) {
