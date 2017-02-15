@@ -20,7 +20,7 @@ export default class Layout extends React.Component {
     } else {
       return <div class="status-container">
               <i class="fa fa-check-circle" aria-hidden="true"></i>
-              <div class="status-direct-deposit">Direct Deposit</div>
+              <div class="status-direct-deposit f--futura-book">Direct Deposit</div>
             </div>;
     }
   }
@@ -53,18 +53,28 @@ export default class Layout extends React.Component {
       return <QuoteAdminUploads key={checklist.checklist_item_id} quote={quote} taxReturn={taxReturn} checklist={checklist} uploadItemFunction={uploadItemFunction} downloadItemFunction={downloadItemFunction} deleteItemFunction={deleteItemFunction} updating={updating} updated={updated} />
     });
 
+    const directDepositStatus = _.map(quote.quoteLineItems, (lineItems) =>{
+        if(lineItems.tax_return_id == taxReturn.id){
+          if(lineItems.checkbox == 1){
+                return this.renderDirectDeposit(true);
+            } else {
+                return this.renderDirectDeposit(false);
+            }
+        }
+    });
+
     return (
       <div data-quote-id={quoteId} >
         <div data-quote-id={quoteId} onClick={this.toggleDetails}>
           <div class="status-container">
-            <div class="status-name">
+            <div class="status-name f--futura-book">
               {taxReturn.first_name}{taxReturn.last_name ? ' ' : ''}{taxReturn.last_name}
             </div>
-            <div class="status">
+            <div class="status f--futura-book">
               STATUS: <span class="status-value">{ taxReturn && taxReturn.status ? taxReturn.status.name : 'no status'}</span>
             </div>
           </div>
-          { this.renderDirectDeposit(false) }
+          { directDepositStatus }
           <div class="status-dollar">
             <div class={taxReturn.refund < 0 ? "font-red" : ""}>
               {taxReturn.refund < 0 ? "-" + "$" + Math.abs(taxReturn.refund) : "" + "$" + Math.abs(taxReturn.refund)}
