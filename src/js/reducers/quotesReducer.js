@@ -9,6 +9,9 @@ export default function reducer(state={
     updating: false,
     updated: false,
     error: null,
+    billSent: false,
+    billSending: false,
+    billError: null
   }, action) {
     switch (action.type) {
       // Users events
@@ -16,7 +19,10 @@ export default function reducer(state={
         return {...state, 
           updating: false,
           updated: false,
-          error:null
+          error:null,
+          billError:null,
+          billSent:false,
+          billSending:false
         };
       }
       case "ADD_ADMIN_LINE_ITEM_REJECTED": {
@@ -45,6 +51,26 @@ export default function reducer(state={
       case "FETCH_QUOTE_REJECTED": {
         return {...state, fetching: false, error: action.payload};
       }
+      case "SENDING_BILL_TO_CLIENT": {
+        return {...state,
+          billSending:true,
+          billSent:false
+        }
+      }
+      case "SEND_BILL_TO_CLIENT_FULFILLED": {
+        return {...state,
+          billSending:true,
+          billSent:false
+        }
+      }
+      case "SEND_BILL_TO_CLIENT_REJECTED": {
+        return {...state,
+          billSending:false,
+          billSent:false,
+          billError:action.payload
+        }
+      }
+
     }
 
     return state;
