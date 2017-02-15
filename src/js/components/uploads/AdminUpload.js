@@ -52,7 +52,7 @@ export default class Layout extends React.Component {
     ); });
 
     this.updateState.value = updateState(updating, updated);
-  };
+  }
 
   handleUploadItem(e) {
     e.preventDefault();    
@@ -109,8 +109,8 @@ export default class Layout extends React.Component {
     } else {
    
       return <div>
-        { this.renderUpdateItem(quote, selectedChecklistItem) }
         { this.renderSelectChecklistItems(checklistItems)}
+        { this.renderUpdateItem(quote, selectedChecklistItem) }
            </div>
     }
   }
