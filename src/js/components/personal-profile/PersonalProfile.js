@@ -96,7 +96,7 @@ export default class PersonalProfile extends React.Component {
 
     // address props
     const address = taxReturn.address ? taxReturn.address : {};
-    
+
     this.addressLine1.value = address.address_line1 ? address.address_line1: '';
     this.city.value = address.city ? address.city : '';
     this.postalCode.value = address.postal_code ? address.postal_code : '';
@@ -118,7 +118,7 @@ export default class PersonalProfile extends React.Component {
       middleInitial: this.middleInitial.value,
       lastName: this.lastName.value,
       provinceOfResidence: this.provinceOfResidence.value,
-      dateOfBirth: this.dateOfBirth.value,
+      dateOfBirth: moment(this.dateOfBirth.value).format('YYYY-MM-DD'),
       canadianCitizen: this.canadianCitizen.value,
       authorizeCra: this.authorizeCra.value,
       sin: this.sin.value,
@@ -166,7 +166,7 @@ export default class PersonalProfile extends React.Component {
 
   renderAddress(address) {
     address = address? address : {};
-    
+
     return  <div>
         <p>
           Address
@@ -184,7 +184,7 @@ export default class PersonalProfile extends React.Component {
       </div>
   }
 
-  renderPersonalProfile(taxReturn){ 
+  renderPersonalProfile(taxReturn){
     return (
       <form class="standard-form">
         <label for="user-prefix">Prefix</label>
@@ -228,7 +228,7 @@ export default class PersonalProfile extends React.Component {
 
   handleClickTaxReturnProfile(e) {
     e.preventDefault();
-    
+
     this.props.dispatch(fetchTaxReturn(e.target.dataset.id));
   }
 
