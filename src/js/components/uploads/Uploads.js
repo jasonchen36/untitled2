@@ -151,7 +151,7 @@ export default class Uploads extends React.Component {
                 <section class="col-sm-8 col-lg-9">
                     <h1>TAXitem Uploads</h1>
                     <div class="grid-container">
-                        {this.renderUploadSection(quotes, quoteChecklist, quoteChecklistUpdating, quoteChecklistUpdated)};
+                        {this.renderUploadSection(quotes, quoteChecklist, quoteChecklistUpdating, quoteChecklistUpdated)}
                         {renderErrors(accountError)}
                         
                         {this.renderUploads(checklistDocuments)}

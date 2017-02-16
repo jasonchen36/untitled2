@@ -7,12 +7,17 @@ import { Link  } from "react-router"
 import Sidebar from "../layout/Sidebar";
 import UserOptionsHeader from "../layout/UserOptionsHeader";
 
+import { renderErrors } from "../helpers/RenderErrors";
+
 import { loadUser, loadUserQuote, refreshUpdateState } from "../../actions/loaderActions";
 import InvoiceQuoteLineItem from "./InvoiceQuoteLineItem";
 import InvoiceAdminQuoteLineItem from "./InvoiceAdminQuoteLineItem";
 import InvoiceAddAdminQuoteLineItem from "./InvoiceAddAdminQuoteLineItem";
+import InvoiceSendBillToClient from "./InvoiceSendBillToClient";
 
-import { disableQuoteLineItem, addAdminLineItem, deleteAdminLineItem } from "../../actions/quoteActions";
+import { disableQuoteLineItem, addAdminLineItem, deleteAdminLineItem, sendBillToClient } from "../../actions/quoteActions";
+
+import { taxReturnsInPaidState } from "../ui-logic/UILogic";
 
 @connect((store) => {
     return {
@@ -22,7 +27,11 @@ import { disableQuoteLineItem, addAdminLineItem, deleteAdminLineItem } from "../
         taxReturn:store.accounts.taxReturn,
         quotes:store.quotes.quotes,
         quoteUpdating:store.quotes.updating,
-        quoteUpdated: store.quotes.updated
+        quoteUpdated: store.quotes.updated,
+        billError: store.quotes.billError,
+        billSending: store.quotes.billSending,
+        billSent: store.quotes.billSent,
+        errors: store.quotes.error
     };
 })
 
@@ -33,6 +42,7 @@ export default class Invoice extends React.Component {
         this.hideLineItem = this.handleHideLineItem.bind(this);
         this.deleteAdminLineItem = this.handleDeleteAdminLineItem.bind(this);
         this.addAdminLineItem = this.handleAddAdminLineItem.bind(this);
+        this.sendBillToClient = this.handleSendBillToClient.bind(this);
     }
 
     componentWillMount() {
@@ -74,16 +84,43 @@ export default class Invoice extends React.Component {
       </tbody>
     }
 
+    askIfAlreadyPaid() {
+      const taxReturns = this.props.taxReturns;
+      if(taxReturnsInPaidState(taxReturns)) {
+        if(confirm("Are you sure? The quote has already been paid.")) {
+          return true;
+        } else {
+             console.log('canceled action');
+             return false;
+        }
+      } else {
+        return true;
+      }
+    }
+
+
     handleHideLineItem(quoteId, quoteLineItemId, enable) {
-      this.props.dispatch(disableQuoteLineItem(quoteId, quoteLineItemId, enable));
+      if(this.askIfAlreadyPaid()) {
+        this.props.dispatch(disableQuoteLineItem(quoteId, quoteLineItemId, enable));
+      }
     }
 
     handleDeleteAdminLineItem(quoteId, quoteLineItemId) {
-      this.props.dispatch(deleteAdminLineItem(quoteId, quoteLineItemId));
+      if(this.askIfAlreadyPaid()) {
+        this.props.dispatch(deleteAdminLineItem(quoteId, quoteLineItemId));
+      }
     }
 
     handleAddAdminLineItem(quoteId,newLineItem) {
-      this.props.dispatch(addAdminLineItem(quoteId,newLineItem));
+      if(this.askIfAlreadyPaid()) {
+        this.props.dispatch(addAdminLineItem(quoteId,newLineItem));
+      }
+    }
+
+    handleSendBillToClient(quoteId) {
+      if(this.askIfAlreadyPaid()) {
+           this.props.dispatch(sendBillToClient(quoteId));
+      }
     }
 
     renderQuoteList(quote,taxReturns) {
@@ -116,7 +153,7 @@ export default class Invoice extends React.Component {
       </thead>
     }
 
-    renderBillingStatusTable(taxReturns,quotes, quoteUpdating, quoteUpdated) {
+    renderBillingStatusTable(taxReturns,quotes, quoteUpdating, quoteUpdated, errors) {
       if(!taxReturns || taxReturns.length===0) {
         return <div>
           No Tax returns
@@ -124,7 +161,6 @@ export default class Invoice extends React.Component {
       }
 
       const addAdminLineItems = <InvoiceAddAdminQuoteLineItem quote={quotes} addLineItemHandler={this.addAdminLineItem} updating={quoteUpdating} updated={quoteUpdated} /> 
-
 
       return (<div>
           <table class="standard-table">
@@ -147,6 +183,7 @@ export default class Invoice extends React.Component {
               {this.renderQuoteList(quotes, taxReturns)}
           </table>
           { addAdminLineItems }
+          { renderErrors(errors) }
           <table class="standard-table">
                 {this.getTotalBillingAmount(quotes)}
           </table>
@@ -154,17 +191,27 @@ export default class Invoice extends React.Component {
       );
     }
 
+    renderSendBillButton(quotes,billError,billSending,billSent) {
+      if(!quotes) {
+        return <div> getting quote
+        </div>
+      }
+
+      return <InvoiceSendBillToClient submitHandler={this.sendBillToClient} quoteId={quotes.id} updating={billSending} updated={billSent} error={billError} />
+    }
+
     render() {
         //todo, figure out what "No documents added to this package" means
         //todo, pass in data to table
-        const { taxReturns, taxReturn, quotes, quoteUpdating, quoteUpdated} = this.props;
+        const { taxReturns, taxReturn, quotes, quoteUpdating, quoteUpdated, billError, billSending, billSent, errors} = this.props;
         return (
             <main class="grid-container row">
                 <Sidebar activeScreen="invoice" userId={this.props.params.userId}/>
                 <section class="col-sm-8 col-lg-9">
                     <h1>Invoice</h1>
                     <h2></h2>
-                    {this.renderBillingStatusTable(taxReturns, quotes, quoteUpdating, quoteUpdated)}
+                    {this.renderBillingStatusTable(taxReturns, quotes, quoteUpdating, quoteUpdated, errors)}
+                    {this.renderSendBillButton(quotes,billError,billSending,billSent)}
                 </section>
             </main>
         )

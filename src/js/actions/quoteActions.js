@@ -83,6 +83,29 @@ const deleteAdminLineItem= (quoteId, adminQuoteLineItemId) => {
   };
 };
 
+const sendBillToClient = (quoteId) => {
+  return function(dispatch) {
+    const url = "/quote/"+quoteId+"/billClient";
+    dispatch({type:"SENDING_BILL_TO_CLIENT",payload:{quoteId:quoteId}});
+
+    return base.post(url)
+      .then((response) => {
+        // This should only be allowed if all tax return statuses are set to 'Data Complete'
+
+        dispatch({type: "SEND_BILL_TO_CLIENT_FULFILLED", payload:response.data});
+        return response;
+      })
+      .catch((err) => {
+
+        // If err status === '
+        dispatch({type:"SEND_BILL_TO_CLIENT_REJECTED", payload: err });
+      })
+      .then((response) => {
+        // reget quote
+        return fetchQuote(quoteId)(dispatch);
+      });
+  };
+};
 
 /// Calls
 
@@ -91,7 +114,8 @@ export {
   fetchQuote,
   disableQuoteLineItem,
   addAdminLineItem,
-  deleteAdminLineItem
+  deleteAdminLineItem,
+  sendBillToClient
  };
 
 
