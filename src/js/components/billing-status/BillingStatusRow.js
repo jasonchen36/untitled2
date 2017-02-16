@@ -38,7 +38,7 @@ export default class Layout extends React.Component {
   }
 
 
-  renderBillingStatusRow(taxReturn, quote, statuses, taxReturnAdminChecklist, submitFunction, uploadItemFunction, downloadItemFunction, deleteItemFunction, checklistUpdating, checklistUpdated, taxReturnUpdated, taxReturnUpdating) {
+  renderBillingStatusRow(taxReturn, quote, quoteLineItem, statuses, taxReturnAdminChecklist, submitFunction, uploadItemFunction, downloadItemFunction, deleteItemFunction, checklistUpdating, checklistUpdated, taxReturnUpdated, taxReturnUpdating) {
     const quoteId = quote.id;
 
     const showDetails = (sd, detailId) => {
@@ -53,14 +53,8 @@ export default class Layout extends React.Component {
       return <QuoteAdminUploads key={checklist.checklist_item_id} quote={quote} taxReturn={taxReturn} checklist={checklist} uploadItemFunction={uploadItemFunction} downloadItemFunction={downloadItemFunction} deleteItemFunction={deleteItemFunction} updating={updating} updated={updated} />
     });
 
-    const directDepositStatus = _.map(quote.quoteLineItems, (lineItems) =>{
-        if(lineItems.tax_return_id == taxReturn.id){
-          if(lineItems.checkbox == 1){
-                return this.renderDirectDeposit(true);
-            } else {
-                return this.renderDirectDeposit(false);
-            }
-        }
+    const directDepositStatus = _.map(quoteLineItem, (lineItems) =>{
+      return this.renderDirectDeposit(lineItems.checkbox == 1 ? true : false);
     });
 
     return (
@@ -94,10 +88,10 @@ export default class Layout extends React.Component {
   render() {
     //todo, figure out what "No documents added to this package" means
     //todo, pass in data to table
-    const { taxReturn, quote, statuses, submitFunction, uploadItemFunction, downloadItemFunction, deleteItemFunction, taxReturnAdminChecklist, checklistUpdating, checklistUpdated, taxReturnUpdated, taxReturnUpdating } = this.props;
+    const { taxReturn, quote, quoteLineItem, statuses, submitFunction, uploadItemFunction, downloadItemFunction, deleteItemFunction, taxReturnAdminChecklist, checklistUpdating, checklistUpdated, taxReturnUpdated, taxReturnUpdating } = this.props;
    
     return <div>
-      {this.renderBillingStatusRow(taxReturn,quote, statuses, taxReturnAdminChecklist, submitFunction, uploadItemFunction, downloadItemFunction, deleteItemFunction, checklistUpdating, checklistUpdated, taxReturnUpdated, taxReturnUpdating)}
+      {this.renderBillingStatusRow(taxReturn,quote, quoteLineItem, statuses, taxReturnAdminChecklist, submitFunction, uploadItemFunction, downloadItemFunction, deleteItemFunction, checklistUpdating, checklistUpdated, taxReturnUpdated, taxReturnUpdating)}
     </div>
   }
 }
