@@ -10,6 +10,7 @@ export default function reducer(state={
     taxReturnsUpdated:[],
     taxReturnsUpdating:[],
     taxReturnStatuses:null,
+    taxReturnsInPaidState:false,
     quoteChecklist: null,
     searchChanged:false,
     user: null,
@@ -32,7 +33,7 @@ export default function reducer(state={
         };
       }
       case "CLEAR_TAXRETURNS": {
-        return {...state, taxReturns:null,};
+        return {...state, taxReturns:null, taxReturnsInPaidState:false};
       }
       case "FETCH_TAXRETURNS": {
         return {...state, fetching: true};
@@ -43,7 +44,7 @@ export default function reducer(state={
       case "FETCH_TAX_RETURN_FULFILLED": {
         const taxReturn = action.payload.data;
         const newTaxReturns =updateListWithObjectById(state.taxReturns,taxReturn);
-        
+        const taxReturnsInPaidState = state.taxReturnsInPaidState || taxReturn.status.paid===1;
         return {
           ...state,
           fetching: false,
@@ -51,6 +52,7 @@ export default function reducer(state={
           taxReturn: taxReturn,
           taxReturns: newTaxReturns,
           taxReturnDetailsFetched: true,
+          taxReturnsInPaidState: taxReturnsInPaidState,
           taxReturnUpdated: false
         };
       }
@@ -60,7 +62,8 @@ export default function reducer(state={
       case "CLEAR_ACCOUNT": {
         return {...state, 
           account:null, 
-          taxReturns:null, 
+          taxReturns:null,
+          taxReturnsInPaidState:false,
           taxReturn:null,
           address:null,
           taxReturnDetailsFetched:false, 
@@ -82,12 +85,17 @@ export default function reducer(state={
 
         const quoteChecklist = state.quoteChecklist && _.some(account.quotes,(quote) => { return quote.id === state.quoteChecklist.quoteId; }) ? state.quoteChecklist : null;
 
+        const taxReturnsInPaidState =  _.some(taxReturns,(tr) => {
+          return tr.status.paid===1;
+        });
+
         return {
           ...state,
           fetching: false,
           fetched: true,
           account: account,
           taxReturns:taxReturns,
+          taxReturnsInPaidState: taxReturnsInPaidState,
           taxReturn:taxReturn,
           taxReturnDetailsFetched: taxReturnDetailsFetched,
           taxReturnUpdated: false,
@@ -162,9 +170,12 @@ export default function reducer(state={
         const taxReturn = action.payload.data;
         const newTaxReturns =updateListWithObjectById(state.taxReturns,taxReturn); 
 
-        let id  = taxReturn.id;
-        let taxReturnsUpdated = _.union(state.taxReturnsUpdated,[id]);
-        let taxReturnsUpdating = _.filter(state.taxReturnsUpdating,(u) => { return u !== id});
+        const id  = taxReturn.id;
+        const taxReturnsUpdated = _.union(state.taxReturnsUpdated,[id]);
+        const taxReturnsUpdating = _.filter(state.taxReturnsUpdating,(u) => { return u !== id});
+
+        const taxReturnsInPaidState = state.taxReturnsInPaidState || taxReturn.status.paid===1;
+
 
         return {
           ...state,
@@ -172,6 +183,7 @@ export default function reducer(state={
           updating:false,
           taxReturn: taxReturn,
           taxReturns:newTaxReturns,
+          taxReturnsInPaidState: taxReturnsInPaidState,
           taxReturnsUpdated:taxReturnsUpdated,
           taxReturnsUpdating: taxReturnsUpdating,
           taxReturnUpdated:true

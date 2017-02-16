@@ -17,14 +17,13 @@ import InvoiceSendBillToClient from "./InvoiceSendBillToClient";
 
 import { disableQuoteLineItem, addAdminLineItem, deleteAdminLineItem, sendBillToClient } from "../../actions/quoteActions";
 
-import { taxReturnsInPaidState } from "../ui-logic/UILogic";
-
 @connect((store) => {
     return {
         loginuser: store.loginuser.loginuser,
         user: store.users.user,
         taxReturns:store.accounts.taxReturns,
         taxReturn:store.accounts.taxReturn,
+        taxReturnsInPaidState:store.accounts.taxReturnsInPaidState,
         quotes:store.quotes.quotes,
         quoteUpdating:store.quotes.updating,
         quoteUpdated: store.quotes.updated,
@@ -86,7 +85,8 @@ export default class Invoice extends React.Component {
 
     askIfAlreadyPaid() {
       const taxReturns = this.props.taxReturns;
-      if(taxReturnsInPaidState(taxReturns)) {
+      const taxReturnsInPaidState = this.props.taxReturnsInPaidState;
+      if(taxReturnsInPaidState) {
         if(confirm("Are you sure? The quote has already been paid.")) {
           return true;
         } else {
