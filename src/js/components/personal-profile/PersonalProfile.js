@@ -8,7 +8,6 @@ import { fetchTaxReturn, updateTaxProfile } from "../../actions/taxReturnActions
 import { loadUser } from "../../actions/loaderActions";
 import { renderErrors } from "../helpers/RenderErrors";
 import { renderSelectionOptions } from "../helpers/LayoutHelpers";
-import moment_timezone from "moment-timezone";
 
 const updateState = { initialized:0, updating:1, updated:2};
 
@@ -113,13 +112,14 @@ export default class PersonalProfile extends React.Component {
     e.preventDefault();
 
     let { id, addressId } = e.target.dataset;
+    console.log(this.dateOfBirth.value);
     let updateTaxProfileParams = {
       prefix: this.prefix.value,
       firstName: this.firstName.value,
       middleInitial: this.middleInitial.value,
       lastName: this.lastName.value,
       provinceOfResidence: this.provinceOfResidence.value,
-      dateOfBirth: moment_timezone.tz(this.dateOfBirth.value, "America/Toronto").format('YYYY-MM-DD'),
+      dateOfBirth: moment(this.dateOfBirth.value).format('YYYY-MM-DD').startOf('day'),
       canadianCitizen: this.canadianCitizen.value,
       authorizeCra: this.authorizeCra.value,
       sin: this.sin.value,

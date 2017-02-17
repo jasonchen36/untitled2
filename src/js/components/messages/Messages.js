@@ -91,7 +91,7 @@ export default class Messages extends React.Component {
                         From: {message.fromname}
                     </p>
                     <p>
-                        Date: {moment.tz(message.date, "America/Toronto").format('LLL')}
+                        Date: {moment.tz(message.date).guess().format('LLL')}
                     </p>
                     <p class="message-body">
                         Message:
