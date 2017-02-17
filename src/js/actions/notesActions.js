@@ -3,7 +3,7 @@
 import * as base from "./lib/baseActions";
 
 /// Fetch a list of users, optionally with search Terms
-export function fetchNotes(userId) {
+const fetchNotes = (userId) => {
   return function(dispatch) {
     
     getNotes(userId)
@@ -30,7 +30,7 @@ const getNotes = function(userId) {
     });
 };
 
-export function createNote(userId,message){
+const createNote = (userId,message) => {
   return function(dispatch) {
     let url = "admin/users/"+userId+"/notes";
     let body = {"message":message};
@@ -46,13 +46,15 @@ export function createNote(userId,message){
   };
 };
 
-export function deleteNote(userId,noteId) {
+const deleteNote = (userId,noteId) => {
   return function(dispatch) {
     let url = "admin/users/"+userId+"/notes/"+noteId;
 
     return base.del(url)
       .then((response) => {
         dispatch({type:"DELETE_NOTE_FULFILLED", payload: {userId:userId, noteId:noteId}});
+
+        return fetchNotes(userId)(dispatch);
       })
       .catch((err) => {
         dispatch({type:"DELETE_NOTE_REJECTED", payload: err});
@@ -60,7 +62,7 @@ export function deleteNote(userId,noteId) {
   };
 };
 
-export function markAsDone(userId, noteId, done) {
+const markAsDone = (userId, noteId, done) => {
   return function(dispatch) {
   
     let url = "admin/users/"+userId+"/notes/"+noteId + "/done";
@@ -74,4 +76,13 @@ export function markAsDone(userId, noteId, done) {
         dispatch({type:"MARK_NOTE_AS_DONE_REJECTED", payload: err});
       });
   };
+};
+
+/// EXPORTS
+
+export { 
+  fetchNotes, 
+  createNote, 
+  deleteNote, 
+  markAsDone
 };
