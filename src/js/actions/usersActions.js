@@ -2,6 +2,8 @@
 
 import * as base from "./lib/baseActions";
 import _ from "lodash";
+import { currentYearProductId } from "../config";
+
 
 /// Fetch a list of users, optionally with search Terms
 export function fetchUsers(searchTerms) {
@@ -31,7 +33,7 @@ export function fetchTaxPros() {
 const getUsers = (dispatch, searchTerms) => {
   let searchUrl = "/users";
   
-  if(searchTerms) {
+  if(searchTerms || currentYearProductId) {
     searchUrl+=searchTermsToString(searchTerms);
   }
 
@@ -92,9 +94,9 @@ const getNewOrderAscendingSearchTerm = (searchTerms,newSearchTerms) => {
 };
 
 const searchTermsToString = (searchTerms) => {
-  let asString = searchTerms.map((term) => { return term.key+"="+term.val }).join("&");
+  let asString = !searchTerms ? "": searchTerms.map((term) => { return term.key+"="+term.val }).join("&");
 
-  return asString? "?"+asString: "";
+  return asString? "?product="+currentYearProductId+"&"+asString: "?product="+currentYearProductId;
 };
 
 /// Fetch user details by id

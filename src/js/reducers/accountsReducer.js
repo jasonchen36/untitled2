@@ -1,6 +1,7 @@
 // The reducer for state involving handling taxreturns (viewing all users in the app, or details for an individual user)
 import _ from "lodash";
 import { updateListWithObjectById } from "./lib/reducerHelpers";
+import { currentYearProductId } from "../config";
 
 export default function reducer(state={
     account:null,
@@ -74,7 +75,9 @@ export default function reducer(state={
       case "FETCH_ACCOUNT_FULFILLED": {
           //todo, account variable is not getting saved to state by taxreturns and taxreturn are
         const account = action.payload;
-        const taxReturns = account.taxReturns;
+        const taxReturns = _.filter(account.taxReturns, (tr) => {
+          return tr.product_id === currentYearProductId;
+        });
         let taxReturn = null;
         let taxReturnDetailsFetched = state.taxReturnDetailsFetched;
 
