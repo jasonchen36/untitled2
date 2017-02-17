@@ -112,7 +112,6 @@ export default class PersonalProfile extends React.Component {
     e.preventDefault();
 
     let { id, addressId } = e.target.dataset;
-    console.log(this.dateOfBirth.value);
     let updateTaxProfileParams = {
       prefix: this.prefix.value,
       firstName: this.firstName.value,
