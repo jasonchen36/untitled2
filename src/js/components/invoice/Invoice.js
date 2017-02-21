@@ -17,14 +17,14 @@ import InvoiceSendBillToClient from "./InvoiceSendBillToClient";
 
 import { disableQuoteLineItem, addAdminLineItem, deleteAdminLineItem, sendBillToClient } from "../../actions/quoteActions";
 
-import { taxReturnsInPaidState } from "../ui-logic/UILogic";
-
 @connect((store) => {
     return {
         loginuser: store.loginuser.loginuser,
+        loginuserRoles: store.loginuser.availableRoles,
         user: store.users.user,
         taxReturns:store.accounts.taxReturns,
         taxReturn:store.accounts.taxReturn,
+        taxReturnsInPaidState:store.accounts.taxReturnsInPaidState,
         quotes:store.quotes.quotes,
         quoteUpdating:store.quotes.updating,
         quoteUpdated: store.quotes.updated,
@@ -86,7 +86,8 @@ export default class Invoice extends React.Component {
 
     askIfAlreadyPaid() {
       const taxReturns = this.props.taxReturns;
-      if(taxReturnsInPaidState(taxReturns)) {
+      const taxReturnsInPaidState = this.props.taxReturnsInPaidState;
+      if(taxReturnsInPaidState) {
         if(confirm("Are you sure? The quote has already been paid.")) {
           return true;
         } else {
@@ -135,7 +136,7 @@ export default class Invoice extends React.Component {
             return tr.id === li.tax_return_id;
         });
 
-        return <InvoiceQuoteLineItem key={li.id} quoteLineItem={li} taxReturn={taxReturn} hideLineHandler={this.hideLineItem} /> 
+        return <InvoiceQuoteLineItem key={li.id} quoteLineItem={li} taxReturn={taxReturn} hideLineHandler={this.hideLineItem} hasAdminPrivileges={this.userHasAdminPrivileges()} /> 
       });
 
       const adminLineItems = _.map(quote.adminLineitems, (li) => {
@@ -143,7 +144,7 @@ export default class Invoice extends React.Component {
             return tr.id === li.tax_return_id;
         });
 
-        return <InvoiceAdminQuoteLineItem key={li.id} quoteLineItem={li} taxReturn={taxReturn} deleteLineItemHandler={this.deleteAdminLineItem} /> 
+        return <InvoiceAdminQuoteLineItem key={li.id} quoteLineItem={li} taxReturn={taxReturn} deleteLineItemHandler={this.deleteAdminLineItem} hasAdminPrivileges={this.userHasAdminPrivileges()} /> 
       });
 
     
@@ -153,6 +154,16 @@ export default class Invoice extends React.Component {
       </thead>
     }
 
+    userHasAdminPrivileges() {
+      const { loginuser, loginuserRoles } = this.props;
+      console.log('loginuser', loginuser, loginuserRoles);
+      if(loginuser && loginuserRoles && loginuser.role===loginuserRoles.Admin) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
     renderBillingStatusTable(taxReturns,quotes, quoteUpdating, quoteUpdated, errors) {
       if(!taxReturns || taxReturns.length===0) {
         return <div>
@@ -160,7 +171,15 @@ export default class Invoice extends React.Component {
           </div>
       }
 
-      const addAdminLineItems = <InvoiceAddAdminQuoteLineItem quote={quotes} addLineItemHandler={this.addAdminLineItem} updating={quoteUpdating} updated={quoteUpdated} /> 
+      let addAdminLineItems = <div>loading</div>
+      
+      if(this.userHasAdminPrivileges()) {
+      
+        addAdminLineItems = <InvoiceAddAdminQuoteLineItem quote={quotes} addLineItemHandler={this.addAdminLineItem} updating={quoteUpdating} updated={quoteUpdated} /> 
+
+      } else {
+        addAdminLineItems = ""
+      }
 
       return (<div>
           <table class="standard-table">
@@ -195,9 +214,12 @@ export default class Invoice extends React.Component {
       if(!quotes) {
         return <div> getting quote
         </div>
+      } else if(!this.userHasAdminPrivileges()) {
+        return <div>To send invoice to client, please contact an admin
+        </div>
+      } else {
+        return <InvoiceSendBillToClient submitHandler={this.sendBillToClient} quoteId={quotes.id} updating={billSending} updated={billSent} error={billError} />
       }
-
-      return <InvoiceSendBillToClient submitHandler={this.sendBillToClient} quoteId={quotes.id} updating={billSending} updated={billSent} error={billError} />
     }
 
     render() {

@@ -6,6 +6,7 @@ export default function reducer(state={
       name: null,
       type: null,
     },
+    availableRoles:{Admin:"Admin", TaxPro:"TaxPro", Customer:"Customer"},
     fetching: false,
     fetched: false,
     authenticated: localStorage.getItem('auth_token') ? true : false,
