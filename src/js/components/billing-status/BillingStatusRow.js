@@ -54,7 +54,7 @@ export default class Layout extends React.Component {
     });
 
     const directDepositStatus = _.map(quoteLineItem, (lineItems) =>{
-      return this.renderDirectDeposit(lineItems.checkbox == 1 ? true : false);
+      return this.renderDirectDeposit(lineItems.enabled == 1 ? true : false);
     });
 
     return (
