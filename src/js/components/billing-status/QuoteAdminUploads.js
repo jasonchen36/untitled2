@@ -52,7 +52,7 @@ export default class Layout extends React.Component {
   }
 
   handleDeleteItem(e) {
-    let {documentId, documentName} = e.target.dataset;
+    let {documentId, documentName} = e.currentTarget.dataset;
     this.props.deleteItemFunction(this.quoteId.value, documentId, documentName);
   }
 
@@ -106,23 +106,6 @@ export default class Layout extends React.Component {
   }
 
  
-  renderDeleteItem(quote,checklist,docs) {
-    if(docs && docs.length>0) {
-      return <a class="tax-item" data-quote-id={quote.id} data-checklist-name={checklist.name} onClick={this.deleteItem} data-document-id={doc.documentId}>
-        <div class="tax-item-trash">
-          <i class="fa fa-trash-o"></i>
-        </div>
-      </a>
-    } else {
-      return <div class="tax-item">
-        <div class="tax-item-trash">
-          <i class="fa fa-trash-o"></i>
-        </div>
-      </div>
-
-    }
-  }
-
   renderItem(quote,checklist,taxReturn) {
    
     let docs = checklist && checklist.documents ? checklist.documents : [];
