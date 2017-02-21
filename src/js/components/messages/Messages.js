@@ -11,7 +11,7 @@ import { fetchUser } from "../../actions/usersActions";
 
 import { renderErrors } from "../helpers/RenderErrors";
 import moment from 'moment-timezone';
-
+import { urlify } from "../../lib/urlify";
 
 @connect((store) => {
     return {
@@ -97,7 +97,7 @@ export default class Messages extends React.Component {
                         Message:
                     </p>
                     <p>
-                        {message.body}
+                        {urlify(message.body)}
                     </p>
                 </div>
             </div>
