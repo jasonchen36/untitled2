@@ -118,7 +118,7 @@ export default class PersonalProfile extends React.Component {
       middleInitial: this.middleInitial.value,
       lastName: this.lastName.value,
       provinceOfResidence: this.provinceOfResidence.value,
-      dateOfBirth: moment(this.dateOfBirth.value).format('YYYY-MM-DD').startOf('day'),
+      dateOfBirth: moment(this.dateOfBirth.value).startOf('day').format('YYYY-MM-DD'),
       canadianCitizen: this.canadianCitizen.value,
       authorizeCra: this.authorizeCra.value,
       sin: this.sin.value,
