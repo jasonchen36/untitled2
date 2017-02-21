@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux"
 import { IndexLink, Link } from "react-router";
-
+import { baseWEBUrl } from "../../config";
 import { logoutLoginuser } from "../../actions/loginuserActions"
 
 @connect((store) => {
@@ -32,9 +32,12 @@ export default class Nav extends React.Component {
                 <li>
                   {user.first_name} ({user.role})
                   <ul class="sub-menu">
-                      <li>
-                          <Link to="/users">Accounts</Link>
-                      </li>
+                    <li>
+                        <Link to="/users">Accounts</Link>
+                    </li>
+                    <li>
+                      <Link to={baseWEBUrl+"/tax-profile"} target="_blank">Create Customer</Link>
+                    </li>
                     <li>
                       <IndexLink to="/" onClick={this.logoutLoginuser.bind(this)}>Logout</IndexLink>
                     </li>
