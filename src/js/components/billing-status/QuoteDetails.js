@@ -5,7 +5,7 @@ import { createLoginuser } from "../../actions/loginuserActions"
 import { renderErrors } from "../helpers/RenderErrors";
 import { renderTaxReturnStatusSelectionOptions } from "../helpers/RenderTaxReturnStatusSelection";
 import { initUpdateState, renderUpdateButton, updateState } from "../helpers/RenderUpdateButton";
-
+import { renderSelectionOptions } from "../helpers/LayoutHelpers";
 
 export default class Layout extends React.Component {
   constructor(props) {
@@ -18,7 +18,7 @@ export default class Layout extends React.Component {
     this.submitChanges = this.handleSubmitChanges.bind(this);
     this.clickInputChange = this.handleClickInputChange.bind(this);
 
-    this.selectedStatus = {value:5};
+    this.selectedStatus = {value:-1};
     this.taxReturnRefund = {value:0};
     this.taxReturnDetails = {value:''};
     this.updateState = {value:null};    
@@ -100,6 +100,27 @@ export default class Layout extends React.Component {
     </div>
   };
 
+  renderStatus(taxReturn, statuses) {
+    let filteredStatuses = _.filter(statuses, (s) => {
+
+      return  s.id===taxReturn.status.id || 
+        _.some(taxReturn.statusChanges,(sc) => {
+          return s.id===sc.end_status_id 
+        });
+    });
+
+    filteredStatuses = _.map(filteredStatuses, 
+      (fs) => {
+        return {
+          id: fs.id,
+          val: fs.name
+        };
+    });
+
+    return <select class="col picker-details-status" name="selectedStatus" onChange={this.clickInputChange} value={this.selectedStatus.value}>
+      {renderSelectionOptions(filteredStatuses, "select status")}        
+    </select>
+  }
 
   renderQuoteDetails(quote, taxReturn, statuses, errors) {
     const inputId = (text,id) => {
@@ -107,14 +128,13 @@ export default class Layout extends React.Component {
     }
 
     const id = quote.id;
+   
 
     return (
       <div data-id={quote.id} class="full-width">
         <form id={inputId("form",id)} data-tax-return-id={taxReturn.id} onSubmit={this.submitChanges}>
           <label for={inputId("status",id)}>STATUS:</label>
-          <select class="col picker-details-status" name="selectedStatus" onChange={this.clickInputChange} value={this.selectedStatus.value}>
-            {renderTaxReturnStatusSelectionOptions(statuses)}        
-          </select>
+          { this.renderStatus(taxReturn,statuses) }
 
           <input id={inputId("return",id)} class="textfield-tax-refund" type="number" name="taxReturnRefund" placeholder="return" value={this.taxReturnRefund.value} onChange={this.clickInputChange} />
           <div class="quote-details-container">

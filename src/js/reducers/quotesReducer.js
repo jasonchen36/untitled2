@@ -59,8 +59,8 @@ export default function reducer(state={
       }
       case "SEND_BILL_TO_CLIENT_FULFILLED": {
         return {...state,
-          billSending:true,
-          billSent:false
+          billSending:false,
+          billSent:true
         }
       }
       case "SEND_BILL_TO_CLIENT_REJECTED": {

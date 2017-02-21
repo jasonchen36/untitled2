@@ -85,7 +85,7 @@ const deleteAdminLineItem= (quoteId, adminQuoteLineItemId) => {
 
 const sendBillToClient = (quoteId) => {
   return function(dispatch) {
-    const url = "/quote/"+quoteId+"/billClient";
+    const url = "/admin/quote/" + quoteId + "/sendBillToClient";
     dispatch({type:"SENDING_BILL_TO_CLIENT",payload:{quoteId:quoteId}});
 
     return base.post(url)
@@ -96,7 +96,6 @@ const sendBillToClient = (quoteId) => {
         return response;
       })
       .catch((err) => {
-
         // If err status === '
         dispatch({type:"SEND_BILL_TO_CLIENT_REJECTED", payload: err });
       })
