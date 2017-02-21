@@ -88,7 +88,8 @@ export default class PersonalProfile extends React.Component {
     this.middleInitial.value = taxReturn.middle_initial;
     this.lastName.value = taxReturn.last_name;
     this.provinceOfResidence.value = taxReturn.province_of_residence;
-    this.dateOfBirth.value = taxReturn.date_of_birth ? moment(taxReturn.date_of_birth).startOf('day').format('YYYY-MM-DD'):'';
+
+    this.dateOfBirth.value = taxReturn.date_of_birth ? moment.utc(taxReturn.date_of_birth).format('YYYY-MM-DD'):'';
     this.canadianCitizen.value = taxReturn.canadian_citizen;
     this.authorizeCra.value = taxReturn.authorize_cra;
     this.sin.value = taxReturn.SIN ? taxReturn.SIN : '';
