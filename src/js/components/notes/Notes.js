@@ -75,7 +75,7 @@ export default class Notes extends React.Component {
         //todo, add handler to checkbox toggle
         //todo, add logic for checkbox selected or not
         return (
-            <tr key={data.id}>
+            <tr key={data.id} class={data.done == 0 ? "" : "disabled-background"}>
                 <td>
                     {data.id}
                 </td>

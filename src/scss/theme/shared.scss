@@ -105,6 +105,9 @@ select {
     tr {
       &:nth-of-type(2n){
         background: #f9f9f9;
+        &.disabled-background{
+          background: $color-global-border-grey;
+        }
       }
       td {
         display: table-cell;
@@ -190,6 +193,10 @@ select {
 
 .full-width{
   width:100%;
+}
+
+.disabled-background{
+  background: $color-global-border-grey;
 }
 
 //border classes
