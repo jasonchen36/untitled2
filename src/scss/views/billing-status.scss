@@ -12,6 +12,9 @@
 .status-name{
   font-size: 1.55rem;
   display:inline-block;
+  &:hover{
+    cursor: pointer;
+  }
 }
 
 .status-dollar{
