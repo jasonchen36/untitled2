@@ -186,13 +186,13 @@ export default class Invoice extends React.Component {
               <thead>
               <tr>
                   <th>
-                      Hide
+                      Show
                   </th>
                   <th>
                       Line Item Description
                   </th>
                   <th>
-                      Refund/ Owing Amount
+                      Cost
                   </th>
                   <th>
                       Remove
