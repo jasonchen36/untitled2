@@ -30,7 +30,7 @@ export default class Layout extends React.Component {
 
     const { quote} = this.props;
     const quoteId = quote.id;
-    
+
     const newLineItem = { text: this.lineItemDescription.value,
       value: this.lineItemRefund.value }
 
@@ -55,8 +55,8 @@ export default class Layout extends React.Component {
     return <form onSubmit={this.addLineItem}>
         <label for="add-line-item-description">Line Item Description</label>
         <input id="add-line-item-description" type="text"  placeholder="Line Item Description" onChange={this.clickInputChange} value={this.lineItemDescription.value} name="lineItemDescription" />
-        <label for="add-line-item-refund">Refund</label>
-        <input id="add-line-item-refund" type="number" placeholder="Refund" onChange={this.clickInputChange} value={this.lineItemRefund.value} name="lineItemRefund" />
+        <label for="add-line-item-refund">Line Item Fee</label>
+        <input id="add-line-item-refund" type="number" placeholder="Line Item Fee" onChange={this.clickInputChange} value={this.lineItemRefund.value} name="lineItemRefund" />
         { renderUpdateButton(this.updateState,"Add", "Adding", "Added") }
     </form>
   }

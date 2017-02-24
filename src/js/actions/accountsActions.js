@@ -73,7 +73,7 @@ const clearChecklist = () => {
 /// UPDATE FUNCTIONS
 
 const  getAccount = (accountId) => {
-  let searchUrl = "/account/"+accountId;
+  let searchUrl = "/admin/account/"+accountId;
   
   return base.get(searchUrl);
 };

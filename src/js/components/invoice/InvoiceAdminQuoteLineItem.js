@@ -26,6 +26,10 @@ export default class InvoiceAdminQuoteLineItem extends React.Component {
   }
 
   deleteButton(){
+    if(!this.hasAdminPrivileges()) {
+      return <td></td>
+    }
+
     return <td>
       <a class="tax-item-trash-container" onClick={this.deleteLineItem}>
         <div class="tax-item-trash">
@@ -33,6 +37,10 @@ export default class InvoiceAdminQuoteLineItem extends React.Component {
         </div>
       </a>
     </td>
+  }
+
+  hasAdminPrivileges() {
+    return this.props.hasAdminPrivileges ? true : false;
   }
 
   renderQuoteList(lineItem,taxReturn) {
@@ -44,7 +52,7 @@ export default class InvoiceAdminQuoteLineItem extends React.Component {
 
       return <tr key={lineItem.id} className={lineItem.enabled ? "" : "greyed-out"} >
         <td>
-        </td><td> {tRName} (From Quote)
+        </td><td> {tRName}
         </td><td> {lineItem.value}
 
         </td>{this.deleteButton()}
