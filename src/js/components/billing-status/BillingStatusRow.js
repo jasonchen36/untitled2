@@ -53,9 +53,11 @@ export default class Layout extends React.Component {
       return <QuoteAdminUploads key={checklist.checklist_item_id} quote={quote} taxReturn={taxReturn} checklist={checklist} uploadItemFunction={uploadItemFunction} downloadItemFunction={downloadItemFunction} deleteItemFunction={deleteItemFunction} updating={updating} updated={updated} />
     });
 
-    const directDepositStatus = _.map(quoteLineItem, (lineItems) =>{
-      return this.renderDirectDeposit(lineItems.enabled == 1 ? true : false);
+    const hasDirectDeposit = _.some(quoteLineItem, (lineItem) => {
+      return lineItem.enabled === 1 && lineItem.text === "Direct Deposit";
     });
+
+    const directDepositStatus = this.renderDirectDeposit(hasDirectDeposit);
 
     return (
       <div data-quote-id={quoteId} >
