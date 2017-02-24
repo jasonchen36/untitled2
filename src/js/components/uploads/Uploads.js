@@ -5,13 +5,13 @@ import { Link  } from "react-router";
 import moment from "moment";
 import Sidebar from "../layout/Sidebar";
 
-import { fetchUser } from "../../actions/usersActions";
-import { fetchAccount, fetchTaxReturn, fetchChecklist, clearChecklist } from "../../actions/accountsActions";
 import { directDownloadChecklistItems, deleteDocument, viewedDocument } from "../../actions/uploadsActions";
 import { saveBlob } from "../../lib/saveBlob";
 
 import { renderErrors } from "../helpers/RenderErrors";
-import { loadUser } from "../../actions/loaderActions";
+import { loadUserQuote } from "../../actions/loaderActions";
+import AdminUpload from "./AdminUpload";
+import { uploadDocument, fetchChecklist } from "../../actions/checklistActions";
 
 
 @connect((store) => {
@@ -22,9 +22,12 @@ import { loadUser } from "../../actions/loaderActions";
         taxReturns:store.accounts.taxReturns,
         taxReturn:store.accounts.taxReturn,
         taxReturnDetailsFetched: store.accounts.taxReturnDetailsFetched,
-        quoteChecklist: store.accounts.quoteChecklist,
-        quoteChecklistFetched: store.accounts.quoteChecklistFetched,
-        quoteChecklistFetching: store.accounts.quoteChecklistFetching,
+        quotes:store.quotes.quotes,    
+        quoteChecklist: store.checklists.quoteChecklist,
+        quoteChecklistFetched: store.checklists.quoteChecklistFetched,
+        quoteChecklistFetching: store.checklists.quoteChecklistFetching,
+        quoteChecklistUpdating: store.checklists.updating,
+        quoteChecklistUpdated: store.checklists.updated,
         accountError: store.accounts.error
     };
 })
@@ -36,11 +39,14 @@ export default class Uploads extends React.Component {
         this.clickDownloadItem = this.handleClickDownloadItem.bind(this);
         this.clickDeleteItem = this.handleClickDeleteItem.bind(this);
         this.clickViewed = this.handleClickViewed.bind(this); 
+//        this.onChecklistItemChosen = this.handleOnChecklistItemChosen.bind(this);
+          //this.checklistItemValue= {value:-1};
+        this.uploadItem = this.handleUploadItem.bind(this);
     }
 
     componentWillMount() {
       const userId = this.props.params.userId;
-      this.props.dispatch(loadUser(userId));
+      this.props.dispatch(loadUserQuote(userId));
     };
 
     componentWillReceiveProps(nextProps) {
@@ -72,6 +78,11 @@ export default class Uploads extends React.Component {
 
       this.props.dispatch(viewedDocument(quoteId, documentId, viewed));
     }
+
+  handleUploadItem(quoteId, taxReturnId, checklistId, uploadFile) {
+
+    this.props.dispatch(uploadDocument(quoteId, taxReturnId, checklistId, uploadFile));
+  }
 
     renderUploadEntry( data,key){
         //todo, add handler to delete icon
@@ -105,9 +116,17 @@ export default class Uploads extends React.Component {
           });
     }
 
+    renderUploadSection(quote,quoteChecklist, quoteChecklistUpdating, quoteChecklistUpdated) {
+      let quoteChecklistItems = quoteChecklist && quoteChecklist.checklistitems ? quoteChecklist.checklistitems : null;
+
+      return <div>
+        <AdminUpload quote={quote} checklistItems={quoteChecklistItems} uploadItemFunction={this.uploadItem} updating={quoteChecklistUpdating} updated={quoteChecklistUpdated} />
+      </div>
+    }
+
     render() {
         //todo, pass in uploads to render
-        const { taxReturns, taxReturn,quoteChecklist, accountError} = this.props;
+        const { quotes, taxReturns, taxReturn,quoteChecklist, accountError, quoteChecklistUpdating, quoteChecklistUpdated} = this.props;
 
         let checkListItems = quoteChecklist && quoteChecklist.checklistitems ? quoteChecklist.checklistitems : [];
 
@@ -132,7 +151,9 @@ export default class Uploads extends React.Component {
                 <section class="col-sm-8 col-lg-9">
                     <h1>TAXitem Uploads</h1>
                     <div class="grid-container">
+                        {this.renderUploadSection(quotes, quoteChecklist, quoteChecklistUpdating, quoteChecklistUpdated)}
                         {renderErrors(accountError)}
+                        
                         {this.renderUploads(checklistDocuments)}
                     </div>
                 </section>

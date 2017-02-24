@@ -7,138 +7,126 @@ import { Link  } from "react-router"
 import Sidebar from "../layout/Sidebar";
 import UserOptionsHeader from "../layout/UserOptionsHeader";
 
-import { fetchUser } from "../../actions/usersActions";
-import { fetchAccount, fetchTaxReturn } from "../../actions/accountsActions";
+import { fetchAllTaxReturnStatuses, updateTaxReturn } from "../../actions/taxReturnActions";
+
+import { loadUser, loadUserQuote, refreshUpdateState } from "../../actions/loaderActions";
+import { renderTaxReturnStatusSelectionOptions } from "../helpers/RenderTaxReturnStatusSelection";
+import QuoteDetails from "./QuoteDetails"
+import BillingStatusRow from "./BillingStatusRow"
+import { directDownloadChecklistItems, deleteDocument, uploadDocument } from "../../actions/uploadsActions";
+import { uploadAdminDocument } from "../../actions/checklistActions";
+import { saveBlob } from "../../lib/saveBlob";
 
 @connect((store) => {
-    return {
-        loginuser: store.loginuser.loginuser,
-        user: store.users.user,
-        taxReturns:store.accounts.taxReturns,
-        taxReturn:store.accounts.taxReturn
-    };
+  return {
+    loginuser: store.loginuser.loginuser,
+    user: store.users.user,
+    taxReturns:store.accounts.taxReturns,
+    taxReturn:store.accounts.taxReturn,
+    quotes:store.quotes.quotes,
+    taxReturnStatuses : store.accounts.taxReturnStatuses,
+    adminChecklist: store.checklists.adminChecklist,
+    adminChecklistFetched: store.checklists.adminChecklistFetched,
+    adminChecklistFetching: store.checklists.adminChecklistFetching,
+    checklistUpdated:store.checklists.updated,
+    checklistUpdating:store.checklists.updating,
+    taxReturnsUpdated:store.accounts.taxReturnsUpdated,
+    taxReturnsUpdating:store.accounts.taxReturnsUpdating,
+  };
 })
 
 export default class BillingStatus extends React.Component {
+  constructor() {
+    super();
+    this.showDetails ={value:false};
+    this.updateTaxReturnStatus = this.handleUpdateTaxReturnStatus.bind(this);
+    this.uploadItem = this.handleUploadItem.bind(this);
+    this.downloadItem = this.handleDownloadItem.bind(this);
+    this.deleteItem = this.handleDeleteItem.bind(this);
+  }
 
-    constructor() {
-        super();
-    }
+  componentWillMount() {
+    const userId = this.props.params.userId;
 
-    componentWillMount() {
-        this.props.dispatch(fetchUser(this.props.params.userId));
-    };
+    this.props.dispatch(refreshUpdateState());
+    this.props.dispatch(loadUserQuote(userId));
+    this.props.dispatch(fetchAllTaxReturnStatuses()); 
+    
+  };
 
-    componentWillReceiveProps(nextProps) {
-    };
+  componentWillReceiveProps(nextProps) {
+  };
 
-    getDummyData(){
-        return [
-            {
-                id: 1,
-                status: 'To Be Assigned',
-                fileElectronically: 'Yes',
-                result: '20.50',
-                fee: '5.00'
-            },
-            {
-                id: 2,
-                status: 'Pending Review',
-                fileElectronically: 'No',
-                result: '15.00',
-                fee: '5.00'
-            },
-            {
-                id: 3,
-                status: 'Done',
-                fileElectronically: 'Yes',
-                result: '0.00',
-                fee: '0.00'
-            }
-        ]
-    }
+  handleUploadItem(quoteId, taxReturnId, checklistId, uploadFile) {
 
-    fetchUser(userId) {
-        this.props.dispatch(fetchUser(userId))
-    };
+    this.props.dispatch(uploadAdminDocument(quoteId, taxReturnId, checklistId, uploadFile));
+  }
 
-    getTotalBillingAmount(data){
-        var total = 0;
-        _.each(data, function(entry){
-            total += parseFloat(entry.result) + parseFloat(entry.fee);
+  handleDownloadItem(quoteId, documentId,documentName) {
+
+    directDownloadChecklistItems(quoteId,documentId)
+        .then((response) => {
+          const data = response.data;
+          const fileName = documentName;
+
+          saveBlob(fileName, response);
         });
-        return total.toFixed(2);
+  }
+
+  handleDeleteItem(quoteId,documentId,documentName) {
+    if(confirm("are you sure you want to delete document '"+documentName+"'?")) {
+      this.props.dispatch(deleteDocument(quoteId,documentId));
+    } else {
+      console.log('not deleted');
+    }
+  }
+
+
+  /// pass to children
+  handleUpdateTaxReturnStatus(taxReturnId,results) {
+    this.props.dispatch(updateTaxReturn(taxReturnId,results));
+  }
+
+  renderBillingStatusTable(taxReturns, quotes, adminChecklist, statuses, checklistUpdated, checklistUpdating, taxReturnsUpdated, taxReturnsUpdating) {
+    if(!taxReturns || taxReturns.length===0) {
+      return <div>
+        No Tax returns
+        </div>
     }
 
-    renderBillingStatusRow(data){
-        return (
-            <tr key={data.id}>
-                <td>
-                    {data.status}
-                </td>
-                <td>
-                    {data.fileElectronically}
-                </td>
-                <td>
-                    ${data.result}
-                </td>
-                <td>
-                    ${data.fee}
-                </td>
-            </tr>
-        );
-    }
+    const tableRows = taxReturns.map((taxReturn) => {
+      const quote = quotes? quotes : {};
 
-    renderBillingStatusTable(data) {
-        const tableRows = data.map(row =>this.renderBillingStatusRow(row));
-        return (
-            <table class="standard-table">
-                <thead>
-                <tr>
-                    <th>
-                        My TAXreturn Status
-                    </th>
-                    <th>
-                        File Electronically?
-                    </th>
-                    <th>
-                        Result
-                    </th>
-                    <th>
-                        Fee
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                {tableRows}
-                </tbody>
-                <tfoot>
-                <tr>
-                    <th></th>
-                    <th></th>
-                    <th>Total</th>
-                    <th>${this.getTotalBillingAmount(data)}</th>
-                </tr>
-                </tfoot>
-            </table>
-        );
-    }
+      const taxReturnChecklist =  adminChecklist && adminChecklist.checklistitems ?  _.filter(adminChecklist.checklistitems,(ac) => {
+        return ac.tax_return_id === taxReturn.id;
+      }) : [];
 
-    render() {
-        //todo, figure out what "No documents added to this package" means
-        //todo, pass in data to table
-        const { taxReturns, taxReturn} = this.props;
-        return (
-            <main class="grid-container row">
-                <Sidebar activeScreen="billingStatus" userId={this.props.params.userId}/>
-                <section class="col-sm-8 col-lg-9">
-                    <UserOptionsHeader taxReturns={taxReturns} activeTaxReturn={taxReturn}/>
-                    <h1>Billing Status</h1>
-                    <h2>Personal Questionnaire 2015</h2>
-                    <p>No documents added to this package</p>
-                    {this.renderBillingStatusTable(this.getDummyData())}
-                </section>
-            </main>
-        )
-    }
+      const taxReturnUpdated = _.some(taxReturnsUpdated,(u) => { return u===taxReturn.id; });
+      const taxReturnUpdating = _.some(taxReturnsUpdating,(u) => { return u===taxReturn.id; });
+
+      const quoteLineItem = quote && quote.quoteLineItems ? _.filter(quotes.quoteLineItems, (quoteLineItem) => {
+          return quoteLineItem.tax_return_id === taxReturn.id;
+      }) : [];
+
+      return <BillingStatusRow key={taxReturn.id} taxReturn={taxReturn} quote={quote} quoteLineItem={quoteLineItem} statuses={statuses} taxReturnAdminChecklist={taxReturnChecklist} submitFunction={this.updateTaxReturnStatus} uploadItemFunction={this.uploadItem} downloadItemFunction={this.downloadItem} deleteItemFunction={this.deleteItem} checklistUpdating={checklistUpdating} checklistUpdated={checklistUpdated} taxReturnUpdated={taxReturnUpdated} taxReturnUpdating={taxReturnUpdating} ></BillingStatusRow>
+    });
+      
+    return (<div >{tableRows}</div>);
+  }
+
+  render() {
+    //todo, figure out what "No documents added to this package" means
+    //todo, pass in data to table
+    const { taxReturns, taxReturn, quotes, adminChecklist, taxReturnStatuses, checklistUpdated, checklistUpdating, taxReturnsUpdated, taxReturnsUpdating} = this.props;
+    return (
+      <main class="grid-container row">
+        <Sidebar activeScreen="billingStatus" userId={this.props.params.userId}/>
+        <section class="col-sm-8 col-lg-9">
+          <h1>Status</h1>
+          <h2></h2>
+          {this.renderBillingStatusTable(taxReturns, quotes, adminChecklist, taxReturnStatuses, checklistUpdated, checklistUpdating,taxReturnsUpdated, taxReturnsUpdating)}
+        </section>
+      </main>
+    )
+  }
 }

@@ -1,13 +1,17 @@
 // The reducer for state involving handling taxreturns (viewing all users in the app, or details for an individual user)
 import _ from "lodash";
 import { updateListWithObjectById } from "./lib/reducerHelpers";
+import { currentYearProductId } from "../config";
 
 export default function reducer(state={
     account:null,
     taxReturns: null,
     taxReturn: null,
     taxReturnUpdated: false,
+    taxReturnsUpdated:[],
+    taxReturnsUpdating:[],
     taxReturnStatuses:null,
+    taxReturnsInPaidState:false,
     quoteChecklist: null,
     searchChanged:false,
     user: null,
@@ -23,8 +27,14 @@ export default function reducer(state={
   }, action) {
     switch (action.type) {
       // Users events
+      case "REFRESH_UPDATE_STATE": {
+        return {...state,
+          taxReturnsUpdated:[],
+          taxReturnsUpdating:[]
+        };
+      }
       case "CLEAR_TAXRETURNS": {
-        return {...state, taxReturns:null};
+        return {...state, taxReturns:null, taxReturnsInPaidState:false};
       }
       case "FETCH_TAXRETURNS": {
         return {...state, fetching: true};
@@ -35,7 +45,7 @@ export default function reducer(state={
       case "FETCH_TAX_RETURN_FULFILLED": {
         const taxReturn = action.payload.data;
         const newTaxReturns =updateListWithObjectById(state.taxReturns,taxReturn);
-        
+        const taxReturnsInPaidState = state.taxReturnsInPaidState || taxReturn.status.paid===1;
         return {
           ...state,
           fetching: false,
@@ -43,6 +53,7 @@ export default function reducer(state={
           taxReturn: taxReturn,
           taxReturns: newTaxReturns,
           taxReturnDetailsFetched: true,
+          taxReturnsInPaidState: taxReturnsInPaidState,
           taxReturnUpdated: false
         };
       }
@@ -52,7 +63,8 @@ export default function reducer(state={
       case "CLEAR_ACCOUNT": {
         return {...state, 
           account:null, 
-          taxReturns:null, 
+          taxReturns:null,
+          taxReturnsInPaidState:false,
           taxReturn:null,
           address:null,
           taxReturnDetailsFetched:false, 
@@ -63,7 +75,9 @@ export default function reducer(state={
       case "FETCH_ACCOUNT_FULFILLED": {
           //todo, account variable is not getting saved to state by taxreturns and taxreturn are
         const account = action.payload;
-        const taxReturns = account.taxReturns;
+        const taxReturns = _.filter(account.taxReturns, (tr) => {
+          return tr.product_id === currentYearProductId;
+        });
         let taxReturn = null;
         let taxReturnDetailsFetched = state.taxReturnDetailsFetched;
 
@@ -74,12 +88,17 @@ export default function reducer(state={
 
         const quoteChecklist = state.quoteChecklist && _.some(account.quotes,(quote) => { return quote.id === state.quoteChecklist.quoteId; }) ? state.quoteChecklist : null;
 
+        const taxReturnsInPaidState =  _.some(taxReturns,(tr) => {
+          return tr.status.paid===1;
+        });
+
         return {
           ...state,
           fetching: false,
           fetched: true,
           account: account,
           taxReturns:taxReturns,
+          taxReturnsInPaidState: taxReturnsInPaidState,
           taxReturn:taxReturn,
           taxReturnDetailsFetched: taxReturnDetailsFetched,
           taxReturnUpdated: false,
@@ -102,8 +121,16 @@ export default function reducer(state={
         };
       }
       case "UPDATING_TAX_RETURN": {
+        let { id } = action.payload;
+        let taxReturnsUpdating = _.union(state.taxReturnsUpdating,[id]);
+//        taxReturnsUpdating.push(action.payload.id);
+
+        let taxReturnsUpdated = _.filter(state.taxReturnsUpdated, (u) => { return u !== id});
+
         return {
           ...state,
+          taxReturnsUpdating: taxReturnsUpdating,
+          taxReturnsUpdated: taxReturnsUpdated,
           updating:true
         }
       }
@@ -132,14 +159,26 @@ export default function reducer(state={
         };
       }
       case "UPDATE_TAX_RETURN_REJECTED": {
+        let { id,error } = action.payload;
+
+        let taxReturnsUpdating = _.filter(state.taxReturnsUpdating,(u) => { return u !== id});
+
         return {
           ...state,
-          error:action.payload
+          taxReturnsUpdating: taxReturnsUpdating,
+          error:error
         };
       }
       case "UPDATE_TAX_RETURN_FULFILLED": {
         const taxReturn = action.payload.data;
         const newTaxReturns =updateListWithObjectById(state.taxReturns,taxReturn); 
+
+        const id  = taxReturn.id;
+        const taxReturnsUpdated = _.union(state.taxReturnsUpdated,[id]);
+        const taxReturnsUpdating = _.filter(state.taxReturnsUpdating,(u) => { return u !== id});
+
+        const taxReturnsInPaidState = state.taxReturnsInPaidState || taxReturn.status.paid===1;
+
 
         return {
           ...state,
@@ -147,6 +186,9 @@ export default function reducer(state={
           updating:false,
           taxReturn: taxReturn,
           taxReturns:newTaxReturns,
+          taxReturnsInPaidState: taxReturnsInPaidState,
+          taxReturnsUpdated:taxReturnsUpdated,
+          taxReturnsUpdating: taxReturnsUpdating,
           taxReturnUpdated:true
         };
       }

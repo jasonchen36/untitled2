@@ -11,6 +11,9 @@ Use helper classes to style elements that otherwise wouldn't need to have a full
 h1,h2,h3,h4,h5,p,a,blockquote,span,div,input,textarea,select,option {
   @extend .f--futura-heavy;
   color: $color-global-text-grey;
+  .font-red{
+    color: red;
+  }
 }
 
 img {
@@ -18,6 +21,7 @@ img {
 }
 
 input, textarea {
+  font-family: FuturaBook, Arial, sans-serif !important;
   $width:  calc(100% - 1rem - 2px);//100% - padding*2 - border width*2
   max-width: $width;
   width: $width;
@@ -101,6 +105,9 @@ select {
     tr {
       &:nth-of-type(2n){
         background: #f9f9f9;
+        &.disabled-background{
+          background: $color-global-border-grey;
+        }
       }
       td {
         display: table-cell;
@@ -182,6 +189,36 @@ select {
 
 .no-margin {
   margin: 0;
+}
+
+.full-width{
+  width:100%;
+}
+
+.disabled-background{
+  background: $color-global-border-grey;
+}
+
+//border classes
+//-----------------------------
+.border-top-dark-gray{
+  border-top: 1px solid $color-global-border-grey;
+}
+
+.border-bottom-dark-grey{
+  border-bottom: 1px solid $color-global-border-grey;
+}
+
+.border-left-dark-grey{
+  border-left: 1px solid $color-global-border-grey;
+}
+
+.border-right-dark-grey{
+  border-right: 1px solid $color-global-border-grey;
+}
+
+.border-none{
+  border: 0 none;
 }
 
 //typography

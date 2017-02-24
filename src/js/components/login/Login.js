@@ -75,9 +75,10 @@ export default class Layout extends React.Component {
                         <input id="login-password" ref={(input) => {this.password = input;}} type="password"  placeholder="Password" />
                         <button id="login-submit" onClick={this.loginLoginuser.bind(this)} class="button" type="submit">Sign In</button>
                     </form>
-                    {renderErrors(error)}                                                        
+                    {renderErrors(error)}
                     <div class="text-center">
-                        <p>Don't have an account? <Link to={"/register"}>Sign up here »</Link></p>
+                        <p>Don't have a taxpro/admin account? <Link to={"/register"}>Sign up here »</Link></p>
+                        <p>Create new user account? <a href={baseWEBUrl+"/tax-profile"}>Sign up here »</a></p>
                         <p>Forgot password? <a href={baseWEBUrl+"/forgot-password"}>Reset password here »</a></p>
                     </div>
                 </section>

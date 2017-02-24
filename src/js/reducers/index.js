@@ -10,7 +10,8 @@ import users from "./usersReducer"
 import loginuser from "./loginuserReducer"
 import messages from "./messagesReducer"
 import notes from "./notesReducer"
-
+import quotes from "./quotesReducer"
+import checklists from "./checklistsReducer"
 
 export default combineReducers({
   users,
@@ -18,5 +19,7 @@ export default combineReducers({
   loginuser,
   messages,
   notes,
+  quotes,
+  checklists,
   routing: routerReducer
 });

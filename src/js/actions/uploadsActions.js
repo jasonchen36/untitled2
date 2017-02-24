@@ -2,19 +2,6 @@ import * as base from "./lib/baseActions";
 import { downloadFile } from "./lib/directDownloadActions";
 import _ from "lodash";
 
-/// These actions may be outside of redux, as we don't want to save the PDF in memory?
-export function fetchUploads(quoteId, documentId) {
-  return function(dispatch) {
-    let url = '/quote/'+quoteId+'/document/'+documentId;    
-    return downloadFile(quoteId)
-      .then((response) => {
-        dispatch({type:"FETCH_DOWNLOAD_UPLOADS_FULFILLED",payload: response});
-      }).catch((err) => {
-        dispatch({type:"FETCH_DOWNLOAD_UPLOADS_REJECTED",payload: err});
-      });
-  };
-};
-
 export function directDownloadChecklistItems(quoteId, documentId) {
   let url = '/quote/'+quoteId+'/document/'+documentId;    
 
@@ -29,6 +16,33 @@ export function deleteDocument(quoteId, documentId) {
         dispatch({type:"DELETE_DOCUMENT_FULFILLED",payload:{quoteId:parseInt(quoteId), documentId: parseInt(documentId)}});
       }).catch((err) => {
         dispatch({type:"DELETE_DOCUMENT_REJECTED",payload:err});
+      });
+  };
+};
+
+export function uploadDocument(quoteId, taxReturnId, checklistId, file) {
+  return function(dispatch) {
+    let url = '/quote/'+quoteId+'/document';
+
+    let postFormData = {
+      uploadFileName: file
+    };
+
+    if(typeof taxReturnId !== 'undefined') {
+      postFormData.taxReturnId = taxReturnId;
+    }
+
+    if(typeof checklistId !== 'undefined') {
+      postFormData.checklistItemId = checklistId;
+    }
+
+    return base.postFile(url,postFormData)
+      .then((response) => {
+        let documentId = response.data.documentId;
+        dispatch({type:"UPLOAD_DOCUMENT_FULFILLED",payload:{quoteId:parseInt(quoteId), documentId: parseInt(documentId)}});
+
+      }).catch((err) => {
+        dispatch({type:"UPLOAD_DOCUMENT_REJECTED",payload:err});
       });
   };
 };

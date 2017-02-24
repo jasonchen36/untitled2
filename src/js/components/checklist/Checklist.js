@@ -11,7 +11,6 @@ import { currentYearProductId } from "../../config";
 
 import { fetchUser } from "../../actions/usersActions";
 import { directDownloadChecklistPdf } from "../../actions/checklistActions";
-import { fetchAccount, fetchTaxReturn } from "../../actions/accountsActions";
 import { saveBlob } from "../../lib/saveBlob";
 import { loadUser } from "../../actions/loaderActions";
 
