@@ -32,7 +32,7 @@ export default class Notes extends React.Component {
 
     componentWillMount() {
         const userId = this.props.params.userId;
-        this.props.dispatch(fetchNotes(userId));      
+        this.props.dispatch(fetchNotes(userId));
     };
 
     componentWillReceiveProps(nextProps) {
@@ -62,7 +62,7 @@ export default class Notes extends React.Component {
     handleSendNote(e) {
         const message = this.note_text.value;
         let {  userId } = e.currentTarget.dataset;
-        
+
         e.preventDefault();
          this.props.dispatch(createNote(userId, message));
     };
@@ -87,12 +87,12 @@ export default class Notes extends React.Component {
         //todo, add handler to checkbox toggle
         //todo, add logic for checkbox selected or not
         return (
-            <tr key={data.id}>
+            <tr key={data.id} class={data.done == 0 ? "" : "disabled-background"}>
                 <td>
                     {data.id}
                 </td>
                 <td>
-                    {moment(data.create_at).format('YYYY-MM-DD HH:mm')}
+                    {moment(data.updated_at).format('YYYY-MM-DD HH:mm')}
                 </td>
                 <td>
                     {data.note}
@@ -145,15 +145,15 @@ export default class Notes extends React.Component {
       const { notes, error } = this.props;
       const userId = this.props.params.userId;
 
-      const orderedNotes = _.orderBy(notes,['create_at','id'],['desc','desc'])
+      const orderedNotes = _.orderBy(notes,['updated_at','id'],['desc','desc'])
       return (
           <main class="grid-container row">
               <Sidebar activeScreen="notes" userId={userId}/>
               <section class="col-sm-8 col-lg-9">
                   <h1>Notes</h1>
                   {this.renderSendNote(userId)}
-                  {renderErrors(error)}                
-                  
+                  {renderErrors(error)}
+
                   {this.renderNotesTable(orderedNotes)}
               </section>
           </main>

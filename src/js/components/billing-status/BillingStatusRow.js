@@ -20,7 +20,7 @@ export default class Layout extends React.Component {
     } else {
       return <div class="status-container">
               <i class="fa fa-check-circle" aria-hidden="true"></i>
-              <div class="status-direct-deposit">Direct Deposit</div>
+              <div class="status-direct-deposit f--futura-book">Direct Deposit</div>
             </div>;
     }
   }
@@ -38,7 +38,7 @@ export default class Layout extends React.Component {
   }
 
 
-  renderBillingStatusRow(taxReturn, quote, statuses, taxReturnAdminChecklist, submitFunction, uploadItemFunction, downloadItemFunction, deleteItemFunction, checklistUpdating, checklistUpdated, taxReturnUpdated, taxReturnUpdating) {
+  renderBillingStatusRow(taxReturn, quote, quoteLineItem, statuses, taxReturnAdminChecklist, submitFunction, uploadItemFunction, downloadItemFunction, deleteItemFunction, checklistUpdating, checklistUpdated, taxReturnUpdated, taxReturnUpdating) {
     const quoteId = quote.id;
 
     const showDetails = (sd, detailId) => {
@@ -53,21 +53,25 @@ export default class Layout extends React.Component {
       return <QuoteAdminUploads key={checklist.checklist_item_id} quote={quote} taxReturn={taxReturn} checklist={checklist} uploadItemFunction={uploadItemFunction} downloadItemFunction={downloadItemFunction} deleteItemFunction={deleteItemFunction} updating={updating} updated={updated} />
     });
 
+    const directDepositStatus = _.map(quoteLineItem, (lineItems) =>{
+      return this.renderDirectDeposit(lineItems.enabled == 1 ? true : false);
+    });
+
     return (
       <div data-quote-id={quoteId} >
         <div data-quote-id={quoteId} onClick={this.toggleDetails}>
           <div class="status-container">
-            <div class="status-name">
+            <div class="status-name f--futura-book">
               {taxReturn.first_name}{taxReturn.last_name ? ' ' : ''}{taxReturn.last_name}
             </div>
-            <div class="status">
+            <div class="status f--futura-book">
               STATUS: <span class="status-value">{ taxReturn && taxReturn.status ? taxReturn.status.name : 'no status'}</span>
             </div>
           </div>
-          { this.renderDirectDeposit(false) }
+          { directDepositStatus }
           <div class="status-dollar">
-            <div>
-              ${taxReturn.refund}
+            <div class={taxReturn.refund < 0 ? "font-red" : ""}>
+              {taxReturn.refund < 0 ? "-" + "$" + Math.abs(taxReturn.refund) : "" + "$" + Math.abs(taxReturn.refund)}
             </div>
           </div>
         </div>
@@ -84,10 +88,10 @@ export default class Layout extends React.Component {
   render() {
     //todo, figure out what "No documents added to this package" means
     //todo, pass in data to table
-    const { taxReturn, quote, statuses, submitFunction, uploadItemFunction, downloadItemFunction, deleteItemFunction, taxReturnAdminChecklist, checklistUpdating, checklistUpdated, taxReturnUpdated, taxReturnUpdating } = this.props;
+    const { taxReturn, quote, quoteLineItem, statuses, submitFunction, uploadItemFunction, downloadItemFunction, deleteItemFunction, taxReturnAdminChecklist, checklistUpdating, checklistUpdated, taxReturnUpdated, taxReturnUpdating } = this.props;
    
     return <div>
-      {this.renderBillingStatusRow(taxReturn,quote, statuses, taxReturnAdminChecklist, submitFunction, uploadItemFunction, downloadItemFunction, deleteItemFunction, checklistUpdating, checklistUpdated, taxReturnUpdated, taxReturnUpdating)}
+      {this.renderBillingStatusRow(taxReturn,quote, quoteLineItem, statuses, taxReturnAdminChecklist, submitFunction, uploadItemFunction, downloadItemFunction, deleteItemFunction, checklistUpdating, checklistUpdated, taxReturnUpdated, taxReturnUpdating)}
     </div>
   }
 }

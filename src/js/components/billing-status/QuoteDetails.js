@@ -62,10 +62,13 @@ export default class Layout extends React.Component {
 
     //TODO: submit correctly
     let data = {
-      statusId: this.selectedStatus.value,
       refund: this.taxReturnRefund.value,
       details: this.taxReturnDetails.value
     };
+
+    if(this.selectedStatus.value !== this.props.taxReturn.status.id) {
+      data.statusId = this.selectedStatus.value;
+    }
 
     let { taxReturnId } = e.target.dataset;
 

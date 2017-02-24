@@ -104,7 +104,11 @@ export default class BillingStatus extends React.Component {
       const taxReturnUpdated = _.some(taxReturnsUpdated,(u) => { return u===taxReturn.id; });
       const taxReturnUpdating = _.some(taxReturnsUpdating,(u) => { return u===taxReturn.id; });
 
-      return <BillingStatusRow key={taxReturn.id} taxReturn={taxReturn} quote={quote} statuses={statuses} taxReturnAdminChecklist={taxReturnChecklist} submitFunction={this.updateTaxReturnStatus} uploadItemFunction={this.uploadItem} downloadItemFunction={this.downloadItem} deleteItemFunction={this.deleteItem} checklistUpdating={checklistUpdating} checklistUpdated={checklistUpdated} taxReturnUpdated={taxReturnUpdated} taxReturnUpdating={taxReturnUpdating} ></BillingStatusRow>
+      const quoteLineItem = quote && quote.quoteLineItems ? _.filter(quotes.quoteLineItems, (quoteLineItem) => {
+          return quoteLineItem.tax_return_id === taxReturn.id;
+      }) : [];
+
+      return <BillingStatusRow key={taxReturn.id} taxReturn={taxReturn} quote={quote} quoteLineItem={quoteLineItem} statuses={statuses} taxReturnAdminChecklist={taxReturnChecklist} submitFunction={this.updateTaxReturnStatus} uploadItemFunction={this.uploadItem} downloadItemFunction={this.downloadItem} deleteItemFunction={this.deleteItem} checklistUpdating={checklistUpdating} checklistUpdated={checklistUpdated} taxReturnUpdated={taxReturnUpdated} taxReturnUpdating={taxReturnUpdating} ></BillingStatusRow>
     });
       
     return (<div >{tableRows}</div>);
