@@ -7,7 +7,7 @@ import Sidebar from "../layout/Sidebar";
 import UserOptionsHeader from "../layout/UserOptionsHeader";
 
 import { fetchUser } from "../../actions/usersActions";
-import { fetchNotes, markAsDone, createNote } from "../../actions/notesActions";
+import { fetchNotes, markAsDone, createNote, deleteNote } from "../../actions/notesActions";
 import { renderErrors } from "../helpers/RenderErrors";
 
 
@@ -26,7 +26,8 @@ export default class Notes extends React.Component {
     constructor() {
         super();
         this.sendNote = this.handleSendNote.bind(this);
-        this.clickDone = this.handleClickDone.bind(this);
+        this.clickDone = this.handleClickDone.bind(this);  
+        this.deleteNote = this.handleDeleteNote.bind(this);
     }
 
     componentWillMount() {
@@ -46,6 +47,17 @@ export default class Notes extends React.Component {
         }
     };
 
+    handleDeleteNote(e) {
+      e.preventDefault();
+      let { userId, noteId } = e.currentTarget.dataset;
+
+      if(confirm("Are you sure you want to delete this note?")) {
+
+      this.props.dispatch(deleteNote(userId, noteId));
+      } else {
+        console.log('delete canceled');
+      }
+    };
 
     handleSendNote(e) {
         const message = this.note_text.value;
@@ -87,6 +99,11 @@ export default class Notes extends React.Component {
                 </td>
                 <td class="text-center">
                     <input name="isDone" data-user-id={data.user_id} data-note-id={data.id} checked={data.done} data-done={data.done} onChange={this.clickDone} type="checkbox" />
+                    <a class="tax-item-trash-container" data-note-id={data.id} data-user-id={data.user_id} onClick={this.deleteNote}>
+                      <div class="tax-item-trash">
+                        <i class="fa fa-trash-o"></i>
+                      </div>
+                    </a>
                 </td>
             </tr>
         );
