@@ -122,7 +122,7 @@ export default class BillingStatus extends React.Component {
       <main class="grid-container row">
         <Sidebar activeScreen="billingStatus" userId={this.props.params.userId}/>
         <section class="col-sm-8 col-lg-9">
-          <h1></h1>
+          <h1>Status</h1>
           <h2></h2>
           {this.renderBillingStatusTable(taxReturns, quotes, adminChecklist, taxReturnStatuses, checklistUpdated, checklistUpdating,taxReturnsUpdated, taxReturnsUpdating)}
         </section>
