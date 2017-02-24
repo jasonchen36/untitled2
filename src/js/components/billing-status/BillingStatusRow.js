@@ -54,7 +54,7 @@ export default class Layout extends React.Component {
     });
 
     const hasDirectDeposit = _.some(quoteLineItem, (lineItem) => {
-      return lineItem.enabled === 1 && lineItem.text === "Direct Deposit"
+      return lineItem.enabled === 1 && lineItem.text === "Direct Deposit";
     });
 
     const directDepositStatus = this.renderDirectDeposit(hasDirectDeposit);
