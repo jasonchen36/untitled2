@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 
 import { Link } from "react-router";
 
-import { fetchUsers,fetchTaxPros, deleteUser, updateSearchTerms } from "../../actions/usersActions";
+import { fetchUsers,fetchTaxPros, deleteUser, updateSearchTerms, clearSearchTerms } from "../../actions/usersActions";
 import _ from "lodash";
 import moment from "moment";
 
@@ -36,11 +36,13 @@ export default class Users extends React.Component {
     this.sortById = this.handleSortById.bind(this);
     this.fetchUsers = this.handleFetchUsers.bind(this);
     this.clickPage = this.handleClickPage.bind(this);
+    this.refreshUserSearch = this.handleRefreshUserSearch.bind(this);
+    this.clearUserFilters = this.handleClearUserFilters.bind(this);
   }
 
 
   componentWillMount() {
-    this.props.dispatch(fetchUsers());
+    this.refreshUserSearch();
     this.props.dispatch(fetchTaxPros());
     this.props.dispatch(fetchAllTaxReturnStatuses());
     
@@ -57,7 +59,7 @@ export default class Users extends React.Component {
   };
 
   componentWillReceiveProps(nextProps) {
-    if(this.searchTermsNotInQuery(nextProps.userSearchTerms,nextProps.location.query)) {
+    if(this.searchTermsNotInQuery(nextProps.userSearchTerms, nextProps.location.query)) {
       let objectQuery = {};
 
       _.each(nextProps.userSearchTerms,(ust) => {
@@ -109,6 +111,12 @@ export default class Users extends React.Component {
     if(action  && action==="delete" && userId) {
       this.deleteUser(userName, userId);
     }
+  }
+
+  handleRefreshUserSearch() {
+    const oldSearchTerms = this.props.userSearchTerms;
+
+    this.props.dispatch(updateSearchTerms(oldSearchTerms,[]));
   }
 
   handleSortByName(e) {
@@ -255,11 +263,16 @@ export default class Users extends React.Component {
     }
    }
 
+  handleClearUserFilters(e) {
+    this.props.dispatch(clearSearchTerms());
+  }
+
   renderTableFilters(taxPros,statuses){
     //todo, populate taxpros and status from db
     //todo, add event handlers to filters
     return (
       <div id="users-table-filters" class="text-right">
+ 
         <label class="col">Filter by:</label>
         <input class="col" type="text" placeholder="User Name" onKeyDown={this.handleNameFilterKeyDown.bind(this)} />
         <select class="col" onChange={this.handleTaxProSelected.bind(this)}>
@@ -268,6 +281,7 @@ export default class Users extends React.Component {
         <select class="col" onChange={this.handleStatusSelected.bind(this)}>
           {renderTaxReturnStatusSelectionOptions(statuses)}        
         </select>
+        <a onClick={this.clearUserFilters}>Clear Filters</a>
       </div>
     );
   }

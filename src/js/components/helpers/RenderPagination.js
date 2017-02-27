@@ -66,6 +66,7 @@ const getPageNumbers = function(currentPage, totalPages, maxPages, minPagesAtSta
 const renderPageNumbers = function(pageNumbers, currentPage, totalPages) {
   let renderedPageNumbers = [];
   let dotdotdot= false;
+  let dotdotdotNumber = 0;
 
     for(let i=1; i<=totalPages; i++) {
       if(_.some(pageNumbers,(pn) => {return pn===i;})) {
@@ -81,7 +82,8 @@ const renderPageNumbers = function(pageNumbers, currentPage, totalPages) {
         renderedPageNumbers.push(pageNumber);
       } else if(dotdotdot===false) {
         dotdotdot=true;
-        renderedPageNumbers.push(<li className="dotdotdot-page" key={-3}>...</li>);
+        dotdotdotNumber++;
+        renderedPageNumbers.push(<li className="dotdotdot-page" key={'dotdotdot'+dotdotdotNumber}>...</li>);
       }
     }
 
