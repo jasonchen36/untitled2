@@ -99,10 +99,8 @@ export default class Notes extends React.Component {
                 </td>
                 <td class="text-center">
                     <input name="isDone" data-user-id={data.user_id} data-note-id={data.id} checked={data.done} data-done={data.done} onChange={this.clickDone} type="checkbox" />
-                    <a class="tax-item-trash-container" data-note-id={data.id} data-user-id={data.user_id} onClick={this.deleteNote}>
-                      <div class="tax-item-trash">
+                    <a class="tax-item-trash-container-inline" data-note-id={data.id} data-user-id={data.user_id} onClick={this.deleteNote}>
                         <i class="fa fa-trash-o"></i>
-                      </div>
                     </a>
                 </td>
             </tr>
