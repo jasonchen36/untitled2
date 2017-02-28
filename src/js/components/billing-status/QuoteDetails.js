@@ -21,7 +21,7 @@ export default class Layout extends React.Component {
     this.selectedStatus = {value:-1};
     this.taxReturnRefund = {value:0};
     this.taxReturnDetails = {value:''};
-    this.updateState = {value:null};    
+    this.updateState = {value:null};
   }
 
   componentWillReceiveProps(nextProps) {
@@ -33,12 +33,12 @@ export default class Layout extends React.Component {
       this.selectedStatus.value = 0;
     }
 
-    this.taxReturnRefund.value = taxReturn.refund; 
+    this.taxReturnRefund.value = taxReturn.refund;
     this.taxReturnDetails.value = taxReturn.details;
     this.updateState.value = updateState(nextProps.updating, nextProps.updated);
-    
+
   };
-  
+
 
   handleUploadItem(e) {
     let { quoteId } = e.target.dataset;
@@ -89,10 +89,10 @@ export default class Layout extends React.Component {
 
   renderDownloadTaxSummary(data) {
     return <div>
-      <a class="tax-summary" data-quote-id={data.id}  data-document-name={data.name} onClick={this.downloadItem}>           
+      <a class="tax-summary" data-quote-id={data.id}  data-document-name={data.name} onClick={this.downloadItem}>
         Tax Summary
       </a>
-      <a class="tax-summary" data-quote-id={data.id} data-document-name={data.name} onClick={this.uploadItem}>           
+      <a class="tax-summary" data-quote-id={data.id} data-document-name={data.name} onClick={this.uploadItem}>
         Upload
       </a>
       <a class="tax-summary" data-quote-id={data.id} data-document-name={data.name} onClick={this.deleteItem}>
@@ -106,13 +106,13 @@ export default class Layout extends React.Component {
   renderStatus(taxReturn, statuses) {
     let filteredStatuses = _.filter(statuses, (s) => {
 
-      return  s.id===taxReturn.status.id || 
+      return  s.id===taxReturn.status.id ||
         _.some(taxReturn.statusChanges,(sc) => {
-          return s.id===sc.end_status_id 
+          return s.id===sc.end_status_id
         });
     });
 
-    filteredStatuses = _.map(filteredStatuses, 
+    filteredStatuses = _.map(filteredStatuses,
       (fs) => {
         return {
           id: fs.id,
@@ -121,7 +121,7 @@ export default class Layout extends React.Component {
     });
 
     return <select class="col picker-details-status" name="selectedStatus" onChange={this.clickInputChange} value={this.selectedStatus.value}>
-      {renderSelectionOptions(filteredStatuses, "select status")}        
+      {renderSelectionOptions(filteredStatuses, "select status")}
     </select>
   }
 
@@ -131,14 +131,14 @@ export default class Layout extends React.Component {
     }
 
     const id = quote.id;
-   
+
 
     return (
       <div data-id={quote.id} class="full-width">
         <form id={inputId("form",id)} data-tax-return-id={taxReturn.id} onSubmit={this.submitChanges}>
           <label for={inputId("status",id)}>STATUS:</label>
           { this.renderStatus(taxReturn,statuses) }
-
+          <label for={inputId("return",id)}>REFUND AMOUNT:</label>
           <input id={inputId("return",id)} class="textfield-tax-refund" type="number" name="taxReturnRefund" placeholder="return" value={this.taxReturnRefund.value} onChange={this.clickInputChange} />
           <div class="quote-details-container">
             <label for={inputId("details",id)}>DETAILS:</label>
@@ -161,4 +161,3 @@ export default class Layout extends React.Component {
     );
   };
 }
-
