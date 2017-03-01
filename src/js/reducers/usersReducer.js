@@ -32,11 +32,20 @@ export default function reducer(state={
         const users = action.payload.data.users;
         const usersCount = action.payload.data.count;
 
+        let usersPageTerm = _.find(action.payload.searchTerms,(st) => { return st.key==='page';});
+        let usersPage = state.usersPage;
+        
+        if(usersPageTerm) {
+          usersPage = _.parseInt(usersPageTerm.val);
+        }
+
+
         return {
           ...state,
           fetching: false,
           fetched: true,
           users: users,
+          usersPage:usersPage,
           usersCount: usersCount,
           userSearchTerms:action.payload.searchTerms
         };
