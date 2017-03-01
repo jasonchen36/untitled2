@@ -21,8 +21,8 @@ export default class InvoiceAdminQuoteLineItem extends React.Component {
     const { quoteLineItem, taxReturn } = this.props;
     const quoteId = quoteLineItem.quote_id;
     const quoteLineItemId = quoteLineItem.id;
-    
-    this.props.deleteLineItemHandler(quoteId, quoteLineItemId); 
+
+    this.props.deleteLineItemHandler(quoteId, quoteLineItemId);
   }
 
   deleteButton(){
@@ -50,10 +50,10 @@ export default class InvoiceAdminQuoteLineItem extends React.Component {
       tRName += lineItem && lineItem.text && tRName.length>0 ? " - " : "";
       tRName += lineItem && lineItem.text ? lineItem.text : "";
 
-      return <tr key={lineItem.id} className={lineItem.enabled ? "" : "greyed-out"} >
+      return <tr key={lineItem.id}>
         <td>
-        </td><td> {tRName}
-        </td><td> {lineItem.value}
+        </td><td className={lineItem.enabled ? "" : "greyed-out"}> {tRName}
+        </td><td className={lineItem.enabled ? "" : "greyed-out"}> {lineItem.value}
 
         </td>{this.deleteButton()}
         </tr>

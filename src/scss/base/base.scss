@@ -3,5 +3,12 @@
 }
 
 .greyed-out {
-  color:#CCC;
+  color:grey !important;
+}
+
+.tax-item-trash-container-inline {
+  float:right;
+  display:inline-block;
+  text-transform: uppercase;
+
 }

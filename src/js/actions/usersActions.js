@@ -6,13 +6,29 @@ import { currentYearProductId } from "../config";
 
 
 /// Fetch a list of users, optionally with search Terms
-export function fetchUsers(searchTerms) {
+const fetchUsers = (searchTerms) => {
   return function(dispatch) {
-      return getUsers(dispatch,searchTerms);
+    let searchUrl = "/users";
+    
+    if(searchTerms || currentYearProductId) {
+      searchUrl+=searchTermsToString(searchTerms);
+    }
+  
+    return base.get(searchUrl)
+      .then((response) => {
+        let result = { searchTerms: searchTerms, data: response.data };
+  
+        dispatch({type: "FETCH_USERS_FULFILLED", payload:  result});
+  
+        return result;
+      })
+      .catch((err) => {
+        dispatch({type: "FETCH_USERS_REJECTED", payload: err});
+      });
   };
 }
 
-export function fetchTaxPros() {
+const fetchTaxPros = () => {
   let searchUrl = "/users?role=TaxPro&perPage=all";
   
   return function(dispatch) {
@@ -73,7 +89,7 @@ const getUsers = (dispatch, searchTerms) => {
     });
 }
 
-export function updateSearchTerms(searchTerms,newSearchTerms) {
+const updateSearchTerms = (searchTerms,newSearchTerms) => {
   return function(dispatch) {
     let  newTermResults =  _.cloneDeep(newSearchTerms);
     newTermResults = _.concat(newTermResults,getNewOrderAscendingSearchTerm(searchTerms,newSearchTerms));
@@ -92,9 +108,80 @@ export function updateSearchTerms(searchTerms,newSearchTerms) {
 
     dispatch({type:"SEARCH_TERMS_UPDATED",payload:newTermResults});
 
-    getUsers(dispatch,newTermResults);
+    fetchUsers(newTermResults)(dispatch);
   } 
 }
+
+const clearSearchTerms = () => {
+  return function(dispatch) {
+    const newTermResults = [];
+
+    dispatch({type:"SEARCH_TERMS_UPDATED",payload:newTermResults});
+
+    fetchUsers(newTermResults)(dispatch);
+  } 
+}
+
+/// Fetch user details by id
+const fetchUser = (id) => {
+  return function(dispatch) {
+    return getUser(id)
+      .then((response) => {
+        dispatch( { type: "FETCH_USER_FULFILLED", payload: response.data});
+
+        return response;
+      });
+  };
+};
+
+/// add a user
+///TODO: implement
+const addUser = (id, text) => {
+  return {
+    type: 'ADD_USER',
+    payload: {
+      id,
+      text,
+    },
+  };
+};
+
+const getUser = (id) => {
+  return  base.get("/users/"+id)
+};
+
+/// update a user
+/// id: the user's id
+/// updateValues : { email:"email",first_name:"new firstname", last_name:"last_name", "phone:"phone", role: "Admin"/"Customer"/"Taxpro" } Only include fields that are to be changed (overwritten)
+const updateUser = (id, updatedValues) => {
+  // update the user 
+  return function(dispatch) {
+    dispatch({type: "UPDATE_USER", payload: null });
+
+    return base.put("/users/"+id,updatedValues)
+      .then((response) => {
+        return getUser(id);
+      })
+      .then((response) => {
+        dispatch( { type: "UPDATE_USER_FULFILLED", payload: response.data });     
+      });
+  };
+};
+
+/// delete the user
+/// id: the id of the user to delete. Be careful!
+const deleteUser =(id) => {
+
+  return function(dispatch) {
+    base.del("/users/"+id)
+      .then((response) => {
+        dispatch( { type: 'DELETE_USER_FULFILLED', payload: id});
+      });
+  };
+};
+
+
+/// Help functions
 
 const getNewOrderAscendingSearchTerm = (searchTerms,newSearchTerms) => {
   let orderAscending = { key:"orderAscending", val:"true"};
@@ -122,60 +209,15 @@ const searchTermsToString = (searchTerms) => {
   return asString? "?product="+currentYearProductId+"&"+asString: "?product="+currentYearProductId;
 };
 
-/// Fetch user details by id
-export function fetchUser(id) {
-  return function(dispatch) {
-    return getUser(id)
-      .then((response) => {
-        dispatch( { type: "FETCH_USER_FULFILLED", payload: response.data});
 
-        return response;
-      });
-  };
-};
 
-/// add a user
-///TODO: implement
-export function addUser(id, text) {
-  return {
-    type: 'ADD_USER',
-    payload: {
-      id,
-      text,
-    },
-  };
-};
-
-const getUser = (id) => {
-  return  base.get("/users/"+id)
-};
-
-/// update a user
-/// id: the user's id
-/// updateValues : { email:"email",first_name:"new firstname", last_name:"last_name", "phone:"phone", role: "Admin"/"Customer"/"Taxpro" } Only include fields that are to be changed (overwritten)
-export function updateUser(id, updatedValues) {
-  // update the user 
-  return function(dispatch) {
-    dispatch({type: "UPDATE_USER", payload: null });
-
-    return base.put("/users/"+id,updatedValues)
-      .then((response) => {
-        return getUser(id);
-      })
-      .then((response) => {
-        dispatch( { type: "UPDATE_USER_FULFILLED", payload: response.data });     
-      });
-  };
-};
-
-/// delete the user
-/// id: the id of the user to delete. Be careful!
-export function deleteUser(id) {
-
-  return function(dispatch) {
-    base.del("/users/"+id)
-      .then((response) => {
-        dispatch( { type: 'DELETE_USER_FULFILLED', payload: id});
-      });
-  };
-};
+export {
+  fetchUsers,
+  fetchTaxPros,
+  updateSearchTerms,
+  clearSearchTerms,
+  fetchUser,
+  addUser,
+  updateUser,
+  deleteUser
+}

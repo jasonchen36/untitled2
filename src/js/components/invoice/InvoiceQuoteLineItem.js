@@ -24,8 +24,8 @@ export default class InvoiceQuoteLineItem extends React.Component {
 
     // toggle
     const enable = quoteLineItem.enabled === 1 ? 0 : 1;
-    
-    this.props.hideLineHandler(quoteId, quoteLineItemId, enable); 
+
+    this.props.hideLineHandler(quoteId, quoteLineItemId, enable);
   }
 
   hasAdminPrivileges() {
@@ -47,11 +47,11 @@ export default class InvoiceQuoteLineItem extends React.Component {
       tRName += lineItem && lineItem.text && tRName.length>0 ? " - " : "";
       tRName += lineItem && lineItem.text ? lineItem.text : "";
 
-      return <tr key={lineItem.id} className={lineItem.enabled ? "" : "greyed-out"} >
+      return <tr key={lineItem.id}>
         {this.getCheckbox(lineItem)}
-        <td> {tRName} (From Quote)
-        </td><td> {lineItem.value}
-        </td><td> {!lineItem.original_quote}
+        <td className={lineItem.enabled ? "" : "greyed-out"}> {tRName} (From Quote)
+        </td><td className={lineItem.enabled ? "" : "greyed-out"}> {lineItem.value}
+        </td><td className={lineItem.enabled ? "" : "greyed-out"}> {!lineItem.original_quote}
         </td>
         </tr>
   }

@@ -57,6 +57,10 @@ export default class Layout extends React.Component {
       return lineItem.enabled === 1 && lineItem.text === "Direct Deposit";
     });
 
+
+    const showMore = this.showDetails.value ? (<a class="fa fa-toggle-up" aria-hidden="true"></a>) :(<a class="fa fa-toggle-down" aria-hidden="true"></a>) ;
+    
+
     const directDepositStatus = this.renderDirectDeposit(hasDirectDeposit);
 
     return (
@@ -74,6 +78,9 @@ export default class Layout extends React.Component {
           <div class="status-dollar">
             <div class={taxReturn.refund < 0 ? "font-red" : ""}>
               {taxReturn.refund < 0 ? "-" + "$" + Math.abs(taxReturn.refund) : "" + "$" + Math.abs(taxReturn.refund)}
+            </div>
+            <div>
+            {showMore}
             </div>
           </div>
         </div>
