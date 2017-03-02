@@ -146,7 +146,7 @@ export default class Layout extends React.Component {
         <form id={inputId("form",id)} data-tax-return-id={taxReturn.id} onSubmit={this.submitChanges}>
           <label for={inputId("status",id)}>STATUS:</label>
           { this.renderStatus(taxReturn,statuses) }
-          <label for={inputId("return",id)}>REFUND AMOUNT:</label>
+          <label for={inputId("return",id)}>RESULTS:</label>
           <input id={inputId("return",id)} class="textfield-tax-refund" type="number" name="taxReturnRefund" placeholder="return" value={this.taxReturnRefund.value} onChange={this.clickInputChange} />
           <div class="quote-details-container">
             <label for={inputId("details",id)}>DETAILS:</label>
