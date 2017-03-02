@@ -33,10 +33,15 @@ export default class Layout extends React.Component {
       this.selectedStatus.value = 0;
     }
 
+    // if is only a toggle, don't update states.
+    if(!_.isEqual(nextProps.taxReturn, this.props.taxReturn)) {
     this.taxReturnRefund.value = taxReturn.refund; 
     this.taxReturnDetails.value = taxReturn.details;
-    this.updateState.value = updateState(nextProps.updating, nextProps.updated);
-    
+    }
+   
+    if(!_.isEqual(nextProps.updating,this.props.updating) || !_.isEqual(nextProps.updated,this.props.updated)) {
+      this.updateState.value = updateState(nextProps.updating, nextProps.updated);
+    }
   };
   
 
@@ -81,6 +86,9 @@ export default class Layout extends React.Component {
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
     this[name].value = value;
+
+    // clear update state
+    this.updateState = {value:null};    
 
     this.setState({
       value: value
