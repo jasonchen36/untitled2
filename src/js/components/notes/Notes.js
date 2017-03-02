@@ -17,7 +17,8 @@ import { renderErrors } from "../helpers/RenderErrors";
         user: store.users.user,
         notes: store.notes.notes,
         noteSent: store.notes.noteSent,
-        error: store.notes.error
+        error: store.notes.error,
+        availableRoles : store.loginuser.availableRoles
     };
 })
 
@@ -83,9 +84,15 @@ export default class Notes extends React.Component {
         );
     }
 
-    renderNotesRow(data){
+    renderNotesRow(data,isAdmin){
         //todo, add handler to checkbox toggle
         //todo, add logic for checkbox selected or not
+        const deleteButton = isAdmin ?   <a class="tax-item-trash-container-inline" data-note-id={data.id} data-user-id={data.user_id} onClick={this.deleteNote}>
+                        <i class="fa fa-trash-o"></i>
+                    </a> : "";
+ 
+
+
         return (
             <tr key={data.id} class={data.done == 0 ? "" : "disabled-background"}>
                 <td>
@@ -99,20 +106,18 @@ export default class Notes extends React.Component {
                 </td>
                 <td class="text-center">
                     <input name="isDone" data-user-id={data.user_id} data-note-id={data.id} checked={data.done} data-done={data.done} onChange={this.clickDone} type="checkbox" />
-                    <a class="tax-item-trash-container-inline" data-note-id={data.id} data-user-id={data.user_id} onClick={this.deleteNote}>
-                        <i class="fa fa-trash-o"></i>
-                    </a>
+                    { deleteButton }
                 </td>
             </tr>
         );
     }
 
-    renderNotesTable(data){
+    renderNotesTable(data, isAdmin){
         if(!data || data.length===0) {
           return <div> No Notes.</div>
         }
 
-        const tableRows = data.map(row =>this.renderNotesRow(row));
+        const tableRows = data.map(row =>this.renderNotesRow(row, isAdmin));
         return (
             <table class="standard-table">
                 <thead>
@@ -140,7 +145,9 @@ export default class Notes extends React.Component {
 
     render() {
       //todo, pass in data to table
-      const { notes, error } = this.props;
+      const { notes, error, loginuser,availableRoles  } = this.props;
+
+      const isAdmin = loginuser && loginuser.role === availableRoles.Admin;
       const userId = this.props.params.userId;
 
       const orderedNotes = _.orderBy(notes,['updated_at','id'],['desc','desc'])
@@ -152,7 +159,7 @@ export default class Notes extends React.Component {
                   {this.renderSendNote(userId)}
                   {renderErrors(error)}
 
-                  {this.renderNotesTable(orderedNotes)}
+                  {this.renderNotesTable(orderedNotes, isAdmin)}
               </section>
           </main>
       )
