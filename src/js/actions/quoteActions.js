@@ -34,11 +34,11 @@ const disableQuoteLineItem = (quoteId, quoteLineItemId,enable) => {
         dispatch({type: "DISABLE_QUOTE_FULFILLED", payload:  result});
         return result;
       })
-      .catch((err) => {
-        dispatch({type: "DISABLE_QUOTE_REJECTED", payload: err});
-      })
       .then((response) => {
           return fetchQuote(quoteId)(dispatch);
+      })
+      .catch((err) => {
+        dispatch({type: "DISABLE_QUOTE_REJECTED", payload: err});
       });
   };
 };
@@ -55,12 +55,13 @@ const addAdminLineItem= (quoteId, adminLineItem) => {
         dispatch({type: "ADD_ADMIN_LINE_ITEM_SUCCEEDED", payload:  result}) 
         return result;
       })
-      .catch((err) => {
-        dispatch({type: "ADD_ADMIN_LINE_ITEM_REJECTED", payload: err});
-      })
       .then((response) => {
           return fetchQuote(quoteId)(dispatch);
       })
+      .catch((err) => {
+        dispatch({type: "ADD_ADMIN_LINE_ITEM_REJECTED", payload: err});
+        return Promise.reject(err);
+      });
   };
 };
 
@@ -74,11 +75,11 @@ const deleteAdminLineItem= (quoteId, adminQuoteLineItemId) => {
         dispatch({type: "DELETE_ADMIN_LINE_ITEM_FULFILLED", payload:  result});
         return result;
       })
-      .catch((err) => {
-        dispatch({type: "DELETE_ADMIN_LINE_ITEM_REJECTED", payload: err});
-      })
       .then((response) => {
           return fetchQuote(quoteId)(dispatch);
+      })
+      .catch((err) => {
+        dispatch({type: "DELETE_ADMIN_LINE_ITEM_REJECTED", payload: err});
       });
   };
 };
@@ -95,13 +96,13 @@ const sendBillToClient = (quoteId) => {
         dispatch({type: "SEND_BILL_TO_CLIENT_FULFILLED", payload:response.data});
         return response;
       })
-      .catch((err) => {
-        // If err status === '
-        dispatch({type:"SEND_BILL_TO_CLIENT_REJECTED", payload: err });
-      })
       .then((response) => {
         // reget quote
         return fetchQuote(quoteId)(dispatch);
+      })
+      .catch((err) => {
+        // If err status === '
+        dispatch({type:"SEND_BILL_TO_CLIENT_REJECTED", payload: err });
       });
   };
 };
