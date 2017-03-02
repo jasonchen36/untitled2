@@ -31,7 +31,7 @@ export default class Layout extends React.Component {
 
     this.showDetails.value = this.showDetails.value === false ? true: false;
 
-    // Refresh 
+    // Refresh
     this.setState({
       value: this.showDetails
     });
@@ -59,7 +59,7 @@ export default class Layout extends React.Component {
 
 
     const showMore = this.showDetails.value ? (<a class="fa fa-toggle-up" aria-hidden="true"></a>) :(<a class="fa fa-toggle-down" aria-hidden="true"></a>) ;
-    
+
 
     const directDepositStatus = this.renderDirectDeposit(hasDirectDeposit);
 
@@ -77,7 +77,7 @@ export default class Layout extends React.Component {
           { directDepositStatus }
           <div class="status-dollar">
             <div class={taxReturn.refund < 0 ? "font-red" : ""}>
-              {taxReturn.refund < 0 ? "-" + "$" + Math.abs(taxReturn.refund) : "" + "$" + Math.abs(taxReturn.refund)}
+              {taxReturn.refund < 0 ? "-" + "$" + Math.abs(taxReturn.refund).toFixed(2) : "" + "$" + Math.abs(taxReturn.refund).toFixed(2)}
             </div>
             <div>
             {showMore}
@@ -88,7 +88,7 @@ export default class Layout extends React.Component {
         <div class={this.showDetails.value ? "show" : "hide" } >
           <QuoteDetails quote={quote} taxReturn={taxReturn} statuses={statuses} submitFunction={submitFunction} updated={taxReturnUpdated} updating={taxReturnUpdating} />
           { adminUploads }
-          <hr/>    
+          <hr/>
         </div>
       </div>
     );
@@ -98,7 +98,7 @@ export default class Layout extends React.Component {
     //todo, figure out what "No documents added to this package" means
     //todo, pass in data to table
     const { taxReturn, quote, quoteLineItem, statuses, submitFunction, uploadItemFunction, downloadItemFunction, deleteItemFunction, taxReturnAdminChecklist, checklistUpdating, checklistUpdated, taxReturnUpdated, taxReturnUpdating } = this.props;
-   
+
     return <div>
       {this.renderBillingStatusRow(taxReturn,quote, quoteLineItem, statuses, taxReturnAdminChecklist, submitFunction, uploadItemFunction, downloadItemFunction, deleteItemFunction, checklistUpdating, checklistUpdated, taxReturnUpdated, taxReturnUpdating)}
     </div>
