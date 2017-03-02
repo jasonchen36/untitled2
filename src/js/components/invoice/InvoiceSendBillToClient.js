@@ -27,7 +27,7 @@ export default class InvoiceSendBillToClient extends React.Component {
 
     const { quoteId } = this.props;
 
-    this.props.submitHandler(quoteId); 
+    this.props.submitHandler(quoteId);
   }
 
   render() {
@@ -35,7 +35,7 @@ export default class InvoiceSendBillToClient extends React.Component {
       //todo, pass in data to table
       const { submitHandler, quoteId, updating, updated, error } = this.props;
       return  <form onSubmit={this.submit}>
-        { renderUpdateButton(this.updateState,"Send Bill To Client", "Sending Bill to Client", "Sent") }
+        { renderUpdateButton(this.updateState,"Send Bill To Client", "Sending Bill to Client", "Bill Sent") }
         { renderErrors(error)}
       </form>
   }
