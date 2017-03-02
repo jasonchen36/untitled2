@@ -50,7 +50,7 @@ export default class InvoiceQuoteLineItem extends React.Component {
       return <tr key={lineItem.id}>
         {this.getCheckbox(lineItem)}
         <td className={lineItem.enabled ? "" : "greyed-out"}> {tRName} (From Quote)
-        </td><td className={lineItem.enabled ? "" : "greyed-out"}> {lineItem.value}
+        </td><td className={lineItem.enabled ? "" : "greyed-out"}> {lineItem.value.toFixed(2)}
         </td><td className={lineItem.enabled ? "" : "greyed-out"}> {!lineItem.original_quote}
         </td>
         </tr>

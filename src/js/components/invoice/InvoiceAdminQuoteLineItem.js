@@ -53,7 +53,7 @@ export default class InvoiceAdminQuoteLineItem extends React.Component {
       return <tr key={lineItem.id}>
         <td>
         </td><td className={lineItem.enabled ? "" : "greyed-out"}> {tRName}
-        </td><td className={lineItem.enabled ? "" : "greyed-out"}> {lineItem.value}
+        </td><td className={lineItem.enabled ? "" : "greyed-out"}> {lineItem.value.toFixed(2)}
 
         </td>{this.deleteButton()}
         </tr>
