@@ -143,6 +143,9 @@ export default class Invoice extends React.Component {
         const taxReturn = _.find(taxReturns,(tr) => {
             return tr.id === li.tax_return_id;
         });
+        
+        // temp fix for adminLineitems not having an enabled flag
+        li.enabled = typeof li.enabled === 'undefined' ? 1 : li.enabled ;
 
         return <InvoiceAdminQuoteLineItem key={li.id} quoteLineItem={li} taxReturn={taxReturn} deleteLineItemHandler={this.deleteAdminLineItem} hasAdminPrivileges={this.userHasAdminPrivileges()} /> 
       });
