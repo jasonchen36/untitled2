@@ -28,12 +28,12 @@ export default class InvoiceQuoteLineItem extends React.Component {
     this.props.hideLineHandler(quoteId, quoteLineItemId, enable);
   }
 
-  hasAdminPrivileges() {
-    return this.props.hasAdminPrivileges ? true : false;
+  hasModifyPrivileges() {
+    return this.props.hasModifyPrivileges ? true : false;
   }
 
   getCheckbox(lineItem){
-    if(!this.hasAdminPrivileges()) {
+    if(!this.hasModifyPrivileges()) {
       return <td></td>
     }
 

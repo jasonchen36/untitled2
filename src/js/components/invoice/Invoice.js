@@ -136,7 +136,7 @@ export default class Invoice extends React.Component {
             return tr.id === li.tax_return_id;
         });
 
-        return <InvoiceQuoteLineItem key={li.id} quoteLineItem={li} taxReturn={taxReturn} hideLineHandler={this.hideLineItem} hasAdminPrivileges={this.userHasAdminPrivileges()} /> 
+        return <InvoiceQuoteLineItem key={li.id} quoteLineItem={li} taxReturn={taxReturn} hideLineHandler={this.hideLineItem} hasModifyPrivileges={this.userHasInvoicePrivileges()} /> 
       });
 
       const adminLineItems = _.map(quote.adminLineitems, (li) => {
@@ -147,7 +147,7 @@ export default class Invoice extends React.Component {
         // temp fix for adminLineitems not having an enabled flag
         li.enabled = typeof li.enabled === 'undefined' ? 1 : li.enabled ;
 
-        return <InvoiceAdminQuoteLineItem key={li.id} quoteLineItem={li} taxReturn={taxReturn} deleteLineItemHandler={this.deleteAdminLineItem} hasAdminPrivileges={this.userHasAdminPrivileges()} /> 
+        return <InvoiceAdminQuoteLineItem key={li.id} quoteLineItem={li} taxReturn={taxReturn} deleteLineItemHandler={this.deleteAdminLineItem} hasModifyPrivileges={this.userHasInvoicePrivileges()} /> 
       });
 
     
@@ -157,10 +157,14 @@ export default class Invoice extends React.Component {
       </thead>
     }
 
-    userHasAdminPrivileges() {
+    userHasInvoicePrivileges() {
       const { loginuser, loginuserRoles } = this.props;
       console.log('loginuser', loginuser, loginuserRoles);
-      if(loginuser && loginuserRoles && loginuser.role===loginuserRoles.Admin) {
+
+      if(loginuser && loginuserRoles && 
+          (loginuser.role===loginuserRoles.Admin
+            || loginuser.role===loginuserRoles.TaxPro
+          )) {
         return true;
       } else {
         return false;
@@ -176,7 +180,7 @@ export default class Invoice extends React.Component {
 
       let addAdminLineItems = <div>loading</div>
       
-      if(this.userHasAdminPrivileges()) {
+      if(this.userHasInvoicePrivileges()) {
       
         addAdminLineItems = <InvoiceAddAdminQuoteLineItem quote={quotes} addLineItemHandler={this.addAdminLineItem} updating={quoteUpdating} updated={quoteUpdated} /> 
 
@@ -217,7 +221,7 @@ export default class Invoice extends React.Component {
       if(!quotes) {
         return <div> getting quote
         </div>
-      } else if(!this.userHasAdminPrivileges()) {
+      } else if(!this.userHasInvoicePrivileges()) {
         return <div>To send invoice to client, please contact an admin
         </div>
       } else {
