@@ -16,6 +16,25 @@ const fetchUsers = (searchTerms) => {
   
     return base.get(searchUrl)
       .then((response) => {
+        const usersCount = response.data.count;
+        const users = response.data.users;
+        if(users.length===0 && usersCount>0) {
+          let pageSearchTerm = searchTerms? _.find(searchTerms,(st) => { return st.key==='page' }) : null;
+          if(pageSearchTerm) {
+            pageSearchTerm.val='1';
+          } else if (searchTerms) {
+            searchTerms.push({key:'page',val:'1'});
+          } else {
+            searchTerms = [{key:'page',val:'1'}];
+          }
+          searchUrl = "/users";
+          searchUrl+=searchTermsToString(searchTerms);
+          return base.get(searchUrl);
+        } else {
+          return response;
+        }
+      })
+      .then((response) => {
         let result = { searchTerms: searchTerms, data: response.data };
   
         dispatch({type: "FETCH_USERS_FULFILLED", payload:  result});

@@ -26,7 +26,7 @@ export default class InvoiceAdminQuoteLineItem extends React.Component {
   }
 
   deleteButton(){
-    if(!this.hasAdminPrivileges()) {
+    if(!this.hasModifyPrivileges()) {
       return <td></td>
     }
 
@@ -39,8 +39,8 @@ export default class InvoiceAdminQuoteLineItem extends React.Component {
     </td>
   }
 
-  hasAdminPrivileges() {
-    return this.props.hasAdminPrivileges ? true : false;
+  hasModifyPrivileges() {
+    return this.props.hasModifyPrivileges ? true : false;
   }
 
   renderQuoteList(lineItem,taxReturn) {
@@ -53,7 +53,7 @@ export default class InvoiceAdminQuoteLineItem extends React.Component {
       return <tr key={lineItem.id}>
         <td>
         </td><td className={lineItem.enabled ? "" : "greyed-out"}> {tRName}
-        </td><td className={lineItem.enabled ? "" : "greyed-out"}> {lineItem.value}
+        </td><td className={lineItem.enabled ? "" : "greyed-out"}> {lineItem.value.toFixed(2)}
 
         </td>{this.deleteButton()}
         </tr>

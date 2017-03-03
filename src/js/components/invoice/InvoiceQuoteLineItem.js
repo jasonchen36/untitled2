@@ -28,12 +28,12 @@ export default class InvoiceQuoteLineItem extends React.Component {
     this.props.hideLineHandler(quoteId, quoteLineItemId, enable);
   }
 
-  hasAdminPrivileges() {
-    return this.props.hasAdminPrivileges ? true : false;
+  hasModifyPrivileges() {
+    return this.props.hasModifyPrivileges ? true : false;
   }
 
   getCheckbox(lineItem){
-    if(!this.hasAdminPrivileges()) {
+    if(!this.hasModifyPrivileges()) {
       return <td></td>
     }
 
@@ -50,7 +50,7 @@ export default class InvoiceQuoteLineItem extends React.Component {
       return <tr key={lineItem.id}>
         {this.getCheckbox(lineItem)}
         <td className={lineItem.enabled ? "" : "greyed-out"}> {tRName} (From Quote)
-        </td><td className={lineItem.enabled ? "" : "greyed-out"}> {lineItem.value}
+        </td><td className={lineItem.enabled ? "" : "greyed-out"}> {lineItem.value.toFixed(2)}
         </td><td className={lineItem.enabled ? "" : "greyed-out"}> {!lineItem.original_quote}
         </td>
         </tr>
